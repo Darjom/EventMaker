@@ -1,5 +1,6 @@
 from flask import Flask
 from config import Config
+from modules.admin.controllers.routes import admin_bp
 from shared.extensions import db, migrate, jwt
 from modules.user.controllers.routes import user_bp
 from modules.home.controllers.routes import home_bp
@@ -16,6 +17,7 @@ def create_app():
 
     app.register_blueprint(home_bp)
     app.register_blueprint(user_bp, url_prefix="/user")
+    app.register_blueprint(admin_bp, url_prefix="/admin")
     init_admin(app)
 
     return app

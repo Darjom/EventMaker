@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Administrativo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="login">
+  <div class="login__container container mt-5">
+    <h2 class="login__title text-center">Acceso Administrativo</h2>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('admin_bp.login') }}" class="login__form">
+      <div class="mb-3">
+        <label for="email" class="form-label login__label">Correo electrónico</label>
+        <input type="email" class="form-control login__input" name="email" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label login__label">Contraseña</label>
+        <input type="password" class="form-control login__input" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary login__button w-100">Iniciar Sesión</button>
+    </form>
+  </div>
+</body>
+</html>
+    
