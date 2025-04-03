@@ -9,5 +9,8 @@ class AreasDTO(BaseModel):
     areas: List[AreaDTO]
 
 
-    def getEventos(self) -> List[AreaDTO]:
-        return self.areas
+    @classmethod
+    def from_domain_list(cls, areas: list):
+        return cls(
+            areas=[AreaDTO.from_domain(area) for area in areas]
+        )

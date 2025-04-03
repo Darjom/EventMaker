@@ -6,6 +6,8 @@ from modules.categories.application.dtos.CategoryDTO import CategoryDTO
 class CategoriesDTO(BaseModel):
     categories: List[CategoryDTO]
 
-
-    def getEventos(self) -> List[CategoryDTO]:
-        return self.categories
+    @classmethod
+    def from_domain_list(cls, categories: list):
+        return cls(
+            areas=[CategoryDTO.from_domain(category) for category in categories]
+        )

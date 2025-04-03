@@ -23,3 +23,7 @@ class PostgresAreaRepository(AreaRepository):
             id_evento=event_id
         ).first()
         return area.to_domain() if area else None
+
+    def find_by_event_id(self, event_id: int) -> List[Area]:
+        areas = AreaMapping.query.filter_by(id_evento=event_id).all()
+        return [a.to_domain() for a in areas]

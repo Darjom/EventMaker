@@ -31,7 +31,10 @@ class PostgresEventsRepository(EventRepository):
         return event_mapping.to_domain() if event_mapping else None
 
     def find_by_user_id(self, user_id: int) -> List[Event]:
-        event_mappings = EventMapping.query.filter_by(creador_id=user_id).all()
+        # consulta para usar la relación many-to-many
+        event_mappings = EventMapping.query.filter(
+            EventMapping.users.any(UserMapping.id == user_id)
+        ).all()
         return [e.to_domain() for e in event_mappings]
 
     # ... implementar otros métodos
