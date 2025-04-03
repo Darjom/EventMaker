@@ -3,7 +3,7 @@ from .dtos.EventsDTO import EventsDTO
 from .dtos.EventDTO import EventDTO
 from ..domain.EventRepository import EventRepository
 
-class EventFinder:
+class UserEventFinder:
     def __init__(self, repository: EventRepository):
         self.repository = repository
 

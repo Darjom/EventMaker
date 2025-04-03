@@ -1,11 +1,11 @@
 from app import app
-from modules.events.application.EventFinder import EventFinder
+from modules.events.application.UserEventFinder import UserEventFinder
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 
 
 def test_find_events_by_user(user_id: int = 100):
     repository = PostgresEventsRepository()
-    finder = EventFinder(repository)
+    finder = UserEventFinder(repository)
     return finder.execute(user_id)
 
 

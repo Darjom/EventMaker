@@ -1,6 +1,5 @@
 from app import app
 from modules.categories.application.CategoryFinder import CategoryFinder
-from modules.categories.application.dtos.CategoriesDTO import CategoriesDTO
 from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
 
 
