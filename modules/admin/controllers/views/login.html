@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Administrativo</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+</head>
+<body class="bg-light d-flex justify-content-center align-items-center vh-100">
+  <div class="card p-4 shadow rounded" style="width: 400px;">
+    <h3 class="text-center text-primary mb-4">Acceso Administrativo</h3>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('admin_bp.login') }}">
+      <div class="mb-3">
+        <label for="email" class="form-label">Correo electrónico</label>
+        <input type="email" name="email" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Contraseña</label>
+        <input type="password" name="password" class="form-control" required>
+      </div>
+      <div class="mb-3 text-center">
+        <span class="badge bg-primary">Nuevo</span>
+        <span class="badge bg-secondary">UMSS</span>
+        <span class="badge bg-info text-dark">Versión beta</span>
+      </div>
+      <button type="submit" class="btn btn-primary w-100 mb-2">Iniciar Sesión</button>
+      <button type="submit" class="btn btn-secondary w-100 mb-2">Iniciar Sesión</button>
+      <button type="button" class="btn btn-outline-secondary w-100 mb-2">Registrarse</button>
+      <button type="button" class="btn btn-danger w-100">Recuperar Contraseña</button>
+    </form>
+
+    <hr>
+    <p class="text-center text-muted mt-2">© 2025 Skyfall · UMSS</p>
+  </div>
+</body>
+</html>
