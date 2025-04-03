@@ -1,10 +1,14 @@
-from typing import Optional
-
 from .dtos.EventDTO import EventDTO
 from ..domain.EventRepository import EventRepository
-from ..domain.Event import Event
+
 
 
 class EventCreator:
 
-    pass
+    def __init__(self, repository: EventRepository):
+        self.repository = repository
+
+    def execute(self, event_dto: EventDTO) -> EventDTO:
+        event = event_dto.toDomain()
+        saved_event = self.repository.save(event)
+        return EventDTO.fromDomain(saved_event)

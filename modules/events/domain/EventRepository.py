@@ -9,6 +9,9 @@ class EventRepository(ABC):
         pass
 
     @abstractmethod
+    def find_by_id(self, event_id: int) -> Optional[Event]:
+        pass
+    @abstractmethod
     def find_by_name(self, name: str) -> Optional[Event]:
         pass
 
