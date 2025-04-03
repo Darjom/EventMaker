@@ -11,3 +11,4 @@ __pycache__/
 migrations/alembic.ini
 migrations/versions/*.py
 migrations/
+.env
