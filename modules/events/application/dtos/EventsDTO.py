@@ -6,6 +6,8 @@ from modules.events.application.dtos.EventDTO import EventDTO
 class EventsDTO(BaseModel):
     eventos: List[EventDTO]
 
-
-    def getEventos(self) -> List[EventDTO]:
-        return self.eventos
+    @classmethod
+    def from_domain_list(cls, events: list):
+        return cls(
+            eventos=[EventDTO.fromDomain(event) for event in events]
+        )

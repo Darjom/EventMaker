@@ -20,12 +20,12 @@ class RolMapping(db.Model):
     )
 
     def to_domain(self):
-        from src.roles.domain.Rol import Rol
+        from modules.roles.domain.Rol import Rol
         return Rol(
             id=self.id,
             name=self.name,
             description=self.description,
-            permissions=[permission.to_domain() for permission in self.permissions]  # 🔹 Convertir a objetos completos
+            permissions=[p.name for p in self.permissions]
         )
 
     @classmethod
@@ -35,3 +35,4 @@ class RolMapping(db.Model):
             name=role_domain.name,
             description=role_domain.description
         )
+        return role_mapping
