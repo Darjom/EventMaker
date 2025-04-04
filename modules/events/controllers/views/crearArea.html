@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Area de Competencia</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <style>
+    .rojo-umss {
+        color: var(--bs-red-umss);
+        }
+        .azul-umss{
+        color: var(--bs-blue-umss);
+        }
+        .rosado-umss{
+        color: var(--bs-red_white-umss);
+        }
+    h2{
+        color:  var(--bs-blue-umss);
+    }
+    input{
+        width: 80%;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 1.1rem;
+    }
+    input::placeholder {
+            color: #aaa; /* Color gris claro para el placeholder */
+    }
+    h1{
+            margin-top: 3%;
+        }
+    h2{
+            margin-top: 3%;
+        }
+    h5{
+            margin-top: 15%;
+    }
+    .boton {
+            display: flex;
+            align-items: center;
+            background-color: var(--bs-blue-umss); /* Azul oscuro */
+            color: white;
+            font-size: 18px;
+            font-family: Arial, sans-serif;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+        }
+
+        .boton:hover {
+            background-color: #0F2C5B; /* Azul más oscuro al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h1 class="azul-umss">Crear Area de Competencia</h1>
+    </center>
+    <div name="Area central" class="row">
+
+
+        <div class="col-md-1"></div>
+
+
+        <div name="Parte izquierda" class="col-md-4">
+            <div name="Titulo">
+                <h2>Titulo</h2>
+                <input type="text" placeholder="Titulo del evento">
+            </div>
+            <div name="Afiche o imagen representativa">
+                <h2>Afiche o imagen representativa</h2>
+                <input type="file">
+            </div>
+        </div>
+
+
+        <div class="col-md-2"></div>
+
+
+        <div name="Parte derecha" class="col-md-2">
+            <div name="Procesos de tramite">
+                <h2>Procesos de Tramite</h2>
+                <div>
+                    <h5><b><span class="exclamacion">❗</span>Asesoría inicial</b></h5>
+                    <label for="">Evaluación del caso y determinación de requisitos específicos</label>
+                </div>
+                <div>
+                    <h5><b><span class="exclamacion">❗</span>Recopilación de documentos</b></h5>
+                    <label for="">Preparación del expediente completo según normativa vigente</label>
+                </div>
+                <div>
+                    <h5><b><span class="exclamacion">❗</span>Asesoría inicial</b></h5>
+                    <label for="">Ingreso formal del trámite ante la autoridad competente</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-1"></div>
+
+
+    </div>
+    <div name="Terminos y condiciones" class="row">
+        <input type="checkbox">
+        <label for="Terminos y condiciones">Acepto los terminos y condiciones</label>
+    </div>
+    <center>
+        <div name="Boton para crear Areas" style="text-align: left;">
+            <button class="boton">
+                <span class="icono">✏️</span>Crear evento
+            </button>
+        </div>
+    </center>
+</body>
+</html>
+
+
+
+
+

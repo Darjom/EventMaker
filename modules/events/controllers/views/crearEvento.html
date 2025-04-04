@@ -77,6 +77,39 @@
             margin-top: 15px;
             display: none;
         }
+        h1{
+            margin-top: 3%;
+        }
+        h2{
+            margin-top: 3%;
+        }
+        .custom-select {
+  position: relative;
+}
+
+.custom-select select {
+  width: 80%;
+  padding: 12px 15px;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  background-color: white;
+  appearance: none;
+  font-size: 1rem;
+  color: #34495e;
+  transition: border-color 0.3s;
+}
+
+/* Flecha personalizada */
+.custom-select::after {
+  content: "▼";
+  position: relative;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  color: black;
+  pointer-events: none;
+}
+
     </style>
  
 </head>
@@ -90,8 +123,9 @@
         </center>
     </div>
 
-        <div name="Parámetros" class="row azul-umss">
-            <div name="Lado izquierdo" class="col-md-5" style="margin-left: 5%;">
+        <div name="Parámetros" class="row azul-umss" style="margin-top: 2%;">
+            <div class="col-md-1"></div>
+            <div name="Lado izquierdo" class="col-md-4">
 
                 <div>
                     <h2>Titulo</h2>
@@ -104,25 +138,26 @@
                 </div>
 
                 <div class="row" name="Fechas">
-                    <div class="col-2"></div>
-                    <div class="column">
-                        <h3>Fecha inicio del evento</h3>
-                        <input type="date" id="Fecha_inicio" name="Fecha_inicio">
-                    </div>
-                    <div class="col-2"></div>
-                    <div class="column">
-                        <h3>Fecha fin del evento</h3>
-                        <input type="date" id="Fecha_fin" name="Fecha_fin">
-                    </div>
+                        <div class="col-md-6">
+                            <h3>Fecha inicio del evento</h3>
+                            <input type="date" id="Fecha_inicio" name="Fecha_inicio">
+                        </div>
+                        <div class="col-md-6">
+                            <h3>Fecha fin del evento</h3>
+                            <input type="date" id="Fecha_fin" name="Fecha_fin">
+                        </div>
                 </div>
                 <div>
                     <h2>Modalidad de inscripción</h2>
-                    <select name="Modalidad_inscripción" id="Modalidad_inscripción">
-                        <option value="" disabled selected>Modalidad de inscripción</option>
-                    </select>
+                    <div class="custom-select">
+                        <select name="Modalidad_inscripción" id="Modalidad_inscripción">
+                            <option value="" disabled selected>Modalidad de inscripción</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div name="Lado derecho" class="col-md-5">
+            <div class="col-md-2"></div>
+            <div name="Lado derecho" class="col-md-4">
 
                 <div>
                     <h2>Capacidad máxima de asistentes</h2>
@@ -161,19 +196,18 @@
                     <img id="preview" alt="Vista previa">
                 </div>
             </div>
+            <div class="col-md-1"></div>
         </div>
 
 
-        <div name="Terminos y condiciones">
-            <div>
-            <center>
-            <h2>Terminos y condiciones</h2>
-            </center>
-            <center>
-            <input type="checkbox">
-            <label for="acepto-terminos">Acepto los terminos,condiciones y politicas del sistema</label>
-            </center>
-        </div>
+        <div name="Terminos y condiciones" class="row" style="text-align: center;">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <h2>Terminos y condiciones</h2>
+                <input type="checkbox">
+                <label for="acepto-terminos">Acepto los terminos,condiciones y politicas del sistema</label>
+            </div>
+            <div class="col-md-4"></div>
         </div>
 
         <br>
