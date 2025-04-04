@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from ..domain.EventRepository import EventRepository
 from ..domain.Event import Event
@@ -37,4 +38,9 @@ class PostgresEventsRepository(EventRepository):
         ).all()
         return [e.to_domain() for e in event_mappings]
 
-    # ... implementar otros métodos
+    def find_active_events(self) -> List[Event]:
+        now = datetime.utcnow()  # Usar UTC para consistencia
+        event_mappings = EventMapping.query.filter(
+            EventMapping.fin_evento >= now
+        ).all()
+        return [e.to_domain() for e in event_mappings]

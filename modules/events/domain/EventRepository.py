@@ -19,4 +19,6 @@ class EventRepository(ABC):
     def find_by_user_id(self, user_id: int) -> List[Event]:
         pass
 
-    # ... otros métodos para update, delete, etc.
+    @abstractmethod
+    def find_active_events(self) -> List[Event]:
+        pass
