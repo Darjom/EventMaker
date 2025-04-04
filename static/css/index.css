@@ -1,0 +1,36 @@
+.hero {
+  background-image: url('/static/img/index/umss_cover.webp'); /* Cambiá el nombre si usás otra imagen */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5); /* Oscurecer para mejor legibilidad */
+  z-index: -1;
+}
+
+.hero .container {
+  z-index: 2;
+}
+
+.hero h1,
+.hero h2 {
+  color: white;
+}
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+}

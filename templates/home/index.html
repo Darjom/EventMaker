@@ -8,8 +8,11 @@
 
 {% block content %}
   {% include "shared/_header.html" %}
-  <div class="container mt-4">
-    <h1 class="display-5">Bienvenido a Skyfall</h1>
-    <p class="lead">Tu sistema de gestión de eventos y competencias científicas.</p>
+<section class="hero d-flex align-items-center justify-content-center text-center text-white">
+  <div class="container">
+    <h1 class="mb-3 hero-title">¡Demuestra de lo que estás hecho!</h1>
+    <h2 class="mb-4 text-primary">Universidad Mayor de San Simón</h2>
+    <a href="{{ url_for('home_bp.eventos') }}" class="btn btn-secondary btn-lg">Ver eventos</a>
   </div>
+</section>
 {% endblock %}
