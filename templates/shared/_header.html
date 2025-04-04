@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand me-5" href="{{ url_for('home_bp.index') }}">
+      <img src="{{ url_for('static', filename='img/shared/logo_umss.webp') }}" alt="UMSS Logo" width="120">
+    </a>
+
+    <!-- Botón de hamburguesa -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Contenido colapsable -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <div class="row w-100">
+        <!-- Navegación -->
+        <div class="col-lg-9">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-lg-row gap-lg-3">
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'home_bp.index' %}active{% endif %}" href="{{ url_for('home_bp.index') }}">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'home_bp.eventos' %}active{% endif %}" href="{{ url_for('home_bp.eventos') }}">Eventos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'home_bp.ayuda' %}active{% endif %}" href="{{ url_for('home_bp.ayuda') }}">Ayuda</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'home_bp.contactos' %}active{% endif %}" href="{{ url_for('home_bp.contactos') }}">Contactos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_bp.login') }}">Inicio Administrativos</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Botón ver estado de inscripcion-->
+        <div class="col-lg-3 text-lg-end text-start mt-3 mt-lg-0">
+          <a href="#" class="btn btn-secondary w-100 w-lg-auto">Ver Estado de Inscripción</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

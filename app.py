@@ -7,9 +7,12 @@ from modules.home.controllers.routes import home_bp
 from modules.admin.infrastructure.admin_interface import init_admin
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
 from werkzeug.security import generate_password_hash
-from modules.permissions.infrastructure.persistence.PermissionMapping import PermissionMapping
 from shared.extensions import db
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
+from modules.permissions.infrastructure.persistence.PermissionMapping import PermissionMapping
+from modules.events.infrastructure.persistence.EventMapping import EventMapping
+from modules.areas.infrastructure.persistence.AreaMapping import AreaMapping
+from modules.categories.infrastructure.persistence.CategoryMapping import CategoryMapping
 import uuid
 from datetime import datetime
 
@@ -58,7 +61,7 @@ def insert_default_roles():
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__,template_folder='templates')
     app.config.from_object(Config)
 
     db.init_app(app)

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 
 class Event:
@@ -17,7 +17,7 @@ class Event:
             ubicacion: Optional[str] = None,
             slogan: Optional[str] = None,
             afiche: Optional[bytes] = None,
-            creador_id: Optional[int] = None
+            creador_id: Optional[List[int]] = None
     ):
         self.id_evento = id_evento
         self.nombre_evento = nombre_evento

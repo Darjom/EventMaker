@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from modules.events.domain.Event import Event # Importa la entidad de dominio
 
 class EventDTO(BaseModel):
-    id_evento: Optional[int]
+    id_evento: Optional[int] = None
     nombre_evento: str
     tipo_evento: str
     descripcion_evento: Optional[str]
@@ -16,7 +16,7 @@ class EventDTO(BaseModel):
     ubicacion: Optional[str]
     slogan: Optional[str]
     afiche: Optional[bytes]
-    creador_id: Optional[int]
+    creador_id: Optional[List[int]] = None
 
     @classmethod
     def fromDomain(cls, event: Event) -> "EventDTO":
