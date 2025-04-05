@@ -38,3 +38,11 @@
   background-color: #e9ecef;
   color: #000;
 }
+
+.sidebar.collapsed .label {
+  display: none !important;
+}
+
+.sidebar .label {
+  text-align: center;
+}
