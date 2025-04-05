@@ -55,36 +55,60 @@
         .boton:hover {
             background-color: #0F2C5B; /* Azul más oscuro al pasar el mouse */
         }
-    
+
+        #preview-container {
+            width: 100%;
+            max-height: 300px;
+            overflow: hidden;
+            margin-top: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        #preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
     <center>
         <h1 class="azul-umss">Crear Area de Competencia</h1>
     </center>
-    <form id="miFormulario">
+    <form id="miFormulario" method="POST" enctype="multipart/form-data">
         <div name="Area central" class="row">
 
 
             <div class="col-md-1 col-sm-2"></div>
 
-            
+
                 <div name="Parte izquierda" class="row col-md-4 col-sm-8" >
                     <div name="Titulo">
                         <h2>Titulo</h2>
                         <input type="text" name="titulo" id="titulo" placeholder="Titulo del evento">
                     </div>
+                    <div>
+                        <h2>Descripción</h2>
+                        <input  type="text" name="descripcion" id="descripcion" placeholder="Descripción del área" required>
+                    </div>
                     <div name="Afiche o imagen representativa">
                         <h2>Afiche o imagen representativa</h2>
-                        <input type="file" name="imagen" id="imagen">
+                        <input type="file" name="imagen" id="imagen" accept="image/jpeg, image/png, image/webp">
+                        <div id="image-error"></div>
+                        <div id="preview-container" class="border rounded overflow-hidden mt-2 ratio ratio-1x1">
+                            <img id="preview-image" src="#" alt="Vista previa" class="img-fluid mx-auto d-block object-fit-contain">
+                        </div>
                     </div>
                 </div>
-        
-    
+
+
 
             <div class="col-md-2 col-sm-2"></div>
 
-    
+
             <div name="Parte derecha" class="row col-md-2">
                 <div class="col-sm-2"></div>
                 <div name="Procesos de tramite" class="col-sm-8">
@@ -110,22 +134,21 @@
 
 
         </div>
+        <center>
+            <div name="Terminos y condiciones" style="color: red; margin: 20px 0;">
+                <input type="checkbox" id="Terminos y condiciones" required>
+                <label for="Terminos y condiciones">Acepto los terminos y condiciones</label>
+            </div>
+            <div name="Boton para crear Areas" >
+                <button type="submit" class="boton">
+                    <span class="icono">✏️</span>Crear Area
+                </button>
+            </div>
+        </center>
     </form>
-    <center>
-    <div name="Terminos y condiciones" style="color: red;">
-        <input type="checkbox" id="Terminos y condiciones">
-        <label for="Terminos y condiciones">Acepto los terminos y condiciones</label>
-    </div>
-        <div name="Boton para crear Areas">
-            <button class="boton">
-                <span class="icono">✏️</span>Crear evento
-            </button>
-        </div>
-    </center>
+
+    <div id="mensaje" style="margin: 15px 0;"></div>
+
+    <script src="/static/js/areas/crearArea.js"></script>
 </body>
 </html>
-
-
-
-
-
