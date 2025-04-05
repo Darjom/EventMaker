@@ -1,0 +1,43 @@
+<!-- templates/admin/_sidebar_content.html -->
+<a href="/" class="d-flex align-items-center mb-3 text-decoration-none">
+  <span class="fs-4 text-primary">EventMaker</span>
+</a>
+<hr>
+<ul class="nav nav-pills flex-column mb-auto">
+  {% if 'user:create' in permisos %}
+  <li class="nav-item">
+    <a href="#" class="nav-link">
+      <img src="{{ url_for('static', filename='img/icons/user_create.png') }}" width="20" class="me-2">
+      Crear Usuario
+    </a>
+  </li>
+  {% endif %}
+
+  {% if 'event:create' in permisos %}
+  <li>
+    <a href="#" class="nav-link">
+      <img src="{{ url_for('static', filename='img/icons/event_create.png') }}" width="20" class="me-2">
+      Crear Evento
+    </a>
+  </li>
+  {% endif %}
+
+  <li>
+    <a href="#" class="nav-link">
+      <img src="{{ url_for('static', filename='img/icons/my_events.png') }}" width="20" class="me-2">
+      Mis Eventos
+    </a>
+  </li>
+</ul>
+<hr>
+<div class="dropdown">
+  <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+    <img src="{{ url_for('static', filename='img/icons/profile.png') }}" width="32" height="32" class="rounded-circle me-2">
+    <strong>{{ user.first_name }}</strong>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><span class="dropdown-item text-muted">Correo: {{ user.email }}</span></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item text-danger" href="{{ url_for('admin_bp.logout') }}">Cerrar sesión</a></li>
+  </ul>
+</div>

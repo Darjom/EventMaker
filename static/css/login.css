@@ -1,0 +1,24 @@
+.login-page .login-left {
+  background-image: url("../img/login/login-bg.webp");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+.login-page .login-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.login-page .login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-page .logo {
+  width: 120px;
+  display: block;
+  margin: 0 auto 1rem auto;
+}
