@@ -4,6 +4,7 @@ from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
+
 admin_bp = Blueprint("admin_bp", __name__)
 
 @admin_bp.route("/login", methods=["GET", "POST"])
@@ -41,3 +42,5 @@ def dashboard():
 def logout():
     session.pop("admin_user", None)  # Elimina la cookie de sesión del usuario
     return redirect(url_for("admin_bp.login"))
+
+
