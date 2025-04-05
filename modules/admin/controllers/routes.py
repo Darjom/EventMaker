@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from modules.admin.application.auth_service import authenticate_admin
+from modules.user.infrastructure.persistence.UserMapping import UserMapping
 
 admin_bp = Blueprint("admin_bp", __name__, template_folder="views")
 
@@ -18,6 +19,9 @@ def login():
 
 @admin_bp.route("/dashboard")
 def dashboard():
-    if not session.get("admin_user"):
+    user_id = session.get("admin_user")
+    if not user_id:
         return redirect(url_for("admin_bp.login"))
-    return "Bienvenido al Panel Administrativo"
+
+    user = UserMapping.query.get(user_id)
+    return render_template("dashboard.html", user=user)
