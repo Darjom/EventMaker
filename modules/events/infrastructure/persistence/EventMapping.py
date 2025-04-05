@@ -1,9 +1,16 @@
+from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from shared.extensions import db
 from modules.events.domain.Event import Event  # Importar la clase Event del dominio
 
 
+users_events = db.Table(
+    'user_events',
+    db.Column('id_evento', db.Integer, db.ForeignKey('evento.id_evento'), primary_key=True),
+    db.Column('id_user', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
+
 class EventMapping(db.Model):
-    __tablename__ = "Evento"
+    __tablename__ = "evento"
 
     id_evento = db.Column(db.Integer, primary_key=True)
     nombre_evento = db.Column(db.String(50))
@@ -17,7 +24,13 @@ class EventMapping(db.Model):
     ubicacion = db.Column(db.String(50))
     slogan = db.Column(db.String(150))
     afiche = db.Column(db.LargeBinary)
-    creador_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Relación con usuario
+
+    # Relación muchos a muchos
+    users = db.relationship(
+        'UserMapping',
+        secondary=users_events,
+        backref=db.backref('created_events', lazy='dynamic')  # 🔹 Lazy loading para eficiencia
+    )
 
     def to_domain(self) -> Event:
         """Convierte un objeto EventMapping en un objeto de dominio Event."""
@@ -34,7 +47,7 @@ class EventMapping(db.Model):
             ubicacion=self.ubicacion,
             slogan=self.slogan,
             afiche=self.afiche,
-            creador_id=self.creador_id
+            creador_id=[user.id for user in self.users]
         )
 
     @classmethod
@@ -53,5 +66,4 @@ class EventMapping(db.Model):
             ubicacion=event.ubicacion,
             slogan=event.slogan,
             afiche=event.afiche,
-            creador_id=event.creador_id
         )
