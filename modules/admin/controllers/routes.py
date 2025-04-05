@@ -25,7 +25,7 @@ def dashboard():
         return redirect(url_for("admin_bp.login"))
     return "Bienvenido al Panel Administrativo"
 
-@tutor_bp.route("/CrearTutores", methods=["POST"])
+@tutor_bp.route("/crearTutores", methods=["GET","POST"])
 def CrearTutor():
     try:
         data = request.get_json()
