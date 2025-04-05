@@ -1,0 +1,48 @@
+/* SIDEBAR por defecto (colapsado) */
+.sidebar {
+  width: 70px;                 /* ancho reducido */
+  transition: width 0.3s;      /* animación de expansión */
+  background-color: #f8f9fa;
+  overflow-x: hidden;          /* oculta contenido horizontal */
+  overflow-y: auto;
+  height: 100vh;
+  position: relative;          /* no fijo: se desplaza con la página */
+  border-right: 1px solid #dee2e6;
+  z-index: 1030;               /* delante del contenido, si gustas */
+}
+
+/* Al hacer hover se expande */
+.sidebar:hover {
+  width: 240px;                /* ancho expandido */
+}
+
+/* Oculta las etiquetas de texto por defecto */
+.sidebar .label {
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;         /* evita saltos de línea */
+}
+
+/* Al hacer hover en la sidebar, muestra el texto */
+.sidebar:hover .label {
+  opacity: 1;
+}
+
+/* Ajustes de la nav-link */
+.sidebar .nav-link {
+  color: #333;
+  padding: 1rem;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #e9ecef;
+  color: #000;
+}
+
+.sidebar.collapsed .label {
+  display: none !important;
+}
+
+.sidebar .label {
+  text-align: center;
+}

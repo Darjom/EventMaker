@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Login Administrativo{% endblock %}
+
+{% block content %}
+<div class="container-fluid login-page">
+  <div class="row">
+    <!-- Columna izquierda: imagen -->
+    <div class="col-md-6 d-none d-md-block login-left"></div>
+
+    <!-- Columna derecha: login -->
+    <div class="col-md-6 login-right">
+      <div class="card shadow p-4 login-card">
+        <img src="{{ url_for('static', filename='img/shared/logo_umss.webp') }}" alt="Logo UMSS" class="logo">
+        <h4 class="text-center text-primary mb-4">Iniciar Sesión en EventMaker</h4>
+
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('admin_bp.login') }}">
+          <div class="mb-3">
+            <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required>
+          </div>
+          <div class="mb-3">
+            <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+        </form>
+
+        <p class="text-center text-muted mt-3 mb-0">© 2025 EventMaker · UMSS</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

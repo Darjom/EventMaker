@@ -13,6 +13,7 @@ from modules.areas.infrastructure.persistence.AreaMapping import AreaMapping
 from modules.categories.infrastructure.persistence.CategoryMapping import CategoryMapping
 import uuid
 from datetime import datetime
+from modules.events.controllers.routes import eventos_bp
 
 
 
@@ -28,6 +29,7 @@ def create_app():
 
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix="/admin")
+    app.register_blueprint(eventos_bp, url_prefix="/eventos")
 
     return app
 
