@@ -22,7 +22,7 @@ def crear_evento():
         event_dto = EventDTO(
             nombre_evento=form.get("titulo"),
             tipo_evento=form.get("tipo_evento") ,
-            descripcion_evento=form.get("descripción"),
+            descripcion_evento=form.get("descripcion"),
             inicio_evento=datetime.strptime(form.get("fecha_inicio"), "%Y-%m-%d"),
             fin_evento=datetime.strptime(form.get("fecha_fin"), "%Y-%m-%d"),
             capacidad_evento=int(form.get("capacidad")),
