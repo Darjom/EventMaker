@@ -21,7 +21,7 @@ class User:
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
-        self.password = generate_password_hash(password)
+        self.password = password
         self.active = active
         self.confirmed_at = confirmed_at
         self.fs_uniquifier = fs_uniquifier

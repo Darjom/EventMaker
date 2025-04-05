@@ -19,10 +19,10 @@ def test_create_user():
 
     # Ejecutar creación de usuario
     return creator.execute(
-        role_ids=[1],  # Asegúrate que exista este rol en tu DB
+        role_ids=[2],  # Asegúrate que exista este rol en tu DB
         first_name="daniel",
-        last_name="Gómez",
-        email="ana@edaniel.com",
+        last_name="Reque",
+        email="adm@admin.com",
         password="SecurePass123!"
     )
 
