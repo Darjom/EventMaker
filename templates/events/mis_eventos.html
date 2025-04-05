@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Eventos{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="container mt-4">
+    <div class="row">
+      {% for evento in eventos %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center shadow-sm" style="border-radius: 10px; border: 1px solid #c1c1c1;">
+            {% if evento.afiche %}
+              <img src="{{ url_for('static', filename=evento.afiche) }}" class="card-img-top p-2" style="height: 180px; object-fit: contain;" alt="Afiche del evento">
+            {% else %}
+              <img src="{{ url_for('static', filename='img/shared/eventDefault.png') }}" class="card-img-top p-2" style="height: 180px; object-fit: contain;" alt="Imagen por defecto">
+            {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ evento.nombre_evento }}</h5>
+            <p class="card-text text-muted">
+              {% if evento.descripcion_evento %}
+                {{ evento.descripcion_evento[:30] }}{% if evento.descripcion_evento|length > 30 %}...{% endif %}
+              {% else %}
+                Sin descripción
+              {% endif %} 
+            </p>
+            <a href="#" class="btn btn-outline-primary">Ver más</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

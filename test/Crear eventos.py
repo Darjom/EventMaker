@@ -14,7 +14,7 @@ def test_create_event():
         descripcion_evento="Un evento sobre las últimas tendencias tecnológicas.",
         inicio_evento=datetime(2025, 5, 20, 9, 0, 0),
         fin_evento=datetime(2025, 5, 20, 18, 0, 0),
-        capacidad_evento=500,
+        capacidad_evento=0,
         inscripcion="Gratis",
         requisitos="Registro previo",
         ubicacion="Centro de Convenciones",
