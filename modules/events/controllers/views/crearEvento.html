@@ -15,7 +15,7 @@
     .rosado-umss{
     color: var(--bs-red_white-umss);
     }
-    input{
+    input:not([type="checkbox"]){
         width: 80%;
         border: 2px solid #ddd;
         border-radius: 8px;
@@ -114,6 +114,8 @@
  
 </head>
 <body>
+
+
     <div name="Titulo">
         <center>
             <h1>
@@ -123,28 +125,33 @@
         </center>
     </div>
 
+    <form id="miFormulario">
         <div name="Parámetros" class="row azul-umss" style="margin-top: 2%;">
-            <div class="col-md-1"></div>
-            <div name="Lado izquierdo" class="col-md-4">
+
+
+            <div class="col-md-1 col-sm-2"></div>
+
+
+            <div name="Lado izquierdo" class="col-md-4 col-sm-8">
 
                 <div>
                     <h2>Titulo</h2>
-                    <input type="text" id="fname" name="fname" placeholder="Titulo del evento">
+                    <input type="text" id="titulo" name="titulo" placeholder="Titulo del evento">
                 </div>
 
                 <div>
                     <h2>Descripción</h2>
-                    <textarea placeholder="Descripción"></textarea>
+                    <textarea id="descripción" name="descripción" placeholder="Descripción"></textarea>
                 </div>
 
                 <div class="row" name="Fechas">
                         <div class="col-md-6">
                             <h3>Fecha inicio del evento</h3>
-                            <input type="date" id="Fecha_inicio" name="Fecha_inicio">
+                            <input type="date" id="fecha_inicio" name="fecha_inicio">
                         </div>
                         <div class="col-md-6">
                             <h3>Fecha fin del evento</h3>
-                            <input type="date" id="Fecha_fin" name="Fecha_fin">
+                            <input type="date" id="fecha_fin" name="fecha_fin">
                         </div>
                 </div>
                 <div>
@@ -156,30 +163,36 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-2"></div>
-            <div name="Lado derecho" class="col-md-4">
 
+
+            <div class="col-md-2 col-sm-2"></div>
+
+
+            <div name="Lado derecho" class="row col-md-4">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
                 <div>
                     <h2>Capacidad máxima de asistentes</h2>
-                    <input type="text" id="fname" name="fname" placeholder="Capacidad">
+                    <input type="text" id="capacidad" name="capacidad" placeholder="Capacidad">
                 </div>
                 
                 <div>
                     <h2>Requisitos de asistencia</h2>
-                    <input type="text" id="fname" name="fname" placeholder="Requisitos">
+                    <input type="text" id="requisitos" name="requisitos" placeholder="Requisitos">
                 </div>
                 <div>
                     <h2>Lugar o sala donde se realizará</h2>
-                    <input type="text" id="fname" name="fname" placeholder="Lugar">
+                    <input type="text" id="lugar" name="lugar" placeholder="Lugar">
                 </div>
                 <div>
                     <h1 class="rojo-umss">Material de apoyo</h1>
                 </div>
                 <div>
                     <h2>Breve mensaje o slogan</h2>
-                    <input type="text" id="fname" name="fname" placeholder="Slogan">
+                    <input type="text" id="mensaje" name="mensaje" placeholder="Slogan">
                 </div>
-
+            </div>
+            <div class="col-sm-2"></div>
                 <!--               <div>
                     <h2>Afiche o imagen representativa</h2>
                     <input type="file" id="fname" name="fname" placeholder="Imagen">
@@ -190,15 +203,17 @@
                     <div class="upload-text">
                         Haz clic para subir una imagen
                     </div>
-                    <input type="file" id="file-input" accept="image/*" style="display:none;" 
+                    <input type="file" id="file-input" name="imagen" accept="image/*" style="display:none;" 
                            onchange="document.getElementById('preview').src = URL.createObjectURL(event.target.files[0]); 
                                     document.getElementById('preview').style.display = 'block';">
                     <img id="preview" alt="Vista previa">
                 </div>
             </div>
+
+
             <div class="col-md-1"></div>
         </div>
-
+    </form>
 
         <div name="Terminos y condiciones" class="row" style="text-align: center;">
             <div class="col-md-4"></div>

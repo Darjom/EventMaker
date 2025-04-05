@@ -1,15 +1,13 @@
 document.getElementById('miFormulario').addEventListener('submit',async(e) =>{
     e.preventDefault()
     const datos ={
-        nombre: document.getElementById('nombre').value,
-        apellido: document.getElementById('apellido').value,
-        correo: document.getElementById('correo').value,
-        contraseña: document.getElementById('contraseña').value
+        titulo: document.getElementById('titulo').value,
+        imagen: document.getElementById('imagen').value,
     };
 
     try {
         // Enviar datos al backend
-        const respuesta = await fetch('/crearTutores', {
+        const respuesta = await fetch('/crearArea', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

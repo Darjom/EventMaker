@@ -1,15 +1,19 @@
 document.getElementById('miFormulario').addEventListener('submit',async(e) =>{
     e.preventDefault()
     const datos ={
-        nombre: document.getElementById('nombre').value,
-        apellido: document.getElementById('apellido').value,
-        correo: document.getElementById('correo').value,
-        contraseña: document.getElementById('contraseña').value
+        titulo: document.getElementById('nombre').value,
+        descripción: document.getElementById('descripción').value,
+        fecha_inicio: document.getElementById('fecha_inicio').value,
+        fecha_fin: document.getElementById('fecha_fin').value,
+        capacidad: document.getElementById('capacidad').value,
+        requisitos: document.getElementById('requisitos').value,
+        mensaje: document.getElementById('mensaje').value,
+        imagen: document.getElementById('imagen').value,
     };
 
     try {
         // Enviar datos al backend
-        const respuesta = await fetch('/crearTutores', {
+        const respuesta = await fetch('/crearEvento', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

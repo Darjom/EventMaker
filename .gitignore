@@ -2,10 +2,10 @@
 .vscode
 static/scss/bootstrap
 
-!__pycache__/
-!**/__pycache__/
-!*.pyc
-!**/*.pyc
+__pycache__/
+**/__pycache__/
+*.pyc
+**/*.pyc
 *.pyo
 *.pyd
 migrations/alembic.ini

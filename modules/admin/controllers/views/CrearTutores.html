@@ -57,6 +57,32 @@
         h2{
         text-align: left;
         }
+        .custom-select {
+  position: relative;
+}
+
+.custom-select select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  background-color: white;
+  appearance: none;
+  font-size: 1rem;
+  color: #34495e;
+  transition: border-color 0.3s;
+}
+
+/* Flecha personalizada */
+.custom-select::after {
+  content: "▼";
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  color: black;
+  pointer-events: none;
+}
     </style>
 </head>
 <body>
@@ -69,19 +95,17 @@
         </center>
     </div>
 
-    <form id="CrearTutor">
+    <form id="miFormulario">
     <div class="row" style="margin-top: 2%;">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
+        <div class="col-md-3 col-sm-2"></div>
+        <div class="col-md-6 col-sm-8">
     
             <h2 name="">Tipo de Usuario</h2>
-            <select name="TipoDeUsuarios" id="" placeholder="Tipo de Usuario">
-                <option value="" disabled selected>Tipo de Usuario</option>
-                <option value="Administrador">Administrador</option>
-                <option value="Moderador">Moderador</option>
-                <option value="Usuario">Usuario</option>
-            </select>
-
+            <div class="custom-select">
+                <select name="TipoDeUsuarios" id="tipoUsuario" placeholder="Tipo de Usuario">
+                    <option value="" disabled selected>Tipo de Usuario</option>
+                </select>
+            </div>
             
             <h2 name="">Nombre del usuario</h2>
             <input type="text" name="nombre" id="nombre" placeholder="Nombre(s) del usuario">
@@ -96,14 +120,12 @@
             <br>
             <br>
             <center>
-            <div>
                 <button class="boton">
                     <span class="icono">✏️</span>Crear tutor
                 </button>
-            </div>
             </center>
         </div>
-        <div class="col-md-3"></div>
+        <div class="col-md-3 col-sm-2"></div>
     </div>
     </form>
     

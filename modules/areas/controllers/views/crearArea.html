@@ -62,52 +62,55 @@
     <center>
         <h1 class="azul-umss">Crear Area de Competencia</h1>
     </center>
-    <div name="Area central" class="row">
+    <form id="miFormulario">
+        <div name="Area central" class="row">
 
 
-        <div class="col-md-1 col-sm-2"></div>
+            <div class="col-md-1 col-sm-2"></div>
 
+            
+                <div name="Parte izquierda" class="row col-md-4 col-sm-8" >
+                    <div name="Titulo">
+                        <h2>Titulo</h2>
+                        <input type="text" name="titulo" id="titulo" placeholder="Titulo del evento">
+                    </div>
+                    <div name="Afiche o imagen representativa">
+                        <h2>Afiche o imagen representativa</h2>
+                        <input type="file" name="imagen" id="imagen">
+                    </div>
+                </div>
+        
+    
 
-        <div name="Parte izquierda" class="row col-md-4 col-sm-8" >
-            <div name="Titulo">
-                <h2>Titulo</h2>
-                <input type="text" placeholder="Titulo del evento">
+            <div class="col-md-2 col-sm-2"></div>
+
+    
+            <div name="Parte derecha" class="row col-md-2">
+                <div class="col-sm-2"></div>
+                <div name="Procesos de tramite" class="col-sm-8">
+                    <h2>Procesos de Tramite</h2>
+                    <div>
+                        <h5><b><span class="exclamacion">❗</span>Asesoría inicial</b></h5>
+                        <label for="">Evaluación del caso y determinación de requisitos específicos</label>
+                    </div>
+                    <div>
+                        <h5><b><span class="exclamacion">❗</span>Recopilación de documentos</b></h5>
+                        <label for="">Preparación del expediente completo según normativa vigente</label>
+                    </div>
+                    <div>
+                        <h5><b><span class="exclamacion">❗</span>Asesoría inicial</b></h5>
+                        <label for="">Ingreso formal del trámite ante la autoridad competente</label>
+                    </div>
+                </div>
+                <div class="col-sm-2"></div>
             </div>
-            <div name="Afiche o imagen representativa">
-                <h2>Afiche o imagen representativa</h2>
-                <input type="file">
-            </div>
+
+
+            <div class="col-md-1 col-sm-2"></div>
+
+
         </div>
-
-
-        <div class="col-md-2 col-sm-2"></div>
-
- 
-        <div name="Parte derecha" class="row col-md-2">
-            <div class="col-sm-2"></div>
-            <div name="Procesos de tramite" class="col-sm-8">
-                <h2>Procesos de Tramite</h2>
-                <div>
-                    <h5><b><span class="exclamacion">❗</span>Asesoría inicial</b></h5>
-                    <label for="">Evaluación del caso y determinación de requisitos específicos</label>
-                </div>
-                <div>
-                    <h5><b><span class="exclamacion">❗</span>Recopilación de documentos</b></h5>
-                    <label for="">Preparación del expediente completo según normativa vigente</label>
-                </div>
-                <div>
-                    <h5><b><span class="exclamacion">❗</span>Asesoría inicial</b></h5>
-                    <label for="">Ingreso formal del trámite ante la autoridad competente</label>
-                </div>
-            </div>
-            <div class="col-sm-2"></div>
-        </div>
-
-
-        <div class="col-md-1 col-sm-2"></div>
-
-
-    </div>
+    </form>
     <center>
     <div name="Terminos y condiciones" style="color: red;">
         <input type="checkbox" id="Terminos y condiciones">
