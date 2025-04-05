@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear usuarios</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <style>
+    .rojo-umss {
+    color: var(--bs-red-umss);
+    }
+    .azul-umss{
+    color: var(--bs-blue-umss);
+    }
+    .azul-intermedio-umss{
+    color:var(--bs-blue_middle-umss)
+    }
+    .rosado-umss{
+    color: var(--bs-red_white-umss);
+    }
+    h2{
+        color: var(--bs-red-umss);
+    }
+    input{
+        width: 100%;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 1.1rem;
+    }
+    input::placeholder {
+            color: #aaa; /* Color gris claro para el placeholder */
+    }
+    .boton {
+            display: flex;
+            align-items: center;
+            background-color: var(--bs-red_white-umss); /* Azul oscuro */
+            color: white;
+            font-size: 18px;
+            font-family: Arial, sans-serif;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+        }
+
+        .boton:hover {
+            background-color: var(--bs-red-umss); /* Azul más oscuro al pasar el mouse */
+        }
+
+        .icono {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        h2{
+        text-align: left;
+        }
+        .custom-select {
+  position: relative;
+}
+
+.custom-select select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  background-color: white;
+  appearance: none;
+  font-size: 1rem;
+  color: #34495e;
+  transition: border-color 0.3s;
+}
+
+/* Flecha personalizada */
+.custom-select::after {
+  content: "▼";
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  color: black;
+  pointer-events: none;
+}
+    </style>
+</head>
+<body>
+    <div name="Titulo">
+        <center>
+            <h1>
+                <span class="rojo-umss">Crear</span>
+                <span class="azul-umss">Usuarios</span>
+            </h1>
+        </center>
+    </div>
+
+    <form id="miFormulario">
+    <div class="row" style="margin-top: 2%;">
+        <div class="col-md-3 col-sm-2"></div>
+        <div class="col-md-6 col-sm-8">
+    
+            <h2 name="">Tipo de Usuario</h2>
+            <div class="custom-select">
+                <select name="TipoDeUsuarios" id="tipoUsuario" placeholder="Tipo de Usuario">
+                    <option value="" disabled selected>Tipo de Usuario</option>
+                </select>
+            </div>
+            
+            <h2 name="">Nombre del usuario</h2>
+            <input type="text" name="nombre" id="nombre" placeholder="Nombre(s) del usuario">
+            <h2 name="">Apellido del usuario</h2>
+            <input type="text" name="apellido" id="apellido" placeholder="Apellido(s) del usuario">
+            <h2 name="">Correo electronico</h2>
+            <input type="text" name="correo" id="correo" placeholder="Ejemplo@gmail.com">
+            <h2 name="">Contraseña</h2>
+            <input type="password" name="contraseña" id="contraseña" placeholder="#####">
+            <h2 name="">Confirmar contraseña</h2>
+            <input type="password" name="contraseña" id="contraseña" placeholder="#####">
+            <br>
+            <br>
+            <center>
+                <button class="boton">
+                    <span class="icono">✏️</span>Crear tutor
+                </button>
+            </center>
+        </div>
+        <div class="col-md-3 col-sm-2"></div>
+    </div>
+    </form>
+    
+
+</body>
+</html>

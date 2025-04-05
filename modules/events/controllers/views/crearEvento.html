@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear evento</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <style>   
+    .rojo-umss {
+    color: var(--bs-red-umss);
+    }
+    .azul-umss{
+    color: var(--bs-blue-umss);
+    }
+    .rosado-umss{
+    color: var(--bs-red_white-umss);
+    }
+    input:not([type="checkbox"]){
+        width: 80%;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 1.1rem;
+    }
+    input::placeholder {
+            color: #aaa; /* Color gris claro para el placeholder */
+    }
+    textarea{
+        width: 80%;
+    }
+    .boton {
+            display: flex;
+            align-items: center;
+            background-color: var(--bs-blue-umss); /* Azul oscuro */
+            color: white;
+            font-size: 18px;
+            font-family: Arial, sans-serif;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+        }
+
+        .boton:hover {
+            background-color: #0F2C5B; /* Azul más oscuro al pasar el mouse */
+        }
+
+        .icono {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            width: 300px;
+            margin: 20px auto;
+            cursor: pointer;
+        }
+        .upload-box:hover {
+            border-color: #f1292f; /* Rojo UMSS */
+        }
+        .upload-icon {
+            font-size: 40px;
+            color: #6c757d;
+        }
+        .upload-text {
+            color: #6c757d;
+            margin: 10px 0;
+        }
+        #preview {
+            max-width: 100%;
+            margin-top: 15px;
+            display: none;
+        }
+        h1{
+            margin-top: 3%;
+        }
+        h2{
+            margin-top: 3%;
+        }
+        .custom-select {
+  position: relative;
+}
+
+.custom-select select {
+  width: 80%;
+  padding: 12px 15px;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  background-color: white;
+  appearance: none;
+  font-size: 1rem;
+  color: #34495e;
+  transition: border-color 0.3s;
+}
+
+/* Flecha personalizada */
+.custom-select::after {
+  content: "▼";
+  position: relative;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  color: black;
+  pointer-events: none;
+}
+
+    </style>
+ 
+</head>
+<body>
+
+
+    <div name="Titulo">
+        <center>
+            <h1>
+                <span class="rojo-umss">Crear</span>
+                <span class="azul-umss">Evento</span>
+              </h1>
+        </center>
+    </div>
+
+    <form id="miFormulario">
+        <div name="Parámetros" class="row azul-umss" style="margin-top: 2%;">
+
+
+            <div class="col-md-1 col-sm-2"></div>
+
+
+            <div name="Lado izquierdo" class="col-md-4 col-sm-8">
+
+                <div>
+                    <h2>Titulo</h2>
+                    <input type="text" id="titulo" name="titulo" placeholder="Titulo del evento">
+                </div>
+
+                <div>
+                    <h2>Descripción</h2>
+                    <textarea id="descripción" name="descripción" placeholder="Descripción"></textarea>
+                </div>
+
+                <div class="row" name="Fechas">
+                        <div class="col-md-6">
+                            <h3>Fecha inicio del evento</h3>
+                            <input type="date" id="fecha_inicio" name="fecha_inicio">
+                        </div>
+                        <div class="col-md-6">
+                            <h3>Fecha fin del evento</h3>
+                            <input type="date" id="fecha_fin" name="fecha_fin">
+                        </div>
+                </div>
+                <div>
+                    <h2>Modalidad de inscripción</h2>
+                    <div class="custom-select">
+                        <select name="Modalidad_inscripción" id="Modalidad_inscripción">
+                            <option value="" disabled selected>Modalidad de inscripción</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-2 col-sm-2"></div>
+
+
+            <div name="Lado derecho" class="row col-md-4">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <div>
+                    <h2>Capacidad máxima de asistentes</h2>
+                    <input type="text" id="capacidad" name="capacidad" placeholder="Capacidad">
+                </div>
+                
+                <div>
+                    <h2>Requisitos de asistencia</h2>
+                    <input type="text" id="requisitos" name="requisitos" placeholder="Requisitos">
+                </div>
+                <div>
+                    <h2>Lugar o sala donde se realizará</h2>
+                    <input type="text" id="lugar" name="lugar" placeholder="Lugar">
+                </div>
+                <div>
+                    <h1 class="rojo-umss">Material de apoyo</h1>
+                </div>
+                <div>
+                    <h2>Breve mensaje o slogan</h2>
+                    <input type="text" id="mensaje" name="mensaje" placeholder="Slogan">
+                </div>
+            </div>
+            <div class="col-sm-2"></div>
+                <!--               <div>
+                    <h2>Afiche o imagen representativa</h2>
+                    <input type="file" id="fname" name="fname" placeholder="Imagen">
+                </div>
+                -->
+                <div class="upload-box" onclick="document.getElementById('file-input').click()">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-text">
+                        Haz clic para subir una imagen
+                    </div>
+                    <input type="file" id="file-input" name="imagen" accept="image/*" style="display:none;" 
+                           onchange="document.getElementById('preview').src = URL.createObjectURL(event.target.files[0]); 
+                                    document.getElementById('preview').style.display = 'block';">
+                    <img id="preview" alt="Vista previa">
+                </div>
+            </div>
+
+
+            <div class="col-md-1"></div>
+        </div>
+    </form>
+
+        <div name="Terminos y condiciones" class="row" style="text-align: center;">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <h2>Terminos y condiciones</h2>
+                <input type="checkbox">
+                <label for="acepto-terminos">Acepto los terminos,condiciones y politicas del sistema</label>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <br>
+        <center>
+        <div>
+            <button class="boton">
+                <span class="icono">✏️</span>Crear evento
+            </button>
+        </div>
+    </center>
+</body>
+</html>
