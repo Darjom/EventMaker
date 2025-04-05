@@ -209,6 +209,13 @@ body {
   background-color: var(--bs-body-bg);
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background-image: url(/modules/home/controllers/views/image\(1\).png);
+  background-size: cover;        /* Cubre todo el espacio disponible */
+  background-position: center;   /* Centra la imagen */
+  background-repeat: no-repeat;  /* Evita que se repita */
+  background-attachment: fixed;  /* Fija el fondo al desplazarse (opcional) */
+  margin: 0;                    /* Elimina márgenes predeterminados */
+  min-height: 100vh;     
 }
 
 hr {
@@ -1011,7 +1018,7 @@ progress {
   --bs-gutter-y: 3rem;
 }
 
-@media (min-width: 576px) {
+@media (max-width: 767px) {
   .col-sm {
     flex: 1 0 0%;
   }
