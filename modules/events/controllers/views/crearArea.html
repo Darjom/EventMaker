@@ -18,8 +18,8 @@
     h2{
         color:  var(--bs-blue-umss);
     }
-    input{
-        width: 80%;
+    input:not([type="checkbox"]){
+        width: 100%;
         border: 2px solid #ddd;
         border-radius: 8px;
         padding: 12px 15px;
@@ -55,6 +55,7 @@
         .boton:hover {
             background-color: #0F2C5B; /* Azul más oscuro al pasar el mouse */
         }
+    
     </style>
 </head>
 <body>
@@ -64,10 +65,10 @@
     <div name="Area central" class="row">
 
 
-        <div class="col-md-1"></div>
+        <div class="col-md-1 col-sm-2"></div>
 
 
-        <div name="Parte izquierda" class="col-md-4">
+        <div name="Parte izquierda" class="row col-md-4 col-sm-8" >
             <div name="Titulo">
                 <h2>Titulo</h2>
                 <input type="text" placeholder="Titulo del evento">
@@ -79,11 +80,12 @@
         </div>
 
 
-        <div class="col-md-2"></div>
+        <div class="col-md-2 col-sm-2"></div>
 
-
-        <div name="Parte derecha" class="col-md-2">
-            <div name="Procesos de tramite">
+ 
+        <div name="Parte derecha" class="row col-md-2">
+            <div class="col-sm-2"></div>
+            <div name="Procesos de tramite" class="col-sm-8">
                 <h2>Procesos de Tramite</h2>
                 <div>
                     <h5><b><span class="exclamacion">❗</span>Asesoría inicial</b></h5>
@@ -98,19 +100,20 @@
                     <label for="">Ingreso formal del trámite ante la autoridad competente</label>
                 </div>
             </div>
+            <div class="col-sm-2"></div>
         </div>
 
 
-        <div class="col-md-1"></div>
+        <div class="col-md-1 col-sm-2"></div>
 
 
-    </div>
-    <div name="Terminos y condiciones" class="row">
-        <input type="checkbox">
-        <label for="Terminos y condiciones">Acepto los terminos y condiciones</label>
     </div>
     <center>
-        <div name="Boton para crear Areas" style="text-align: left;">
+    <div name="Terminos y condiciones" style="color: red;">
+        <input type="checkbox" id="Terminos y condiciones">
+        <label for="Terminos y condiciones">Acepto los terminos y condiciones</label>
+    </div>
+        <div name="Boton para crear Areas">
             <button class="boton">
                 <span class="icono">✏️</span>Crear evento
             </button>

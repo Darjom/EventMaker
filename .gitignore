@@ -1,8 +1,5 @@
 .venv
 .vscode
 static/scss/bootstrap
-/__pycache__
-/__pycache__
-/modules/admin/application/__pycache__
 .env
-.env
+/__pycache__

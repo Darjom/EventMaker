@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session,jsonify
 from modules.admin.application.auth_service import authenticate_admin
+from shared.extensions import db
 
 admin_bp = Blueprint("admin_bp", __name__, template_folder="views")
 tutor_bp = Blueprint("tutor_bp", __name__, template_folder="crearTutores")
