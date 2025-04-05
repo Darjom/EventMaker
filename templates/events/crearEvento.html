@@ -1,91 +1,102 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block title %}Crear Evento{% endblock %}
 
 {% block content %}
-<div class="text-center mt-4">
-  <h1><span class="rojo-umss">Crear</span> <span class="azul-umss">Evento</span></h1>
-</div>
+{% include 'shared/admin_header.html' %}
 
-<form method="POST" enctype="multipart/form-data">
-  <div class="row azul-umss mt-4 px-5">
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
 
-    <div class="col-md-5">
-      <div class="mb-4">
-        <h2>Título</h2>
-        <input type="text" name="titulo" placeholder="Título del evento" required>
-      </div>
+  <div class="crear-evento-main container-fluid mt-4">
+    <div class="text-center mb-4">
+      <h1>
+        <span class="crear-evento-rojo">Crear</span>
+        <span class="crear-evento-azul">Evento</span>
+      </h1>
+    </div>
 
-      <div class="mb-4">
-        <h2>Descripción</h2>
-        <textarea name="descripcion" rows="4" placeholder="Descripción del evento" required></textarea>
-      </div>
+    <form method="POST" enctype="multipart/form-data">
+      <div class="row px-4 crear-evento-form">
 
-      <div class="row mb-4">
-        <div class="col">
-          <h3>Fecha de inicio</h3>
-          <input type="date" name="fecha_inicio" required>
-        </div>
-        <div class="col">
-          <h3>Fecha de fin</h3>
-          <input type="date" name="fecha_fin" required>
-        </div>
-      </div>
+        <!-- Lado izquierdo -->
+        <div class="col-md-5">
+          <div class="mb-4">
+            <h2>Título</h2>
+            <input type="text" name="titulo" class="crear-evento-input" placeholder="Título del evento" required>
+          </div>
 
-        <div class="mb-4">
+          <div class="mb-4">
+            <h2>Descripción</h2>
+            <textarea name="descripcion" class="crear-evento-textarea" rows="4" placeholder="Descripción del evento" required></textarea>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col">
+              <h3>Fecha de inicio</h3>
+              <input type="date" name="fecha_inicio" class="crear-evento-input" required>
+            </div>
+            <div class="col">
+              <h3>Fecha de fin</h3>
+              <input type="date" name="fecha_fin" class="crear-evento-input" required>
+            </div>
+          </div>
+
+          <div class="mb-4">
             <h2>Tipo de evento</h2>
-            <select name="tipo_evento" required>
+            <select name="tipo_evento" class="crear-evento-select" required>
               <option disabled selected value="">Selecciona una opción</option>
-              <option value="Conferencia">Conferencia</option>
-              <option value="Taller">Taller</option>
-              <option value="Seminario">Seminario</option>
+              <option value="Virtual">Conferencia</option>
+              <option value="Presencial">Taller</option>
+              <option value="hibrido">Seminario</option>
             </select>
+          </div>
         </div>
 
-    <div class="col-md-5 offset-md-1">
-      <div class="mb-4">
-        <h2>Capacidad máxima</h2>
-        <input type="number" name="capacidad" placeholder="Ej: 100" min="1" required>
+        <!-- Lado derecho -->
+        <div class="col-md-5 offset-md-1">
+          <div class="mb-4">
+            <h2>Capacidad máxima</h2>
+            <input type="number" name="capacidad" id="capacidad" class="crear-evento-input" placeholder="Ej: 100" min="0">
+          </div>
+
+          <div class="mb-4">
+            <h2>Requisitos</h2>
+            <input type="text" name="requisitos" class="crear-evento-input" placeholder="Ej: Registro previo" required>
+          </div>
+
+          <div class="mb-4">
+            <h2>Lugar del evento</h2>
+            <input type="text" name="lugar" class="crear-evento-input" placeholder="Ej: Auditorio UMSS" required>
+          </div>
+
+          <div class="mb-4">
+            <h2>Slogan del evento</h2>
+            <input type="text" name="slogan" class="crear-evento-input" placeholder="Ej: La innovación nos une">
+          </div>
+
+          <div class="crear-evento-upload-box" onclick="document.getElementById('file-input').click()">
+            <div class="crear-evento-upload-icon">📷</div>
+            <div class="crear-evento-upload-text">Haz clic para subir una imagen</div>
+            <input type="file" id="file-input" name="afiche_path" accept="image/*" hidden onchange="mostrarPreview(this)">
+            <img id="preview" class="crear-evento-preview" alt="Vista previa del afiche">
+          </div>
+        </div>
       </div>
 
-      <div class="mb-4">
-        <h2>Requisitos</h2>
-        <input type="text" name="requisitos" placeholder="Ej: Registro previo">
+      <div class="text-center mt-4">
+        <input type="checkbox" name="terminos" required>
+        <label for="terminos">Acepto los términos, condiciones y políticas del sistema</label>
       </div>
 
-      <div class="mb-4">
-        <h2>Lugar del evento</h2>
-        <input type="text" name="lugar" placeholder="Ej: Auditorio UMSS" required>
+      <div class="text-center mt-4 mb-5">
+        <button type="submit" class="crear-evento-boton">
+          <span class="crear-evento-icono">✏️</span>Crear evento
+        </button>
       </div>
-
-      <div class="mb-4">
-        <h2>Slogan del evento</h2>
-        <input type="text" name="slogan" placeholder="Ej: La innovación nos une">
-      </div>
-
-      <div class="upload-box" onclick="document.getElementById('file-input').click()">
-        <div class="upload-icon">📷</div>
-        <div class="upload-text">Haz clic para subir una imagen</div>
-        <input type="file" id="file-input" name="afiche" accept="image/*" hidden onchange="mostrarPreview(this)">
-        <img id="preview" alt="Vista previa del afiche">
-      </div>
-    </div>
+    </form>
   </div>
-
-  <div class="row text-center mt-4">
-    <div class="col">
-      <h2>Términos y condiciones</h2>
-      <input type="checkbox" name="terminos" required>
-      <label for="terminos">Acepto los términos, condiciones y políticas del sistema</label>
-    </div>
-  </div>
-
-  <div class="text-center mt-4 mb-5">
-    <button type="submit" class="boton">
-      <span class="icono">✏️</span>Crear evento
-    </button>
-  </div>
-</form>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -97,5 +108,21 @@
       preview.style.display = 'block';
     }
   }
+    // Validar número en campo capacidad
+  document.getElementById("capacidad").addEventListener("input", function (e) {
+    const valor = e.target.value;
+    if (valor && isNaN(valor)) {
+      alert("Por favor, ingresa un número válido en el campo de capacidad.");
+      e.target.value = "";  // Borra lo ingresado si no es válido
+    }
+  });
+
+  document.querySelector("form").addEventListener("submit", function (e) {
+    const capacidad = document.getElementById("capacidad").value;
+    if (capacidad && isNaN(capacidad)) {
+      alert("Capacidad debe ser un número.");
+      e.preventDefault();  // Cancela el envío del formulario
+    }
+  });
 </script>
 {% endblock %}

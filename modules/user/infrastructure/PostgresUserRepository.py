@@ -39,3 +39,6 @@ class PostgresUserRepository(UserRepository):
         if user_mapping:
             return user_mapping.to_domain()
         return None
+
+    def get_by_id(self, user_id):
+        pass
