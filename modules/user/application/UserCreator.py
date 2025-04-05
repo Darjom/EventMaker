@@ -1,4 +1,7 @@
 from typing import List
+
+from werkzeug.security import generate_password_hash
+
 from modules.user.domain.User import User
 from modules.user.domain.UserRepository import UserRepository
 from modules.roles.application.RoleQueryService import RoleQueryService
@@ -35,7 +38,7 @@ class UserCreator:
             first_name=first_name,
             last_name=last_name,
             email=email,
-            password=password,  # Deberías hashear la contraseña aquí
+            password=generate_password_hash(password),  # Deberías hashear la contraseña aquí
             roles=[]  # Los roles se asignan después de crear el usuario
         )
 

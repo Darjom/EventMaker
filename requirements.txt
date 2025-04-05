@@ -9,3 +9,4 @@ Werkzeug==2.3.7
 python-dotenv
 Flask-Admin==1.6.1
 pydantic==2.5.3
+flask_migrate==3.1.0

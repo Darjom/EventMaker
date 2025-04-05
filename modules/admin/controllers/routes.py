@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session,jsonify
 from modules.admin.application.auth_service import authenticate_admin
 from shared.extensions import db
+from modules.user.infrastructure.persistence.UserMapping import UserMapping
 
 admin_bp = Blueprint("admin_bp", __name__, template_folder="views")
 tutor_bp = Blueprint("tutor_bp", __name__, template_folder="crearTutores")
@@ -19,7 +20,8 @@ def login():
 
 @admin_bp.route("/dashboard")
 def dashboard():
-    if not session.get("admin_user"):
+    user_id = session.get("admin_user")
+    if not user_id:
         return redirect(url_for("admin_bp.login"))
     return "Bienvenido al Panel Administrativo"
 
@@ -45,3 +47,6 @@ def CrearTutor():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+    user = UserMapping.query.get(user_id)
+    return render_template("dashboard.html", user=user)
