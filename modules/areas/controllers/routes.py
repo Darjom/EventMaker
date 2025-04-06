@@ -46,4 +46,4 @@ def crear_area():
         except Exception as e:
             return jsonify({"success": False, "error": str(e)}), 400
 
-    return render_template("areas/formCrearArea.html", evento_id=1)
+    return render_template("areas/formCrearArea.html")

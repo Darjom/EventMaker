@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Crear FormData
             const formData = new FormData(form);
-            formData.append('idevento', '3');
+            formData.append('idevento', '10');
 
             const response = await fetch('/area/crear', {
                 method: 'POST',
