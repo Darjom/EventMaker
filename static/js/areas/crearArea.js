@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = form.querySelector('button[type="submit"]');
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
-    // Función para mostrar mensajes
     const showMessage = (text, isError = false) => {
         mensajeDiv.textContent = text;
         mensajeDiv.style.color = isError ? 'red' : 'green';
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Preview de imagen
     imagenInput.addEventListener('change', function() {
         const file = this.files[0];
         errorMessage.textContent = '';
@@ -40,15 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Envío del formulario
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        showMessage(''); // Limpiar mensajes anteriores
+        showMessage('');
         const originalBtnText = submitBtn.innerHTML;
 
         try {
-            // Validaciones
-            if (!document.getElementById('Terminos y condiciones').checked) {
+            if (!document.getElementById('TerminosYCondiciones').checked) {
                 throw new Error('Debe aceptar los términos y condiciones');
             }
 
@@ -57,13 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Tipo de archivo no permitido');
             }
 
-            // Deshabilitar botón durante el envío
             submitBtn.disabled = true;
             submitBtn.innerHTML = 'Creando...';
 
-            // Crear FormData
             const formData = new FormData(form);
-            formData.append('idevento', '10');
 
             const response = await fetch('/area/crear', {
                 method: 'POST',
@@ -79,11 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(result.error || 'Error en el servidor');
             }
 
-            // Éxito
-            showMessage(result.message);
-            form.reset();
-            previewContainer.style.display = 'none';
-            setTimeout(() => window.location.href = '/area/crear', 1500);
+            // Redirección al evento
+            const eventoId = formData.get('idevento');
+            window.location.href = `/evento/ver/${eventoId}`;
 
         } catch (error) {
             console.error('Error:', error);
