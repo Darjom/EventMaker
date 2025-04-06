@@ -8,6 +8,7 @@ from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepos
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
+from modules.events.application.EventQueryService import EventQueryService
 
 eventos_bp = Blueprint("eventos_bp", __name__)
 
@@ -76,3 +77,27 @@ def mis_eventos():
     events_dto = event_finder.execute(user_id)
 
     return render_template("events/mis_eventos.html", user=user, permisos=permisos, eventos=events_dto.eventos)
+
+@eventos_bp.route("/evento/<int:event_id>", methods=["GET"])
+def ver_evento(event_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+    # Obtener permisos del usuario
+    permisos = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        dto = service.execute(role.id)
+        if dto and dto.permissions:
+            permisos.extend(dto.permissions)
+
+    repository = PostgresEventsRepository()
+    service = EventQueryService(repository)
+    evento = service.execute(event_id)
+
+    if evento is None:
+        return redirect(url_for("eventos_bp.mis_eventos"))
+
+    return render_template("events/ver_evento.html", evento=evento, user=user, permisos=permisos)
