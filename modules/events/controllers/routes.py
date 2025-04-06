@@ -38,7 +38,7 @@ def crear_evento():
             if not ImageRotator.is_allowed_file(file.filename):
                 flash('Formato de imagen no permitido. Use JPG, PNG o WEBP', 'error')
                 return render_template("events/crearEvento.html", user=user)
-            
+
             file_path = ImageRotator.save_rotated_image(file)
 
         event_dto = EventDTO(
