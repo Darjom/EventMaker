@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Ayuda - EventMaker{% endblock %}
+
+{% block content %}
+{% include 'shared/_header.html' %}
+
+<div class="container mt-5 mb-5">
+  <h2 class="mb-4 text-primary fw-bold">Centro de Ayuda - EventMaker</h2>
+
+  <p class="lead">Bienvenido al centro de soporte de <strong>EventMaker</strong>, el sistema de gestión de eventos desarrollado para la <strong>Universidad Mayor de San Simón (UMSS)</strong> y adaptable para cualquier institución pública o privada.</p>
+
+  <div class="accordion mt-4" id="faqAccordion">
+
+    <!-- ¿Qué es EventMaker? -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="faq1">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+          ¿Qué es EventMaker?
+        </button>
+      </h2>
+      <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          Es un sistema SaaS (Software as a Service) para gestionar convocatorias, inscripción, administración de eventos académicos, culturales y técnicos. Fue desarrollado por estudiantes de la UMSS con enfoque modular y escalable.
+        </div>
+      </div>
+    </div>
+
+    <!-- ¿Qué puedo hacer con EventMaker? -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="faq2">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+          ¿Qué funcionalidades tiene actualmente?
+        </button>
+      </h2>
+      <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          Puedes crear eventos, asignar áreas, subir imágenes, registrar fechas y capacidades, controlar permisos por rol, mostrar eventos públicos, y generar formularios personalizados para inscripciones. Pronto se incluirá generación de reportes y certificados.
+        </div>
+      </div>
+    </div>
+
+    <!-- ¿Quién puede contratar EventMaker? -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="faq3">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+          ¿Quién puede utilizar o contratar EventMaker?
+        </button>
+      </h2>
+      <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          EventMaker es adaptable para universidades, colegios, ONGs, municipios u organizaciones que gestionen concursos, ferias o congresos. Puede desplegarse en servidores propios o en la nube.
+        </div>
+      </div>
+    </div>
+
+    <!-- ¿Cómo puedo obtener soporte técnico? -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="faq4">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+          ¿Cómo puedo obtener soporte técnico?
+        </button>
+      </h2>
+      <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          Puedes contactar al equipo desarrollador desde la sección <a href="{{ url_for('home_bp.contactos') }}">Contactos</a> o enviar un correo electrónico al soporte institucional de la UMSS.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+.crear-user-container h1 span {
+  font-weight: bold;
+}
+.rojo-umss {
+  color: var(--bs-red-umss);
+}
+.azul-umss {
+  color: var(--bs-blue-umss);
+}
+
+.crear-user-container h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: var(--bs-red-umss);
+}
+
+.crear-user-container input,
+.crear-user-select select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.crear-user-select {
+  position: relative;
+}
+
+.crear-user-select::after {
+  content: "▼";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #666;
+}
+
+.crear-user-btn {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bs-red_white-umss);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 18px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
+}
+.crear-user-btn:hover {
+  background-color: var(--bs-red-umss);
+}

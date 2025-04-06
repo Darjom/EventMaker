@@ -4,6 +4,8 @@ from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
+from modules.events.application.ActiveEventFinder import ActiveEventFinder
+from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 
 admin_bp = Blueprint("admin_bp", __name__)
 

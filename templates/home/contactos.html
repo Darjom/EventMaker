@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Contactos - EventMaker{% endblock %}
+
+{% block content %}
+{% include 'shared/_header.html' %}
+
+<div class="container mt-5 mb-5">
+  <h2 class="mb-4 text-primary fw-bold">Contáctanos</h2>
+  <p class="lead">Si tienes preguntas, sugerencias o deseas implementar EventMaker en tu institución, no dudes en escribirnos.</p>
+
+  <div class="row mt-4">
+    <!-- Información institucional -->
+    <div class="col-md-6 mb-4">
+      <h4 class="fw-bold text-secondary">Universidad Mayor de San Simón</h4>
+      <ul class="list-unstyled">
+        <li><strong>Dirección:</strong> Calle Sucre entre Jordán y Cochabamba, Cochabamba - Bolivia</li>
+        <li><strong>Teléfono:</strong> +591 4 4525082</li>
+        <li><strong>Correo:</strong> info@umss.edu.bo</li>
+        <li><strong>Sitio web:</strong> <a href="https://www.umss.edu.bo" target="_blank">www.umss.edu.bo</a></li>
+      </ul>
+    </div>
+
+    <!-- Formulario de contacto -->
+    <div class="col-md-6">
+      <form>
+        <div class="mb-3">
+          <label for="nombre" class="form-label">Nombre completo</label>
+          <input type="text" class="form-control" id="nombre" placeholder="Juan Pérez">
+        </div>
+        <div class="mb-3">
+          <label for="correo" class="form-label">Correo electrónico</label>
+          <input type="email" class="form-control" id="correo" placeholder="ejemplo@correo.com">
+        </div>
+        <div class="mb-3">
+          <label for="mensaje" class="form-label">Mensaje</label>
+          <textarea class="form-control" id="mensaje" rows="4" placeholder="Escribe tu consulta aquí..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -11,7 +11,7 @@
 
     <div class="text-center">
       {% if evento.afiche %}
-        <img src="{{ url_for('static', filename='uploads/' + evento.afiche) }}" class="ver-evento-afiche" alt="Afiche del evento">
+        <img src="{{ url_for('static', filename=evento.afiche) }}" class="ver-evento-afiche" alt="Afiche del evento">
       {% else %}
         <img src="{{ url_for('static', filename='img/shared/eventDefault.png') }}" class="ver-evento-afiche" alt="Afiche por defecto">
       {% endif %}

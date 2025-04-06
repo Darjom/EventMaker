@@ -1,0 +1,15 @@
+.evento-publico-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: 0.3s ease;
+}
+
+.evento-publico-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.evento-publico-card .card-img-top {
+  height: 160px;
+  object-fit: cover;
+  border-bottom: 1px solid #ddd;
+}
