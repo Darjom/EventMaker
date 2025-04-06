@@ -15,7 +15,7 @@ class EventDTO(BaseModel):
     requisitos: Optional[str]
     ubicacion: Optional[str]
     slogan: Optional[str]
-    afiche: Optional[bytes]
+    afiche: Optional[str]
     creador_id: Optional[List[int]] = None
 
     @classmethod
