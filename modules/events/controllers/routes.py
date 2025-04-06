@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from modules.events.application.dtos.EventDTO import EventDTO
 from modules.events.application.EventCreator import EventCreator
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
@@ -9,6 +9,7 @@ from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.events.application.EventQueryService import EventQueryService
+from shared.ImageRotator import ImageRotator
 
 eventos_bp = Blueprint("eventos_bp", __name__)
 
@@ -28,7 +29,17 @@ def crear_evento():
 
     if request.method == "POST":
         form = request.form
-        afiche = request.files.get("afiche")
+        file = request.files.get('afiche_path')
+
+        file_path = None
+        # Procesar imagen solo si se subió un archivo válido
+        if file and file.filename != '':
+            # Verificar que el archivo tenga nombre y extensión válida
+            if not ImageRotator.is_allowed_file(file.filename):
+                flash('Formato de imagen no permitido. Use JPG, PNG o WEBP', 'error')
+                return render_template("events/crearEvento.html", user=user)
+            
+            file_path = ImageRotator.save_rotated_image(file)
 
         event_dto = EventDTO(
             nombre_evento=form.get("titulo"),
@@ -41,7 +52,7 @@ def crear_evento():
             requisitos=form.get("requisitos"),
             ubicacion=form.get("lugar"),
             slogan=form.get("slogan"),
-            afiche=afiche_path,
+            afiche=file_path,
             creador_id=[user_id]
         )
 
