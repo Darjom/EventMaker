@@ -10,7 +10,7 @@ class AreaMapping(db.Model):
     id_area = db.Column(db.Integer, primary_key=True)
     nombre_area = db.Column(db.String(100), nullable=False)
     descripcion = db.Column(db.String(500))
-    afiche = db.Column(db.LargeBinary)
+    afiche = db.Column(db.String)
     precio = db.Column(db.Integer)
 
     # Relación muchos-a-uno con Evento

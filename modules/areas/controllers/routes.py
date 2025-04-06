@@ -6,6 +6,7 @@ from modules.events.infrastructure.PostgresEventRepository import PostgresEvents
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
+from shared.ImageRotator import ImageRotator
 
 areas_bp = Blueprint("areas_bp", __name__)
 
@@ -26,7 +27,16 @@ def crear_area(evento_id):
 
     if request.method == "POST":
         try:
-            imagen_file = request.files.get('imagen')
+            file = request.files.get('imagen')
+            file_path = None
+
+            if file and file.filename != '':
+                # Verificar que el archivo tenga nombre y extensión válida
+                if not ImageRotator.is_allowed_file(file.filename):
+                    flash('Formato de imagen no permitido. Use JPG, PNG o WEBP', 'error')
+                    return render_template("areas/formCrearArea.html", user=user, permisos=permisos, evento_id=evento_id)
+
+                file_path = ImageRotator.save_rotated_image(file)
 
             required_fields = ['titulo', 'descripcion']
             for field in required_fields:
@@ -35,12 +45,13 @@ def crear_area(evento_id):
 
             nombre_area = request.form.get("titulo")
             descripcion = request.form.get("descripcion")
-            afiche = imagen_file.read() if imagen_file else None
+
 
             area_dto = AreaDTO(
                 nombre_area=nombre_area,
                 descripcion=descripcion,
                 id_evento=evento_id,
+                afiche=file_path,
             )
 
             creator = AreaCreator(

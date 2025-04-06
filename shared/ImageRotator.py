@@ -20,7 +20,7 @@ class ImageRotator:
             filename.rsplit('.', 1)[1].lower() in cls.ALLOWED_EXTENSIONS
 
     @staticmethod
-    def save_rotated_image(file, angle=90):
+    def save_rotated_image(file, angle=0):
         """
         Guarda la imagen rotada en el directorio predeterminado.
 
