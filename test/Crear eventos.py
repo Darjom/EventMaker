@@ -19,7 +19,7 @@ def test_create_event():
         requisitos="Registro previo",
         ubicacion="Centro de Convenciones",
         slogan="Innovación sin límites",
-        afiche=None,  # No se incluye imagen en este test
+        afiche="/ruta/prueba/imagen.png",  # No se incluye imagen en este test
         creador_id=[1]  # Suponiendo que existe un usuario con ID 1
     )
 

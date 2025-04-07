@@ -16,6 +16,7 @@ from modules.categories.infrastructure.persistence.CategoryMapping import Catego
 import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp
+from modules.user.controllers.routes import users_bp
 
 
 
@@ -34,7 +35,8 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix="/admin")
     app.register_blueprint(eventos_bp, url_prefix="/eventos")
     app.register_blueprint(areas_bp ,url_prefix="/area")
-    #app.register_blueprint(roles_bp, url_prefix="/rol")
+    app.register_blueprint(users_bp)
+
     return app
 
 

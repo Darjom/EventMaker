@@ -1,0 +1,74 @@
+/* static/css/ver_evento.css */
+
+.ver-evento-container {
+  padding: 2rem;
+  background: linear-gradient(to bottom right, #e8f0ff, #fce4ec);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ver-evento-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #0F2C5B;
+}
+
+.ver-evento-afiche {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 2rem;
+}
+
+.ver-evento-section {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.ver-evento-section h2 {
+  color: #0F2C5B;
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.ver-evento-section p {
+  color: #555;
+  font-size: 1rem;
+}
+
+.ver-evento-icon {
+  margin-right: 0.5rem;
+  color: #0F2C5B;
+}
+
+.ver-evento-slogan {
+  font-style: italic;
+  color: #e91e63;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.ver-evento-fechas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ver-evento-btn-inscribirse {
+  background-color: #0F2C5B;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  margin-top: 2rem;
+}
+
+.ver-evento-btn-inscribirse:hover {
+  background-color: #092043;
+}

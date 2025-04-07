@@ -7,7 +7,7 @@ class Area:
         id_evento: int,
         nombre_area: str,
         descripcion: str,
-        afiche: Optional[bytes] = None,
+        afiche: Optional[str] = None,
         precio: Optional[int] = None
     ):
         self.id_area = id_area

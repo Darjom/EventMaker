@@ -16,7 +16,7 @@ class Event:
             requisitos: Optional[str] = None,
             ubicacion: Optional[str] = None,
             slogan: Optional[str] = None,
-            afiche: Optional[bytes] = None,
+            afiche: Optional[str] = None,
             creador_id: Optional[List[int]] = None
     ):
         self.id_evento = id_evento

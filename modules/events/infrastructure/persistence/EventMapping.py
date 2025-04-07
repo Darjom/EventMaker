@@ -23,7 +23,7 @@ class EventMapping(db.Model):
     requisitos = db.Column(db.String(50))
     ubicacion = db.Column(db.String(50))
     slogan = db.Column(db.String(150))
-    afiche = db.Column(db.LargeBinary)
+    afiche = db.Column(db.String)
 
     # Relación muchos a muchos
     users = db.relationship(
