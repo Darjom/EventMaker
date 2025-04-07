@@ -2,6 +2,7 @@ from flask import Flask
 from config import Config
 from modules.admin.controllers.routes import admin_bp
 from modules.areas.controllers.routes import areas_bp
+#from.modules.roles.controllers.routes import rol_bp
 from shared.extensions import db, migrate, jwt
 from modules.home.controllers.routes import home_bp
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
@@ -33,7 +34,7 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix="/admin")
     app.register_blueprint(eventos_bp, url_prefix="/eventos")
     app.register_blueprint(areas_bp ,url_prefix="/area")
-
+    #app.register_blueprint(roles_bp, url_prefix="/rol")
     return app
 
 
