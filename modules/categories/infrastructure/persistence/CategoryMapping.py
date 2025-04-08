@@ -8,7 +8,7 @@ class CategoryMapping(db.Model):
 
     category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(500))
+    description = db.Column(db.String(1000))
     price = db.Column(db.Integer)
 
     # Relación muchos-a-uno con Area

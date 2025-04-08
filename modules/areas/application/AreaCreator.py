@@ -23,7 +23,7 @@ class AreaCreator:
         area = area_dto.to_domain()
 
         # Verificar nombre único por evento
-        existing_area = self.area_repo.find_by_name(
+        existing_area = self.area_repo.find_by_name_idEvent(
             area.nombre_area,
             area.id_evento
         )
