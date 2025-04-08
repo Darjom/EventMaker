@@ -9,6 +9,8 @@ from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.events.application.EventQueryService import EventQueryService
+from modules.areas.application.AreaFinder import AreaFinder
+from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from shared.ImageRotator import ImageRotator
 
 eventos_bp = Blueprint("eventos_bp", __name__)
@@ -119,5 +121,9 @@ def ver_evento(event_id):
 
     if evento is None:
         return redirect(url_for("eventos_bp.mis_eventos"))
+    # Obtener las áreas del evento
+    area_finder = AreaFinder(PostgresAreaRepository())
+    areas_dto = area_finder.execute(event_id)
 
-    return render_template("events/ver_evento.html", evento=evento, user=user, permisos=permisos)
+
+    return render_template("events/ver_evento.html", evento=evento, user=user, permisos=permisos, areas=areas_dto.areas)

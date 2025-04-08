@@ -7,6 +7,8 @@ from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from shared.ImageRotator import ImageRotator
+from modules.areas.application.AreaFinder import AreaFinder
+
 
 areas_bp = Blueprint("areas_bp", __name__)
 
@@ -31,10 +33,10 @@ def crear_area(evento_id):
             file_path = None
 
             if file and file.filename != '':
-                # Verificar que el archivo tenga nombre y extensión válida
                 if not ImageRotator.is_allowed_file(file.filename):
                     flash('Formato de imagen no permitido. Use JPG, PNG o WEBP', 'error')
-                    return render_template("areas/formCrearArea.html", user=user, permisos=permisos, evento_id=evento_id)
+                    return render_template("areas/formCrearArea.html", user=user, permisos=permisos,
+                                           evento_id=evento_id)
 
                 file_path = ImageRotator.save_rotated_image(file)
 
@@ -46,7 +48,15 @@ def crear_area(evento_id):
             nombre_area = request.form.get("titulo")
             descripcion = request.form.get("descripcion")
 
+            # ✅ Validar si ya existe una área con el mismo nombre en el evento
+            area_finder = AreaFinder(PostgresAreaRepository())
+            area_existente = area_finder.by_name_and_event_id(nombre_area, evento_id)
 
+            if area_existente:
+                flash("❗ Ya existe un área con ese nombre para este evento.", "warning")
+                return render_template("areas/formCrearArea.html", user=user, permisos=permisos, evento_id=evento_id)
+
+            # ✅ Crear el área si no existe
             area_dto = AreaDTO(
                 nombre_area=nombre_area,
                 descripcion=descripcion,
@@ -54,10 +64,7 @@ def crear_area(evento_id):
                 afiche=file_path,
             )
 
-            creator = AreaCreator(
-                PostgresAreaRepository(),
-                PostgresEventsRepository()
-            )
+            creator = AreaCreator(PostgresAreaRepository(), PostgresEventsRepository())
             creator.execute(area_dto)
 
             flash("Área creada exitosamente.", "success")

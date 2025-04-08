@@ -72,3 +72,16 @@
 .ver-evento-btn-inscribirse:hover {
   background-color: #092043;
 }
+
+.ver-evento-section .card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.ver-evento-section .card:hover {
+  transform: scale(1.02);
+}
+
+.ver-evento-icon {
+  margin-right: 8px;
+  color: #0d6efd;
+}
