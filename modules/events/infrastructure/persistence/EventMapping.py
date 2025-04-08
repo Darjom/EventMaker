@@ -13,16 +13,16 @@ class EventMapping(db.Model):
     __tablename__ = "evento"
 
     id_evento = db.Column(db.Integer, primary_key=True)
-    nombre_evento = db.Column(db.String(50))
+    nombre_evento = db.Column(db.String(150))
     tipo_evento = db.Column(db.String(50))
-    descripcion_evento = db.Column(db.String(500))
+    descripcion_evento = db.Column(db.String(1000))
     inicio_evento = db.Column(db.DateTime)
     fin_evento = db.Column(db.DateTime)
     capacidad_evento = db.Column(db.Integer)
-    inscripcion = db.Column(db.String(50))
-    requisitos = db.Column(db.String(50))
-    ubicacion = db.Column(db.String(50))
-    slogan = db.Column(db.String(150))
+    inscripcion = db.Column(db.String(100))
+    requisitos = db.Column(db.String())
+    ubicacion = db.Column(db.String(250))
+    slogan = db.Column(db.String(500))
     afiche = db.Column(db.String)
 
     # Relación muchos a muchos
