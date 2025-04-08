@@ -4,7 +4,7 @@ from modules.areas.application.dtos.AreaDTO import AreaDTO
 from modules.areas.application.AreaFinder import AreaFinder
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 
-def test_find_areas_by_event(event_id: int = 10):
+def test_find_areas_by_event(event_id: int = 3):
 
         repo = PostgresAreaRepository()
         finder = AreaFinder(repo)
