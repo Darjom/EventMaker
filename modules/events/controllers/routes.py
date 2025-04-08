@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, get_flashed_messages
 from modules.events.application.dtos.EventDTO import EventDTO
 from modules.events.application.EventCreator import EventCreator
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from datetime import datetime
-
+from modules.events.application.EventFinder import EventFinder
 from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
@@ -19,7 +19,7 @@ def crear_evento():
     if not user_id:
         return redirect(url_for("admin_bp.login"))
     user = UserMapping.query.get(user_id)
-    # Obtener permisos
+
     permisos = []
     for role in user.roles:
         service = RoleQueryService(PostgresRolesRepository())
@@ -30,25 +30,34 @@ def crear_evento():
     if request.method == "POST":
         form = request.form
         file = request.files.get('afiche_path')
+        titulo = form.get("titulo")
 
+        # Validar si ya existe el evento
+        repository = PostgresEventsRepository()
+        finder = EventFinder(repository)
+        existente = finder.by_name_and_user_id(titulo, user_id)
+
+        if existente:
+            flash("Ya existe un evento con ese nombre.", "error")
+            return render_template("events/crearEvento.html", user=user, permisos=permisos)
+
+        # Continuar con la creación
         file_path = None
-        # Procesar imagen solo si se subió un archivo válido
         if file and file.filename != '':
-            # Verificar que el archivo tenga nombre y extensión válida
             if not ImageRotator.is_allowed_file(file.filename):
                 flash('Formato de imagen no permitido. Use JPG, PNG o WEBP', 'error')
-                return render_template("events/crearEvento.html", user=user)
+                return render_template("events/crearEvento.html", user=user, permisos=permisos)
 
             file_path = ImageRotator.save_rotated_image(file)
 
         event_dto = EventDTO(
-            nombre_evento=form.get("titulo"),
+            nombre_evento=titulo,
             tipo_evento=form.get("tipo_evento"),
             descripcion_evento=form.get("descripcion"),
             inicio_evento=datetime.strptime(form.get("fecha_inicio"), "%Y-%m-%d"),
             fin_evento=datetime.strptime(form.get("fecha_fin"), "%Y-%m-%d"),
             capacidad_evento=int(form.get("capacidad")),
-            inscripcion=form.get("tipo_evento"),  # Puedes modificarlo si usas otra lógica
+            inscripcion=form.get("tipo_evento"),
             requisitos=form.get("requisitos"),
             ubicacion=form.get("lugar"),
             slogan=form.get("slogan"),
@@ -56,14 +65,12 @@ def crear_evento():
             creador_id=[user_id]
         )
 
-        repository = PostgresEventsRepository()
         creator = EventCreator(repository)
         creator.execute(event_dto)
 
         return redirect(url_for("admin_bp.dashboard"))
 
     return render_template("events/crearEvento.html", user=user, permisos=permisos)
-
 
 @eventos_bp.route("/mis-eventos")
 def mis_eventos():

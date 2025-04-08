@@ -16,6 +16,20 @@
       </h1>
     </div>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mt-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+
     <form method="POST" enctype="multipart/form-data">
       <div class="row px-4 crear-evento-form">
 
@@ -72,7 +86,7 @@
 
           <div class="mb-4">
             <h2>Slogan del evento</h2>
-            <input type="text" name="slogan" class="crear-evento-input" placeholder="Ej: La innovación nos une">
+            <input type="text" name="slogan" class="crear-evento-input" placeholder="Ej: La innovación nos une" required>
           </div>
 
           <div class="crear-evento-upload-box" onclick="document.getElementById('file-input').click()">
