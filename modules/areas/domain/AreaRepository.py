@@ -15,7 +15,7 @@ class AreaRepository(ABC):
 
 
     @abstractmethod
-    def find_by_name(self, name: str, event_id: int) -> Optional[Area]:
+    def find_by_name_idEvent(self, name: str, event_id: int) -> Optional[Area]:
         pass
 
     @abstractmethod

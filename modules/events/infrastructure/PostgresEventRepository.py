@@ -23,7 +23,7 @@ class PostgresEventsRepository(EventRepository):
 
         return event_mapping.to_domain()
 
-    def find_by_name(self, name: str) -> Optional[Event]:
+    def find_by_name_userId(self, name: str, user_id : int) -> Optional[Event]:
         event_mapping = EventMapping.query.filter_by(nombre_evento=name).first()
         return event_mapping.to_domain() if event_mapping else None
 
