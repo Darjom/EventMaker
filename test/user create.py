@@ -33,7 +33,8 @@ def test_create_user():
         password="Ab89/*%47990#"
     )
 
-
+#adm@adm.com - admin
+#mod@modmod.com - moderador
 if __name__ == "__main__":
     with app.app_context():
         # Crear el usuario
