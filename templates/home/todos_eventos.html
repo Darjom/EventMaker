@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Todos los Eventos{% endblock %}
+{% block title %}Todas las Convocatorias{% endblock %}
 
 {% block content %}
 {% include 'shared/_header.html' %}
 
 <div class="container mt-4">
-  <h3 class="fw-bold mb-4 text-start bg-light px-3 py-2 rounded">Todos los eventos</h3>
+  <h3 class="fw-bold mb-4 text-start bg-light px-3 py-2 rounded">Todas las Convocatorias</h3>
 
   <div class="row">
     {% for evento in eventos %}
     <div class="col-md-4 mb-4">
       <div class="card h-100 shadow-sm border border-secondary rounded-3">
         <!-- Imagen del evento -->
-        <img src="{{ url_for('static', filename=evento.afiche if evento.afiche else 'img/eventos/default_evento.jpg') }}"
+        <img src="{{ url_for('static', filename=evento.afiche if evento.afiche else 'img/shared/eventDefault.png') }}"
              class="card-img-top rounded-top"
              style="height: 180px; object-fit: cover;" alt="Imagen del evento">
 

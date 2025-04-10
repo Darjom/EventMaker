@@ -17,7 +17,7 @@ class PostgresAreaRepository(AreaRepository):
         areas = AreaMapping.query.filter_by(id_area=area_id).all()
         return [a.to_domain() for a in areas]
 
-    def find_by_name(self, name: str, event_id: int) -> Optional[Area]:
+    def find_by_name_idEvent(self, name: str, event_id: int) -> Optional[Area]:
         area = AreaMapping.query.filter_by(
             nombre_area=name,
             id_evento=event_id
@@ -27,3 +27,4 @@ class PostgresAreaRepository(AreaRepository):
     def find_by_event_id(self, event_id: int) -> List[Area]:
         areas = AreaMapping.query.filter_by(id_evento=event_id).all()
         return [a.to_domain() for a in areas]
+

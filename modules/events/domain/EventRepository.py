@@ -12,7 +12,7 @@ class EventRepository(ABC):
     def find_by_id(self, event_id: int) -> Optional[Event]:
         pass
     @abstractmethod
-    def find_by_name(self, name: str) -> Optional[Event]:
+    def find_by_name_userId(self, name: str, user_id: int) -> Optional[Event]:
         pass
 
     @abstractmethod
