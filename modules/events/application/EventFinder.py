@@ -1,5 +1,4 @@
 # modules/areas/application/AreaFinder.py
-from typing import List
 
 from .dtos.EventsDTO import EventsDTO
 from .dtos.EventDTO import EventDTO

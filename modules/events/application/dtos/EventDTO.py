@@ -10,6 +10,8 @@ class EventDTO(BaseModel):
     descripcion_evento: Optional[str]
     inicio_evento: Optional[datetime]
     fin_evento: Optional[datetime]
+    inicio_inscripcion: Optional[datetime]
+    fin_inscripcion: Optional[datetime]
     capacidad_evento: Optional[int]
     inscripcion: Optional[str]
     requisitos: Optional[str]
@@ -30,6 +32,8 @@ class EventDTO(BaseModel):
             descripcion_evento=event.descripcion_evento,
             inicio_evento=event.inicio_evento,
             fin_evento=event.fin_evento,
+            incio_inscripcion=event.inicio_inscripcion,
+            fin_inscripcion=event.fin_inscripcion,
             capacidad_evento=event.capacidad_evento,
             inscripcion=event.inscripcion,
             requisitos=event.requisitos,
@@ -50,6 +54,8 @@ class EventDTO(BaseModel):
             descripcion_evento=self.descripcion_evento,
             inicio_evento=self.inicio_evento,
             fin_evento=self.fin_evento,
+            inicio_inscripcion=self.inicio_inscripcion,
+            fin_inscripcion=self.fin_inscripcion,
             capacidad_evento=self.capacidad_evento,
             inscripcion=self.inscripcion,
             requisitos=self.requisitos,

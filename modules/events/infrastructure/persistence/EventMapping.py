@@ -18,6 +18,8 @@ class EventMapping(db.Model):
     descripcion_evento = db.Column(db.String(1000))
     inicio_evento = db.Column(db.DateTime)
     fin_evento = db.Column(db.DateTime)
+    inicio_inscripcion = db.Column(db.DateTime)
+    fin_inscripcion = db.Column(db.DateTime)
     capacidad_evento = db.Column(db.Integer)
     inscripcion = db.Column(db.String(100))
     requisitos = db.Column(db.String())
@@ -41,6 +43,8 @@ class EventMapping(db.Model):
             descripcion_evento=self.descripcion_evento,
             inicio_evento=self.inicio_evento,
             fin_evento=self.fin_evento,
+            inicio_inscripcion=self.inicio_inscripcion,
+            fin_inscripcion=self.fin_inscripcion,
             capacidad_evento=self.capacidad_evento,
             inscripcion=self.inscripcion,
             requisitos=self.requisitos,
@@ -60,6 +64,8 @@ class EventMapping(db.Model):
             descripcion_evento=event.descripcion_evento,
             inicio_evento=event.inicio_evento,
             fin_evento=event.fin_evento,
+            inicio_inscripcion=event.inicio_inscripcion,
+            fin_inscripcion=event.fin_inscripcion,
             capacidad_evento=event.capacidad_evento,
             inscripcion=event.inscripcion,
             requisitos=event.requisitos,
