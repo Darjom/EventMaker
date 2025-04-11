@@ -32,7 +32,7 @@ class EventDTO(BaseModel):
             descripcion_evento=event.descripcion_evento,
             inicio_evento=event.inicio_evento,
             fin_evento=event.fin_evento,
-            incio_inscripcion=event.inicio_inscripcion,
+            inicio_inscripcion=event.inicio_inscripcion,
             fin_inscripcion=event.fin_inscripcion,
             capacidad_evento=event.capacidad_evento,
             inscripcion=event.inscripcion,
