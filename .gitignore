@@ -1,7 +1,7 @@
 .venv
 .vscode
 static/scss/bootstrap
-
+.env
 __pycache__/
 **/__pycache__/
 *.pyc
@@ -11,4 +11,4 @@ __pycache__/
 migrations/alembic.ini
 migrations/versions/*.py
 migrations/
-.env
+
