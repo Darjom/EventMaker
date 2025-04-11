@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!allowedTypes.includes(file.type)) {
                 errorMessage.textContent = 'Solo se permiten imágenes (JPEG, PNG, WEBP)';
                 this.value = '';
+                previewImage.src = '#'; // Limpiar la vista previa
                 return;
             }
 
@@ -33,8 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.onload = (e) => {
                 previewImage.src = e.target.result;
                 previewContainer.style.display = 'block';
+                previewImage.style.display = 'block'; // Asegurar visibilidad
+            };
+            reader.onerror = (error) => {
+                console.error('Error al leer la imagen:', error);
+                errorMessage.textContent = 'Error al cargar la imagen';
             };
             reader.readAsDataURL(file);
+            
+        } else {
+            previewImage.src = '#'; // Limpiar si no hay archivo
+            previewContainer.style.display = 'none';
         }
     });
 
@@ -84,4 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.innerHTML = originalBtnText;
         }
     });
+    reader.onload = (e) => {
+        console.log('Imagen cargada:', e.target.result); // Verificar URL de datos
+        previewImage.src = e.target.result;
+        previewContainer.style.display = 'block';
+    };
 });

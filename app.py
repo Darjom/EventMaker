@@ -2,6 +2,7 @@ from flask import Flask
 from config import Config
 from modules.admin.controllers.routes import admin_bp
 from modules.areas.controllers.routes import areas_bp
+#from.modules.roles.controllers.routes import rol_bp
 from shared.extensions import db, migrate, jwt
 from modules.home.controllers.routes import home_bp
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
