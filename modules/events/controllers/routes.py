@@ -60,6 +60,8 @@ def crear_evento():
             descripcion_evento=form.get("descripcion"),
             inicio_evento=datetime.strptime(form.get("fecha_inicio"), "%Y-%m-%d"),
             fin_evento=datetime.strptime(form.get("fecha_fin"), "%Y-%m-%d"),
+            inicio_inscripcion=datetime.strptime(form.get("fecha_inicio-inscripcion"), "%Y-%m-%d"),
+            fin_inscripcion=datetime.strptime(form.get("fecha_fin-inscripcion"), "%Y-%m-%d"),
             capacidad_evento=int(form.get("capacidad")),
             inscripcion=form.get("tipo_evento"),
             requisitos=form.get("requisitos"),
