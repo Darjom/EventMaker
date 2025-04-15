@@ -14,3 +14,17 @@
     border-radius: 2px;
   }
 }
+  .crear-cuenta-card .card {
+    background-color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+  }
+
+  .crear-cuenta-card .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .crear-cuenta-card .card h5 {
+    font-weight: bold;
+  }

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Registro Estudiante{% endblock %}
+
+{% block content %}
+{% include "shared/_header.html" %}
+<div class="container my-5">
+  <div class="card shadow p-4">
+    <h3 class="text-center text-primary mb-4">Registro de <b>Estudiantes</b></h3>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <!-- Información Personal -->
+      <fieldset class="border p-3 mb-4">
+        <legend>Información Personal</legend>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <input name="last_name" class="form-control" placeholder="Apellidos" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <input name="first_name" class="form-control" placeholder="Nombres" required>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <input name="ci" class="form-control" placeholder="Carnet de Identidad" required>
+          </div>
+          <div class="col-md-4 mb-3">
+            <input name="complemento" class="form-control" placeholder="Complemento (opcional)">
+          </div>
+          <div class="col-md-4 mb-3">
+            <input name="expedito_ci" class="form-control" placeholder="Expedido en" required>
+          </div>
+        </div>
+        <input type="date" name="fecha_nacimiento" class="form-control mb-3" placeholder="Fecha de nacimiento" required>
+        <input type="number" name="phone_number" class="form-control mb-3" placeholder="Número de teléfono">
+      </fieldset>
+
+      <!-- Información Académica -->
+      <fieldset class="border p-3 mb-4">
+        <legend>Información Académica</legend>
+        <input name="school_id" type="number" class="form-control mb-3" placeholder="ID del colegio (por ahora manual)" required>
+        <input name="course" class="form-control mb-3" placeholder="Curso actual" required>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <input name="department" class="form-control" placeholder="Departamento" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <input name="province" class="form-control" placeholder="Provincia" required>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Seguridad -->
+      <fieldset class="border p-3 mb-4">
+        <legend>Seguridad</legend>
+        <input type="email" name="email" class="form-control mb-3" placeholder="Correo electrónico" required>
+        <input type="password" name="password" class="form-control mb-3" placeholder="Contraseña" required>
+        <input type="password" name="confirm_password" class="form-control mb-3" placeholder="Confirmar contraseña" required>
+      </fieldset>
+
+      <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" required>
+        <label class="form-check-label">Acepto los términos y condiciones</label>
+      </div>
+
+      <div class="d-flex justify-content-center gap-3">
+        <button type="submit" class="btn btn-primary">Inscribirse</button>
+        <a href="{{ url_for('home_bp.index') }}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
