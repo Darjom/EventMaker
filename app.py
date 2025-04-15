@@ -13,6 +13,8 @@ from modules.permissions.infrastructure.persistence.PermissionMapping import Per
 from modules.events.infrastructure.persistence.EventMapping import EventMapping
 from modules.areas.infrastructure.persistence.AreaMapping import AreaMapping
 from modules.categories.infrastructure.persistence.CategoryMapping import CategoryMapping
+from modules.students.infrastructure.persistence.StudentMapping import StudentMapping
+from modules.schools.infrastructure.persistence.SchoolMapping import SchoolMapping
 import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp
