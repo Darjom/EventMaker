@@ -1,3 +1,5 @@
+console.log('JS cargado correctamente');
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('miFormulario');
     const imagenInput = document.getElementById('imagen');
@@ -94,9 +96,5 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.innerHTML = originalBtnText;
         }
     });
-    reader.onload = (e) => {
-        console.log('Imagen cargada:', e.target.result); // Verificar URL de datos
-        previewImage.src = e.target.result;
-        previewContainer.style.display = 'block';
-    };
+
 });
