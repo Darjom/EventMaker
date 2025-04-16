@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Información{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="container mt-4">
+        <h1 class="text-center mb-5">
+            <span class="azul-umss">Mi Información</span>
+        </h1>
+        <form id="formMostarInformacion">
+            
+            <h2>Detalles del {{ user.roles[0].name }}</h2>
+            <div class="info-header">
+                <div class="info-header__top">
+                <img src="{{ url_for('static', filename='img/info/InfoPersonal.webp') }}"
+                     alt="Icono Información Personal">
+                <h3 class="info-header__title">Información Personal</h3>
+                </div>
+
+                <label class="info-header__desc">Datos personales del {{ user.roles[0].name }} registrado en la competencia academica </label>
+            </div>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <div class="mb-4">
+                        <h2>Apellidos</h2>
+                        <input type="text" id="Apellidos" name="Apellidos"  value="{{ user.last_name }}" disabled>
+                    </div>
+                    <div class="mb-4">
+                       <h2>Nombres</h2>
+                       <input type="text" id="Nombres" name="Nombres"  value="{{ user.first_name }}" disabled>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                        <h2>Carnet de  Identidad</h2>
+                        <input type="text" id="Carnet de  Identidad" name="Carnet de  Identidad"  value="{{ user.ci }}" disabled>
+                        </div>
+                        <div class="col-md-4">
+                        <h2>Complemento</h2>
+                        <input type="text" id="Complemento" name="Complemento"  value="{{ user.complemento }}" disabled>
+                        </div>
+                        <div class="col-md-4">
+                            <h2>Expedido</h2>
+                            <input type="text" id="Expedido" name="Expedido"  value="{{ user.expedido }}" disabled>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h2>Fecha de Nacimiento</h2>
+                        <input type="datetime" id="Fecha de Nacimiento" name="Fecha de Nacimiento"  value="" disabled>
+                    </div>
+                
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+            <div class="info-header">
+                <div class="info-header__top">
+                <img src="{{ url_for('static', filename='img/info/AreasInscritas.webp') }}"
+                     alt="Icono Información Personal">
+                <h3 class="info-header__title">Areas Inscritas</h3>
+                </div>
+                
+                <label class="info-header__desc">Areas academicas en las que el {{ user.roles[0].name }} esta inscrito </label>
+            </div>
+            <h5>Listado de inscripciones</h5>
+            <div class="row ListadoInscripciones">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <h5>Areas inscritas</h5>
+                </div>
+                <div class="col-md-2">
+                    <h5>Categoria</h5>
+                    
+                </div>
+                <div class="col-md-2">
+                    <h5>Fecha</h5>
+                </div>
+                <div class="col-md-2">
+                    <h5>Estado</h5>
+                </div>
+                <div class="col-md-2">
+                    <h5>Acciones</h5>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </form>
+        <!-- HTML -->
+    <div class="container-fluid mb-4">
+        <div class="botones-container">
+            <button class="btn-outline">Volver a inscripciones</button>
+            <button class="btn-primary">Inscribir en Nueva Área</button>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/usuarios/mi_informacion.css') }}">
+{% endblock %}

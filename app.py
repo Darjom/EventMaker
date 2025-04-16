@@ -17,7 +17,7 @@ import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp
 from modules.user.controllers.routes import users_bp
-
+from modules.info.controllers.routes import info_bp
 
 
 
@@ -36,6 +36,7 @@ def create_app():
     app.register_blueprint(eventos_bp, url_prefix="/eventos")
     app.register_blueprint(areas_bp ,url_prefix="/area")
     app.register_blueprint(users_bp)
+    app.register_blueprint(info_bp)
 
     return app
 
