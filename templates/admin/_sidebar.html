@@ -5,7 +5,7 @@
   <div class="sidebar" id="sidebar">
     <ul class="nav flex-column">
 
-      <!-- Ejemplo: Crear Usuario (solo visible si 'user:create' en permisos) -->
+      <!-- Crear Usuario (solo visible si 'user:create' en permisos) -->
       {% if 'user:create' in permisos %}
       <li class="nav-item" title="Crear Usuario">
         <a href="{{ url_for('users_bp.crear_usuario') }}" class="nav-link d-flex align-items-center">
@@ -15,7 +15,7 @@
       </li>
       {% endif %}
 
-      <!-- Ejemplo: Crear Evento (solo si 'event:create' en permisos) -->
+      <!-- Crear Evento-->
       {% if 'event:create' in permisos %}
       <li class="nav-item" title="Crear Evento">
         <a href="{{ url_for('eventos_bp.crear_evento') }}" class="nav-link d-flex align-items-center">
@@ -25,13 +25,15 @@
       </li>
       {% endif %}
 
-      <!-- Mis Eventos (siempre disponible) -->
+      <!-- Mis Eventos  -->
+      {% if 'event:create' in permisos %}
       <li class="nav-item" title="Mis Eventos">
         <a href="{{ url_for('eventos_bp.mis_eventos') }}" class="nav-link d-flex align-items-center">
             <img src="{{ url_for('static', filename='img/sidebar/my_events.webp') }}" width="24" class="me-2 icon">
           <span class="label">Mis Convocatorias</span>
         </a>
       </li>
+      {% endif %}
 
       <!-- Perfil/Cerrar Sesión -->
       <li class="nav-item mt-auto" title="Perfil">
