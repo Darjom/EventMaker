@@ -18,7 +18,7 @@
       {% endif %}
     {% endwith %}
 
-    <form method="POST">
+    <form method="POST" id="registro-form">
       <!-- Información Personal -->
       <fieldset class="border p-3 mb-4">
         <legend>Información Personal</legend>
@@ -45,8 +45,15 @@
       <fieldset class="border p-3 mb-4">
         <legend>Seguridad</legend>
         <input type="email" name="email" class="form-control mb-3" placeholder="Correo electrónico" required>
-        <input type="password" name="password" class="form-control mb-3" placeholder="Contraseña" required>
-        <input type="password" name="confirm_password" class="form-control mb-3" placeholder="Confirmar contraseña" required>
+
+        <input type="password" name="password" id="password" class="form-control mb-2" placeholder="Contraseña" required>
+        <div class="progress mb-2" style="height: 6px;">
+          <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+        </div>
+        <div id="password-strength-msg" class="text-danger mb-3"></div>
+
+        <input type="password" name="confirm_password" id="confirm_password" class="form-control mb-2" placeholder="Confirmar contraseña" required>
+        <div id="password-match-msg" class="text-danger mb-3"></div>
       </fieldset>
 
       <div class="form-check mb-4">
@@ -61,4 +68,78 @@
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const form = document.getElementById("registro-form");
+  const passwordInput = document.getElementById("password");
+  const confirmInput = document.getElementById("confirm_password");
+  const strengthMsg = document.getElementById("password-strength-msg");
+  const strengthBar = document.getElementById("password-strength-bar");
+  const matchMsg = document.getElementById("password-match-msg");
+
+  const validarPassword = (password) => {
+    const tests = [
+      /.{8,}/,
+      /[A-Z]/,
+      /[a-z]/,
+      /[0-9]/,
+      /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/
+    ];
+
+    let passed = 0;
+    for (const test of tests) {
+      if (test.test(password)) passed++;
+    }
+
+    return passed;
+  };
+
+  const updateStrength = () => {
+    const password = passwordInput.value;
+    const strength = validarPassword(password);
+    const progress = [0, 20, 50, 75, 100][strength] || 0;
+    strengthBar.style.width = progress + "%";
+
+    strengthBar.className = "progress-bar";
+    if (strength <= 2) {
+      strengthBar.classList.add("bg-danger");
+      strengthMsg.textContent = "Contraseña débil";
+      strengthMsg.className = "text-danger";
+    } else if (strength === 3 || strength === 4) {
+      strengthBar.classList.add("bg-warning");
+      strengthMsg.textContent = "Contraseña aceptable";
+      strengthMsg.className = "text-warning";
+    } else if (strength === 5) {
+      strengthBar.classList.add("bg-success");
+      strengthMsg.textContent = "Contraseña segura";
+      strengthMsg.className = "text-success";
+    }
+
+    return strength === 5;
+  };
+
+  const checkMatch = () => {
+    if (confirmInput.value !== passwordInput.value) {
+      matchMsg.textContent = "Las contraseñas no coinciden";
+      return false;
+    } else {
+      matchMsg.textContent = "";
+      return true;
+    }
+  };
+
+  passwordInput.addEventListener("input", updateStrength);
+  confirmInput.addEventListener("input", checkMatch);
+
+  form.addEventListener("submit", function (e) {
+    const fuerte = updateStrength();
+    const coincide = checkMatch();
+    if (!fuerte || !coincide) {
+      e.preventDefault();
+      alert("❌ La contraseña no es válida o no coincide.");
+    }
+  });
+</script>
 {% endblock %}
