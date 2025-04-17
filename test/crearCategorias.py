@@ -7,8 +7,8 @@ from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepo
 def test_create_category():
     # Crear un DTO de categoría de prueba
     category_dto = CategoryDTO(
-        area_id=2,  # Debes asegurarte que exista un área con este ID
-        category_name="freemiun",
+        area_id=1,  # Debes asegurarte que exista un área con este ID
+        category_name="5TO",
         description="Categoría con acceso gratis",
         price= None
     )
