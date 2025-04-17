@@ -12,3 +12,10 @@ migrations/alembic.ini
 migrations/versions/*.py
 migrations/
 .env
+.env
+test/test_minimo.py
+test/pruebaInicioSesion.py
+test/geckodriver.log
+test/geckodriver.exe
+geckodriver.log
+.env
