@@ -23,14 +23,14 @@
   {% endif %}
 {% endwith %}
 
-    <form id="miFormulario" method="POST" enctype="multipart/form-data">
+    <form id="miFormulario" method="POST" enctype="multipart/form-data"  action="{{ url_for('areas_bp.crear_area', evento_id=evento_id) }}">
         <input type="hidden" name="idevento" value="{{ evento_id }}">
       <div class="row">
         <!-- Parte izquierda -->
         <div class="col-md-5">
           <div class="mb-4">
             <h2>Título</h2>
-            <input type="text" name="titulo" id="titulo" class="form-area-input" placeholder="Título del evento" required>
+            <input type="text" name="titulo" id="titulo" class="form-area-input" placeholder="Título del area" required>
           </div>
 
           <div class="mb-4">
@@ -43,7 +43,7 @@
             <input type="file" name="imagen" id="imagen" accept="image/jpeg, image/png, image/webp" class="form-area-input">
             <div id="image-error" class="text-danger mt-2"></div>
             <div id="preview-container" class="border rounded overflow-hidden mt-2 ratio ratio-1x1">
-              <img id="preview-image" src="#" alt="Vista previa" class="img-fluid mx-auto d-block object-fit-contain">
+              <img id="preview-image" src="" alt="Vista previa" class="img-fluid mx-auto d-block object-fit-contain">
             </div>
           </div>
         </div>

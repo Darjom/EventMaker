@@ -1,4 +1,11 @@
+# En test/user_create.py
+import sys
+import os
+
+# Añade el directorio raíz al path de Python
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import app
+
 from modules.user.application.UserCreator import UserCreator
 from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
@@ -19,10 +26,10 @@ def test_create_user():
 
     # Ejecutar creación de usuario
     return creator.execute(
-        role_ids=[2],  # Asegúrate que exista este rol en tu DB
+        role_ids=[1],  # Asegúrate que exista este rol en tu DB
         first_name="dan",
         last_name="Reque",
-        email="mod@modmod.com",
+        email="add@adm.com",
         password="12345678"
     )
 

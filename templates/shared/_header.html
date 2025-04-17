@@ -13,7 +13,7 @@
     <div class="collapse navbar-collapse" id="navbarContent">
       <div class="row w-100">
         <!-- Navegación -->
-        <div class="col-lg-9">
+        <div class="col-lg-8">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-lg-row gap-lg-3">
             <li class="nav-item">
               <a class="nav-link {% if request.endpoint == 'home_bp.index' %}active{% endif %}" href="{{ url_for('home_bp.index') }}">Inicio</a>
@@ -27,17 +27,47 @@
             <li class="nav-item">
               <a class="nav-link {% if request.endpoint == 'home_bp.contactos' %}active{% endif %}" href="{{ url_for('home_bp.contactos') }}">Contactos</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('admin_bp.login') }}">Inicio Administrativos</a>
-            </li>
           </ul>
         </div>
 
-        <!-- Botón ver estado de inscripcion-->
-        <div class="col-lg-3 text-lg-end text-start mt-3 mt-lg-0">
-          <a href="#" class="btn btn-secondary w-100 w-lg-auto">Ver Estado de Inscripción</a>
+        <!-- Botón crear Cuenta y inicio Sesion-->
+        <div class="col-lg-2 text-lg-end text-start mt-2 mt-lg-0">
+          <a href="#" class="btn btn-outline-secondary w-100 w-lg-auto" data-bs-toggle="modal" data-bs-target="#crearCuentaModal">Crear Cuenta</a>
+        </div>
+        <div class="col-lg-2 text-lg-end text-start mt-2 mt-lg-0">
+          <a href="{{ url_for('admin_bp.login') }}" class="btn btn-secondary w-100 w-lg-auto">Iniciar Sesion</a>
         </div>
       </div>
     </div>
   </div>
 </nav>
+
+<!-- Modal Crear Cuenta -->
+<div class="modal fade" id="crearCuentaModal" tabindex="-1" aria-labelledby="crearCuentaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-4 rounded-4" style="background-color: #f0f0f0;">
+      <div class="modal-header border-0">
+        <h5 class="modal-title w-100 text-center text-primary" id="crearCuentaLabel">Crear Cuenta</h5>
+      </div>
+      <div class="modal-body d-flex justify-content-around gap-3 flex-wrap">
+
+        <!-- Tarjeta Estudiante -->
+        <a href="{{ url_for('estudiantes_bp.registro') }}" class="crear-cuenta-card text-decoration-none">
+          <div class="card text-center p-3 shadow-sm rounded-4 h-100">
+            <img src="{{ url_for('static', filename='img/shared/student_icon.webp') }}" width="100" height="100" alt="Estudiante" class="mx-auto">
+            <h5 class="mt-3 text-primary">Estudiante</h5>
+          </div>
+        </a>
+
+        <!-- Tarjeta Tutor -->
+        <a href="{{ url_for('tutores_bp.registro') }}" class="crear-cuenta-card text-decoration-none">
+          <div class="card text-center p-3 shadow-sm rounded-4 h-100">
+            <img src="{{ url_for('static', filename='img/shared/tutor_icon.webp') }}" width="100" height="100" alt="Tutor" class="mx-auto">
+            <h5 class="mt-3 text-primary">Tutor</h5>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>

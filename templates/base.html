@@ -14,8 +14,9 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/todos_eventos.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/crear_user.css') }}">
     </head>
-    <body>
-        {% block content %}{% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    </body>
+        <body>
+            {% block content %}{% endblock %}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+            {% block scripts %}{% endblock %}
+        </body>
     </html>
