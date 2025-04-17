@@ -11,7 +11,6 @@ from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepos
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.roles.application.RoleQueryService import RoleQueryService
 
-
 def test_create_user():
     # Inicializar repositorios
     user_repository = PostgresUserRepository()
