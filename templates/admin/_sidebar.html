@@ -35,6 +35,15 @@
       </li>
       {% endif %}
 
+      <!-- Convocatorias disponibles (todos los usuarios) -->
+      <li class="nav-item" title="Convocatorias disponibles">
+        <a href="{{ url_for('admin_bp.convocatorias_disponibles') }}" class="nav-link d-flex align-items-center">
+          <img src="{{ url_for('static', filename='img/sidebar/my_events.webp') }}" width="24" class="me-2 icon">
+          <span class="label">Convocatorias disponibles</span>
+        </a>
+      </li>
+
+
       <!-- Perfil/Cerrar Sesión -->
       <li class="nav-item mt-auto" title="Perfil">
         <a href="{{ url_for('admin_bp.logout') }}" class="nav-link d-flex align-items-center">

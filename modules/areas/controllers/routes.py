@@ -79,3 +79,5 @@ def crear_area(evento_id):
         permisos=permisos,
         evento_id=evento_id
     )
+
+
