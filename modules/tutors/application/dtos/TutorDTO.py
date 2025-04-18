@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
-
 from modules.tutors.domain.Tutor import Tutor
 
 
