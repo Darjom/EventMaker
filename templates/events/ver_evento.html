@@ -66,7 +66,7 @@
                data-titulo="{{ area.nombre_area }}"
                data-descripcion="{{ area.descripcion }}"
                data-imagen="{{ url_for('static', filename=area.afiche if area.afiche else 'img/shared/eventDefault.png') }}"
-               data-evento-id="{{ evento.id_evento }}"
+               data-area-id="{{ area.id_area }}"
                style="cursor: pointer;">
             <img src="{{ url_for('static', filename=area.afiche if area.afiche else 'img/shared/eventDefault.png') }}"
                  class="card-img-top rounded-top"
@@ -117,6 +117,11 @@
           <div class="col-md-6">
             <h4 id="areaModalTitulo" class="text-primary"></h4>
             <p id="areaModalDescripcion" class="text-muted mt-3"></p>
+            <hr class="my-4">
+            <h5 class="text-secondary">Categorías disponibles</h5>
+            <div id="categoriasContainer">
+              <p class="text-muted">Cargando categorías...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -140,6 +145,7 @@
 {% block scripts %}
 <script>
   const areaModal = document.getElementById('areaModal');
+
   areaModal.addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
     if (!button) return;
@@ -147,7 +153,7 @@
     const titulo = button.getAttribute('data-titulo');
     const descripcion = button.getAttribute('data-descripcion');
     const imagen = button.getAttribute('data-imagen');
-    const eventoId = button.getAttribute('data-evento-id');
+    const areaId = button.getAttribute('data-area-id');
 
     document.getElementById('areaModalTitulo').textContent = titulo;
     document.getElementById('areaModalDescripcion').textContent = descripcion;
@@ -155,8 +161,42 @@
 
     const crearCategoriaBtn = document.getElementById('crearCategoriaBtn');
     if (crearCategoriaBtn) {
-      crearCategoriaBtn.href = `/categorias/crear/${eventoId}`;
+      crearCategoriaBtn.href = `/categorias/crear/${areaId}`;
     }
+
+    // Cargar categorías vía API
+    const categoriasContainer = document.getElementById('categoriasContainer');
+    categoriasContainer.innerHTML = `<p class="text-muted">Cargando categorías...</p>`;
+
+    fetch(`/categorias/api/categorias/${areaId}`)
+      .then(response => {
+        if (!response.ok) throw new Error("No se pudo cargar categorías");
+        return response.json();
+      })
+      .then(data => {
+        if (data.length === 0) {
+          categoriasContainer.innerHTML = `<p class="text-muted">No hay categorías registradas para esta área.</p>`;
+        } else {
+          const lista = document.createElement('ul');
+          lista.classList.add('list-group');
+
+          data.forEach(categoria => {
+            const item = document.createElement('li');
+            item.className = 'list-group-item';
+            item.innerHTML = `<strong>${categoria.category_name}</strong><br>
+                              <small>${categoria.description || 'Sin descripción'}</small><br>
+                              <span class="text-muted">Precio: ${categoria.price !== null ? 'Bs ' + categoria.price : 'Gratis'}</span>`;
+            lista.appendChild(item);
+          });
+
+          categoriasContainer.innerHTML = '';
+          categoriasContainer.appendChild(lista);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        categoriasContainer.innerHTML = `<p class="text-danger">Error al cargar categorías.</p>`;
+      });
   });
 </script>
 {% endblock %}
