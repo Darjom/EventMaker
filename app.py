@@ -16,6 +16,7 @@ from modules.categories.infrastructure.persistence.CategoryMapping import Catego
 from modules.students.infrastructure.persistence.StudentMapping import StudentMapping
 from modules.schools.infrastructure.persistence.SchoolMapping import SchoolMapping
 from modules.inscriptions.infrastructure.persistence.InscriptionMapping import InscriptionMapping
+from modules.tutors.infrastructure.persistence.TieneACargoMapping import TieneAcargoMapping
 import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp

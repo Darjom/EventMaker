@@ -3,6 +3,7 @@ from typing import List
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
 from modules.tutors.domain.Tutor import Tutor
 from modules.tutors.domain.TutorRepository import TutorRepository
+from modules.tutors.infrastructure.persistence.TieneACargoMapping import TieneAcargoMapping
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from shared.extensions import db
 
@@ -40,3 +41,17 @@ class PostgresTutorRepository(TutorRepository):
         if tutor_mapping:
             return tutor_mapping.to_domain()
         return None
+
+    def assign_tutorship(self, student_id: int, tutor_id: int):
+
+        existing_relationship = TieneAcargoMapping.query.filter_by(student_id=student_id, tutor_id=tutor_id).first()
+        if existing_relationship:
+            print("The relationship already exists.")
+            return False
+
+        # Create the new relationship
+        new_relationship = TieneAcargoMapping(student_id=student_id, tutor_id=tutor_id)
+        db.session.add(new_relationship)
+        db.session.commit()
+        print("Relationship successfully added.")
+        return True
