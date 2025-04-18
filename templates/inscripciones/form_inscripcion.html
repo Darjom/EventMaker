@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}Inscripción a {{ evento.nombre_evento }}{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="form-area-container container mt-4">
+    <h1 class="text-center azul-umss mb-5">Inscripción a <span class="text-danger">{{ evento.nombre_evento }}</span></h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" id="formInscripcion">
+      <div class="mb-5">
+        <h4 class="text-secondary">Selecciona un Área</h4>
+        <p class="text-muted">Puedes elegir una sola área por inscripción.</p>
+        <div class="form-switch-container">
+          {% for area in areas %}
+            <label class="form-check form-switch d-flex justify-content-between align-items-center py-2 px-3 border mb-2 rounded bg-light cursor-pointer">
+              <div>
+                <strong>{{ area.nombre_area }}</strong><br>
+                <small class="text-muted">{{ area.descripcion }}</small>
+              </div>
+              <input class="form-check-input area-switch" type="checkbox" name="area_id" value="{{ area.id_area }}">
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div id="categoriaContainer" class="mt-4" style="display: none;">
+        <h4 class="text-secondary">Selecciona una Categoría</h4>
+        <p class="text-muted">Solo puedes seleccionar una categoría por área.</p>
+        <div class="list-group" id="categoriaList"></div>
+      </div>
+
+      <div class="row mt-5 mb-5">
+        <div class="col-md-2"></div>
+
+        <div class="col-md-3 d-grid">
+          <button type="submit" class="btn btn-primary">Confirmar inscripción</button>
+        </div>
+
+        <div class="col-md-2"></div>
+
+        <div class="col-md-3 d-grid">
+          <a href="{{ url_for('eventos_bp.ver_evento', event_id=evento.id_evento) }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+        <div class="col-md-2"></div>
+      </div>
+
+
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form_area.css') }}">
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const switches = document.querySelectorAll('.area-switch');
+  const categoriaContainer = document.getElementById("categoriaContainer");
+  const categoriaList = document.getElementById("categoriaList");
+
+  switches.forEach(sw => {
+    sw.addEventListener('change', () => {
+      switches.forEach(other => {
+        if (other !== sw) other.checked = false;
+      });
+
+      if (sw.checked) {
+        const areaId = sw.value;
+        categoriaContainer.style.display = "block";
+        categoriaList.innerHTML = '<p class="text-muted">Cargando categorías...</p>';
+
+        fetch(`/categorias/api/categorias/${areaId}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.length === 0) {
+              categoriaList.innerHTML = '<p class="text-muted">No hay categorías disponibles.</p>';
+            } else {
+              categoriaList.innerHTML = "";
+              data.forEach(cat => {
+                const item = document.createElement("label");
+                item.className = "list-group-item d-flex justify-content-between align-items-center";
+                item.innerHTML = `
+                  <div>
+                    <strong>${cat.category_name}</strong><br>
+                    <small>${cat.description || "Sin descripción"}</small>
+                    <div class="text-muted">Precio: ${cat.price !== null ? 'Bs ' + cat.price : 'Gratis'}</div>
+                  </div>
+                  <input class="form-check-input" type="radio" name="category_id" value="${cat.category_id}" required>
+                `;
+                categoriaList.appendChild(item);
+              });
+            }
+          })
+          .catch(error => {
+            console.error("Error al cargar categorías:", error);
+            categoriaList.innerHTML = '<p class="text-danger">Error al cargar categorías.</p>';
+          });
+      } else {
+        categoriaContainer.style.display = "none";
+        categoriaList.innerHTML = "";
+      }
+    });
+  });
+</script>
+{% endblock %}

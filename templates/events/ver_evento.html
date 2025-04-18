@@ -50,9 +50,14 @@
       </div>
     </div>
 
-    <div class="text-center">
-      <button class="ver-evento-btn-inscribirse">Inscribirme ahora</button>
-    </div>
+    {% if 'student' in roles_usuario %}
+      <div class="text-center">
+        <a href="{{ url_for('inscripciones_bp.seleccionar_area_categoria', event_id=evento.id_evento) }}" class="btn btn-primary ver-evento-btn-inscribirse">
+          Inscribirme ahora
+        </a>
+      </div>
+    {% endif %}
+
 
     {% if areas and areas|length > 0 %}
     <div class="ver-evento-section mt-5">
