@@ -209,12 +209,12 @@ body {
   background-color: var(--bs-body-bg);
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  background-image: url(/static/img/shared/fondo_general.webp);
-  background-size: cover;        /* Cubre todo el espacio disponible */
-  background-position: center;   /* Centra la imagen */
-  background-repeat: no-repeat;  /* Evita que se repita */
-  background-attachment: fixed;  /* Fija el fondo al desplazarse (opcional) */
-  margin: 0;                    /* Elimina márgenes predeterminados */
+/*  background-image: url(/static/img/shared/fondo_general.webp);
+/*  background-size: cover;        /* Cubre todo el espacio disponible */
+/*  background-position: center;   /* Centra la imagen */
+/*  background-repeat: no-repeat;  /* Evita que se repita */
+/*  background-attachment: fixed;  /* Fija el fondo al desplazarse (opcional) */
+/*  margin: 0;                    /* Elimina márgenes predeterminados */
   min-height: 100vh;   
 }
 

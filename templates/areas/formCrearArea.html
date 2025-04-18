@@ -23,7 +23,7 @@
   {% endif %}
 {% endwith %}
 
-    <form id="miFormulario" method="POST" enctype="multipart/form-data">
+    <form id="miFormulario" method="POST" enctype="multipart/form-data"  action="{{ url_for('areas_bp.crear_area', evento_id=evento_id) }}">
         <input type="hidden" name="idevento" value="{{ evento_id }}">
       <div class="row">
         <!-- Parte izquierda -->

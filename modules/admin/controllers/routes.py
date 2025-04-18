@@ -6,6 +6,8 @@ from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.events.application.ActiveEventFinder import ActiveEventFinder
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
+from modules.events.application.RandomActiveEventFinder import RandomActiveEventFinder
+from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 
 admin_bp = Blueprint("admin_bp", __name__)
 
@@ -32,13 +34,20 @@ def dashboard():
 
     # Obtener permisos
     permisos = []
+    roles_usuario = []
     for role in user.roles:
         service = RoleQueryService(PostgresRolesRepository())
         dto = service.execute(role.id)
-        if dto and dto.permissions:
-            permisos.extend(dto.permissions)
+        if dto:
+            if dto.permissions:
+                permisos.extend(dto.permissions)
+            if dto.name:
+                roles_usuario.append(dto.name.lower())
+    # Obtiene los 6 eventos aleatorios
+    event_finder = RandomActiveEventFinder(PostgresEventsRepository())
+    eventos_dto = event_finder.execute()
 
-    return render_template("admin/dashboard.html", user=user, permisos=permisos)
+    return render_template("admin/dashboard.html", user=user, permisos=permisos,  eventos=eventos_dto.eventos, roles_usuario=roles_usuario)
 
 @admin_bp.route("/logout")
 def logout():
