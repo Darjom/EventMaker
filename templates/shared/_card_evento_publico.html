@@ -1,5 +1,5 @@
 <div class="col-md-4 mb-4">
-  <div class="card h-100 shadow-sm">
+  <div class="card h-100 shadow-sm evento-hover position-relative evento-clickable" style="cursor: pointer;" onclick="window.location='{{ url_for('home_bp.evento_publico', event_id=evento.id_evento) }}'">
     {% if evento.afiche %}
       <img src="{{ url_for('static', filename=evento.afiche) }}" class="card-img-top" style="object-fit: cover; height: 180px;" alt="Imagen evento">
     {% else %}
@@ -11,14 +11,14 @@
       <p class="card-text">
         {% if evento.descripcion_evento|length > 30 %}
           {{ evento.descripcion_evento[:30] }}...
-          <a href="{{ url_for('eventos_bp.ver_evento', event_id=evento.id_evento) }}" class="text-decoration-none small">Ver más</a>
+          <span class="text-muted small">Ver más</span>
         {% else %}
           {{ evento.descripcion_evento }}
         {% endif %}
       </p>
       <div class="d-flex justify-content-between mt-3">
-        <a href="{{ url_for('home_bp.evento_publico', event_id=evento.id_evento) }}" class="btn btn-secondary btn-sm">Ver más</a>
-        <a href="{{ url_for('admin_bp.login') }}" class="btn btn-outline-secondary btn-sm">Inscribirse</a>
+        <button class="btn btn-secondary btn-sm" onclick="window.location='{{ url_for('home_bp.evento_publico', event_id=evento.id_evento) }}'; event.stopPropagation()">Ver más</button>
+        <a href="{{ url_for('admin_bp.login') }}" class="btn btn-outline-secondary btn-sm" onclick="event.stopPropagation()">Inscribirse</a>
       </div>
     </div>
   </div>
