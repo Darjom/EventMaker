@@ -125,12 +125,12 @@
           </div>
         </div>
       </div>
+      {% if 'category:create' in permisos %}
       <div class="modal-footer justify-content-between">
         <span class="text-muted">¿Deseas crear una categoría?</span>
-        {% if 'category:create' in permisos %}
         <a id="crearCategoriaBtn" href="#" class="btn btn-outline-primary">Crear Categoría</a>
-        {% endif %}
       </div>
+      {% endif %}
     </div>
   </div>
 </div>
