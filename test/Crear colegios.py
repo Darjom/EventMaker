@@ -16,7 +16,7 @@ def test_school_creation():
         school_creator = SchoolCreator(school_repo)
 
         # Create DTO PROPERLY using keyword arguments
-        school_dto = SchoolDTO(name="Exb mmmUniversity")
+        school_dto = SchoolDTO(name="ExUnersity")
 
         # Create school
 
