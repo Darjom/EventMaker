@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from modules.admin.application.auth_service import authenticate_admin
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
@@ -8,6 +8,7 @@ from modules.events.application.ActiveEventFinder import ActiveEventFinder
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.events.application.RandomActiveEventFinder import RandomActiveEventFinder
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
+from modules.students.application.dtos.StudentDTO import StudentDTO
 
 admin_bp = Blueprint("admin_bp", __name__)
 
@@ -73,4 +74,5 @@ def convocatorias_disponibles():
     eventos_dto = finder.execute()
 
     return render_template("admin/convocatorias_disponibles.html", eventos=eventos_dto.eventos, user=user, permisos=permisos)
+
 
