@@ -17,7 +17,7 @@
   <div class="ver-evento-header text-center mb-3">
     <h1>{{ evento.nombre_evento }}</h1>
     {% if evento.slogan %}
-    <p class="ver-evento-slogan text-muted">{{ evento.slogan }}</p>
+      <p class="ver-evento-slogan text-muted">{{ evento.slogan }}</p>
     {% endif %}
   </div>
 
@@ -46,35 +46,118 @@
   <div class="text-center mt-4">
     <a href="#" class="btn btn-success">Inscribirme ahora</a>
   </div>
+
+  {% if areas %}
+  <div class="ver-evento-section mt-5">
+    <h2 class="text-center">Áreas del Evento</h2>
+    <div class="row mt-4">
+      {% for area in areas %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm border border-secondary rounded-3 area-card-trigger"
+             data-bs-toggle="modal"
+             data-bs-target="#areaModal"
+             data-titulo="{{ area.nombre_area }}"
+             data-descripcion="{{ area.descripcion }}"
+             data-imagen="{{ url_for('static', filename=area.afiche if area.afiche else 'img/eventos/default_evento.jpg') }}"
+             data-area-id="{{ area.id_area }}"
+             style="cursor: pointer;">
+          <img src="{{ url_for('static', filename=area.afiche if area.afiche else 'img/eventos/default_evento.jpg') }}"
+               class="card-img-top rounded-top"
+               style="height: 180px; object-fit: cover;" alt="Imagen del área">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <h5 class="card-title text-primary">{{ area.nombre_area }}</h5>
+            <p class="card-text text-muted">
+              {{ area.descripcion[:30] }}{% if area.descripcion|length > 30 %}...{% endif %}
+            </p>
+            <span class="btn btn-sm btn-outline-success mt-auto disabled">Ver más</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 </div>
 
-{% if areas %}
-<div class="ver-evento-section mt-5">
-  <h2 class="text-center">Áreas del Evento</h2>
-  <div class="row mt-4">
-    {% for area in areas %}
-    <div class="col-md-4 mb-4">
-      <div class="card h-100 shadow-sm border border-secondary rounded-3">
-        <img src="{{ url_for('static', filename=area.afiche if area.afiche else 'img/eventos/default_evento.jpg') }}"
-             class="card-img-top rounded-top"
-             style="height: 180px; object-fit: cover;" alt="Imagen del área">
-
-        <div class="card-body d-flex flex-column justify-content-between">
-          <h5 class="card-title text-primary">{{ area.nombre_area }}</h5>
-          <p class="card-text text-muted">
-            {{ area.descripcion[:30] }}{% if area.descripcion|length > 30 %}...{% endif %}
-          </p>
-          <a href="#" class="btn btn-sm btn-outline-success mt-auto">Ver más</a>
+<!-- Modal Detalle de Área -->
+<div class="modal fade" id="areaModal" tabindex="-1" aria-labelledby="areaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="areaModalLabel">Detalle del Área</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <img id="areaModalImage" src="" alt="Imagen del área" class="img-fluid rounded shadow-sm">
+          </div>
+          <div class="col-md-6">
+            <h4 id="areaModalTitulo" class="text-primary"></h4>
+            <p id="areaModalDescripcion" class="text-muted mt-3"></p>
+            <hr class="my-4">
+            <h5 class="text-secondary">Categorías disponibles</h5>
+            <div id="categoriasContainer">
+              <p class="text-muted">Cargando categorías...</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    {% endfor %}
   </div>
 </div>
-{% endif %}
-
 {% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/ver_evento.css') }}">
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const areaModal = document.getElementById('areaModal');
+  areaModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    if (!button) return;
+
+    const titulo = button.getAttribute('data-titulo');
+    const descripcion = button.getAttribute('data-descripcion');
+    const imagen = button.getAttribute('data-imagen');
+    const areaId = button.getAttribute('data-area-id');
+
+    document.getElementById('areaModalTitulo').textContent = titulo;
+    document.getElementById('areaModalDescripcion').textContent = descripcion;
+    document.getElementById('areaModalImage').src = imagen;
+
+    const categoriasContainer = document.getElementById('categoriasContainer');
+    categoriasContainer.innerHTML = `<p class="text-muted">Cargando categorías...</p>`;
+
+    fetch(`/categorias/api/categorias/${areaId}`)
+      .then(res => res.json())
+      .then(data => {
+        const lista = document.createElement('ul');
+        lista.classList.add('list-group');
+        categoriasContainer.innerHTML = '';
+
+        if (data.length === 0) {
+          const item = document.createElement('li');
+          item.className = "list-group-item text-muted";
+          item.textContent = "Sin categorías disponibles.";
+          lista.appendChild(item);
+        } else {
+          data.forEach(cat => {
+            const item = document.createElement('li');
+            item.className = "list-group-item";
+            item.innerHTML = `<strong>${cat.category_name}</strong> - ${cat.description || 'Sin descripción'}<br><small>Precio: ${cat.price !== null ? 'Bs ' + cat.price : 'Gratuito'}</small>`;
+            lista.appendChild(item);
+          });
+        }
+
+        categoriasContainer.appendChild(lista);
+      })
+      .catch(error => {
+        console.error("Error cargando categorías:", error);
+        categoriasContainer.innerHTML = `<p class="text-danger">Error al cargar categorías.</p>`;
+      });
+  });
+</script>
 {% endblock %}

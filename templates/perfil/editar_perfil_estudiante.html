@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+{% include "shared/admin_header.html" %}
+<div class="container-fluid d-flex">
+  {% include "admin/_sidebar.html" %}
+
+  <div class="container mt-5">
+    <div class="card shadow p-4">
+      <h3 class="text-center text-primary mb-4">Editar mi <b>Perfil</b></h3>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+        <form method="POST">
+          <fieldset class="border p-3 mb-4">
+            <legend>Información Personal</legend>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="last_name">Apellidos</label>
+                <input name="last_name" class="form-control" value="{{ student.last_name }}" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="first_name">Nombres</label>
+                <input name="first_name" class="form-control" value="{{ student.first_name }}" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label for="ci">CI</label>
+                <input name="ci" class="form-control" value="{{ student.ci }}">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="complemento">Complemento</label>
+                <input name="complemento" class="form-control" value="{{ student.complemento or '' }}">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="expedito_ci">Expedido en</label>
+                <input name="expedito_ci" class="form-control" value="{{ student.expedito_ci }}">
+              </div>
+            </div>
+            <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+            <input type="date" name="fecha_nacimiento" class="form-control mb-3"
+                   value="{{ student.fecha_nacimiento.strftime('%Y-%m-%d') if student.fecha_nacimiento else '' }}">
+
+            <label for="phone_number">Teléfono</label>
+            <input type="number" name="phone_number" class="form-control mb-3" value="{{ student.phone_number or '' }}">
+          </fieldset>
+
+          <fieldset class="border p-3 mb-4">
+            <legend>Información Académica</legend>
+            <label for="course">Curso</label>
+            <input name="course" class="form-control mb-3" value="{{ student.course or '' }}">
+
+            <label for="department">Departamento</label>
+            <input name="department" class="form-control mb-3" value="{{ student.department or '' }}">
+
+            <label for="province">Provincia</label>
+            <input name="province" class="form-control mb-3" value="{{ student.province or '' }}">
+          </fieldset>
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          </div>
+        </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

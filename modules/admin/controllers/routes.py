@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from modules.admin.application.auth_service import authenticate_admin
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
@@ -8,6 +8,7 @@ from modules.events.application.ActiveEventFinder import ActiveEventFinder
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.events.application.RandomActiveEventFinder import RandomActiveEventFinder
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
+from modules.students.application.dtos.StudentDTO import StudentDTO
 
 admin_bp = Blueprint("admin_bp", __name__)
 
@@ -53,5 +54,25 @@ def dashboard():
 def logout():
     session.pop("admin_user", None)  # Elimina la cookie de sesión del usuario
     return redirect(url_for("admin_bp.login"))
+
+@admin_bp.route("/convocatorias-disponibles")
+def convocatorias_disponibles():
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    permisos = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        dto = service.execute(role.id)
+        if dto and dto.permissions:
+            permisos.extend(dto.permissions)
+
+    finder = ActiveEventFinder(PostgresEventsRepository())
+    eventos_dto = finder.execute()
+
+    return render_template("admin/convocatorias_disponibles.html", eventos=eventos_dto.eventos, user=user, permisos=permisos)
 
 

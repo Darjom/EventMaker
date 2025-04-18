@@ -8,7 +8,6 @@
   {% include 'admin/_sidebar.html' %}
 
   <div class="ver-evento-container container">
-
     <div class="text-center">
       {% if evento.afiche %}
         <img src="{{ url_for('static', filename=evento.afiche) }}" class="ver-evento-afiche" alt="Afiche del evento">
@@ -21,8 +20,9 @@
       <h1>{{ evento.nombre_evento }}</h1>
       <p class="ver-evento-slogan">{{ evento.slogan }}</p>
     </div>
+
     <div class="row">
-    <div class="col-md-6">
+      <div class="col-md-6">
         <div class="ver-evento-section">
           <h2><i class="bi bi-card-text ver-evento-icon"></i>Descripción</h2>
           <p>{{ evento.descripcion_evento }}</p>
@@ -35,8 +35,8 @@
             <p><strong>Fin:</strong> {{ evento.fin_evento.strftime('%d/%m/%Y') }}</p>
           </div>
         </div>
-    </div>
-    <div class="col-md-6">
+      </div>
+      <div class="col-md-6">
         <div class="ver-evento-section">
           <h2><i class="bi bi-geo-alt ver-evento-icon"></i>Ubicación</h2>
           <p>{{ evento.ubicacion }}</p>
@@ -47,11 +47,17 @@
           <p><strong>Capacidad:</strong> {{ evento.capacidad_evento }}</p>
           <p><strong>Requisitos:</strong> {{ evento.requisitos }}</p>
         </div>
+      </div>
     </div>
-  </div>
-    <div class="text-center">
-      <button class="ver-evento-btn-inscribirse">Inscribirme ahora</button>
-    </div>
+
+    {% if 'student' in roles_usuario %}
+      <div class="text-center">
+        <a href="{{ url_for('inscripciones_bp.seleccionar_area_categoria', event_id=evento.id_evento) }}" class="btn btn-primary ver-evento-btn-inscribirse">
+          Inscribirme ahora
+        </a>
+      </div>
+    {% endif %}
+
 
     {% if areas and areas|length > 0 %}
     <div class="ver-evento-section mt-5">
@@ -59,8 +65,15 @@
       <div class="row mt-4">
         {% for area in areas %}
         <div class="col-md-4 mb-4">
-          <div class="card h-100 shadow-sm border border-secondary rounded-3">
-            <img src="{{ url_for('static', filename=area.afiche if area.afiche else 'img/eventos/default_evento.jpg') }}"
+          <div class="card h-100 shadow-sm border border-secondary rounded-3 area-card-trigger"
+               data-bs-toggle="modal"
+               data-bs-target="#areaModal"
+               data-titulo="{{ area.nombre_area }}"
+               data-descripcion="{{ area.descripcion }}"
+               data-imagen="{{ url_for('static', filename=area.afiche if area.afiche else 'img/shared/eventDefault.png') }}"
+               data-area-id="{{ area.id_area }}"
+               style="cursor: pointer;">
+            <img src="{{ url_for('static', filename=area.afiche if area.afiche else 'img/shared/eventDefault.png') }}"
                  class="card-img-top rounded-top"
                  style="height: 180px; object-fit: cover;" alt="Imagen del área">
 
@@ -69,7 +82,7 @@
               <p class="card-text text-muted">
                 {{ area.descripcion[:30] }}{% if area.descripcion|length > 30 %}...{% endif %}
               </p>
-              <a href="#" class="btn btn-sm btn-outline-success mt-auto">Ver más</a>
+              <span class="btn btn-sm btn-outline-success mt-auto disabled">Ver más</span>
             </div>
           </div>
         </div>
@@ -77,28 +90,118 @@
       </div>
     </div>
     {% else %}
-      <div class="ver-evento-section mt-5">
-        <h2><i class="bi bi-diagram-3 ver-evento-icon"></i>Áreas del Evento</h2>
-        <p class="text-muted">Este evento aún no tiene áreas registradas.</p>
-      </div>
+    <div class="ver-evento-section mt-5">
+      <h2><i class="bi bi-diagram-3 ver-evento-icon"></i>Áreas del Evento</h2>
+      <p class="text-muted">Este evento aún no tiene áreas registradas.</p>
+    </div>
     {% endif %}
 
-
-      {% if 'area:create' in permisos %}
-        <div class="text-end me-5">
-          <a href="{{ url_for('areas_bp.crear_area', evento_id=evento.id_evento) }}" class="btn btn-outline-primary crear-area-boton">
-            ➕ Crear Área
-          </a>
-        </div>
+    {% if 'area:create' in permisos %}
+    <div class="text-end me-5">
+      <a href="{{ url_for('areas_bp.crear_area', evento_id=evento.id_evento) }}" class="btn btn-outline-primary crear-area-boton">
+        ➕ Crear Área
+      </a>
+    </div>
     {% endif %}
-
   </div>
 </div>
 
-
+<!-- Modal Detalle de Área -->
+<div class="modal fade" id="areaModal" tabindex="-1" aria-labelledby="areaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="areaModalLabel">Detalle del Área</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <img id="areaModalImage" src="" alt="Imagen del área" class="img-fluid rounded shadow-sm">
+          </div>
+          <div class="col-md-6">
+            <h4 id="areaModalTitulo" class="text-primary"></h4>
+            <p id="areaModalDescripcion" class="text-muted mt-3"></p>
+            <hr class="my-4">
+            <h5 class="text-secondary">Categorías disponibles</h5>
+            <div id="categoriasContainer">
+              <p class="text-muted">Cargando categorías...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if 'category:create' in permisos %}
+      <div class="modal-footer justify-content-between">
+        <span class="text-muted">¿Deseas crear una categoría?</span>
+        <a id="crearCategoriaBtn" href="#" class="btn btn-outline-primary">Crear Categoría</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 
+
 {% block styles %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ver_evento.css') }}">
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const areaModal = document.getElementById('areaModal');
+
+  areaModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    if (!button) return;
+
+    const titulo = button.getAttribute('data-titulo');
+    const descripcion = button.getAttribute('data-descripcion');
+    const imagen = button.getAttribute('data-imagen');
+    const areaId = button.getAttribute('data-area-id');
+
+    document.getElementById('areaModalTitulo').textContent = titulo;
+    document.getElementById('areaModalDescripcion').textContent = descripcion;
+    document.getElementById('areaModalImage').src = imagen;
+
+    const crearCategoriaBtn = document.getElementById('crearCategoriaBtn');
+    if (crearCategoriaBtn) {
+      crearCategoriaBtn.href = `/categorias/crear/${areaId}`;
+    }
+
+    // Cargar categorías vía API
+    const categoriasContainer = document.getElementById('categoriasContainer');
+    categoriasContainer.innerHTML = `<p class="text-muted">Cargando categorías...</p>`;
+
+    fetch(`/categorias/api/categorias/${areaId}`)
+      .then(response => {
+        if (!response.ok) throw new Error("No se pudo cargar categorías");
+        return response.json();
+      })
+      .then(data => {
+        if (data.length === 0) {
+          categoriasContainer.innerHTML = `<p class="text-muted">No hay categorías registradas para esta área.</p>`;
+        } else {
+          const lista = document.createElement('ul');
+          lista.classList.add('list-group');
+
+          data.forEach(categoria => {
+            const item = document.createElement('li');
+            item.className = 'list-group-item';
+            item.innerHTML = `<strong>${categoria.category_name}</strong><br>
+                              <small>${categoria.description || 'Sin descripción'}</small><br>
+                              <span class="text-muted">Precio: ${categoria.price !== null ? 'Bs ' + categoria.price : 'Gratis'}</span>`;
+            lista.appendChild(item);
+          });
+
+          categoriasContainer.innerHTML = '';
+          categoriasContainer.appendChild(lista);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        categoriasContainer.innerHTML = `<p class="text-danger">Error al cargar categorías.</p>`;
+      });
+  });
+</script>
 {% endblock %}
