@@ -45,7 +45,7 @@ class UserMapping(db.Model):
             password=self.password,
             active=self.active,
             confirmed_at=self.confirmed_at,
-            roles=[role.name for role in self.roles],  # Convertir los roles a una lista de nombres
+            roles=[role.id for role in self.roles],  # Convertir los roles a una lista de nombres
             fs_uniquifier=self.fs_uniquifier,
             ci=self.ci,
             expedito_ci=self.expedito_ci,

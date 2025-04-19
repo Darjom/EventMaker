@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
-
 from modules.tutors.domain.Tutor import Tutor
 
 
@@ -21,9 +20,6 @@ class TutorDTO(BaseModel):
 
     @classmethod
     def from_domain(cls, student: Tutor):
-        print("tutor domain")
-        print(student.ci)
-        print(student.expedito_ci)
 
         """
         Convierte un objeto de dominio Tutor a un DTO TutorDTO.
