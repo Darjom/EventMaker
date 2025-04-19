@@ -37,12 +37,12 @@
         <div class="col-md-5">
           <div class="mb-4">
             <h2>Título</h2>
-            <input type="text" name="titulo" class="crear-evento-input" placeholder="Título del evento" required>
+            <input type="text" name="titulo" class="crear-evento-input" placeholder="Título de la convocatoria" required>
           </div>
 
           <div class="mb-4">
             <h2>Descripción</h2>
-            <textarea name="descripcion" class="crear-evento-textarea" rows="4" placeholder="Descripción del evento" required></textarea>
+            <textarea name="descripcion" class="crear-evento-textarea" rows="4" placeholder="Descripción de la convocatoria" required></textarea>
           </div>
 
           <div class="row mb-4">
@@ -55,9 +55,19 @@
               <input type="date" name="fecha_fin" class="crear-evento-input" required>
             </div>
           </div>
+          <div class="row mb-4">
+            <div class="col">
+              <h3>Fecha de inicio de inscripcion</h3>
+              <input type="date" name="fecha_inicio-inscripcion" class="crear-evento-input" required>
+            </div>
+            <div class="col">
+              <h3>Fecha de fin de inscripcion</h3>
+              <input type="date" name="fecha_fin-inscripcion" class="crear-evento-input" required>
+            </div>
+          </div>
 
           <div class="mb-4">
-            <h2>Tipo de evento</h2>
+            <h2>Tipo de convocatoria</h2>
             <select name="tipo_evento" class="crear-evento-select" required>
               <option disabled selected value="">Selecciona una opción</option>
               <option value="Virtual">Conferencia</option>
@@ -80,12 +90,12 @@
           </div>
 
           <div class="mb-4">
-            <h2>Lugar del evento</h2>
+            <h2>Lugar de la convocatoria</h2>
             <input type="text" name="lugar" class="crear-evento-input" placeholder="Ej: Auditorio UMSS" required>
           </div>
 
           <div class="mb-4">
-            <h2>Slogan del evento</h2>
+            <h2>Slogan de la convocatoria</h2>
             <input type="text" name="slogan" class="crear-evento-input" placeholder="Ej: La innovación nos une" required>
           </div>
 

@@ -1,5 +1,5 @@
 from decouple import config
-
+print("DB_PORT:", config('DB_PORT'))
 class Config:
     SECRET_KEY = config('SECRET_KEY')
     JWT_SECRET_KEY = config('JWT_SECRET_KEY')

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Convocatorias Disponibles{% endblock %}
+
+{% block content %}
+  {% include 'shared/admin_header.html' %}
+  <div class="d-flex">
+    {% include 'admin/_sidebar.html' %}
+    <div class="flex-grow-1 p-4">
+      <h2 class="mb-4 text-primary">Convocatorias Disponibles</h2>
+
+      <div class="row">
+        {% for evento in eventos %}
+          {% include 'shared/_card_evento.html' %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

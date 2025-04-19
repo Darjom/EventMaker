@@ -1,3 +1,5 @@
+console.log('JS cargado correctamente');
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('miFormulario');
     const imagenInput = document.getElementById('imagen');
@@ -17,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    imagenInput.addEventListener('change', function() {
+    imagenInput.addEventListener('change', function () {
         const file = this.files[0];
         errorMessage.textContent = '';
         previewContainer.style.display = 'none';
@@ -26,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!allowedTypes.includes(file.type)) {
                 errorMessage.textContent = 'Solo se permiten imágenes (JPEG, PNG, WEBP)';
                 this.value = '';
+                previewImage.src = '#';
                 return;
             }
 
@@ -33,8 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.onload = (e) => {
                 previewImage.src = e.target.result;
                 previewContainer.style.display = 'block';
+                previewImage.style.display = 'block';
+            };
+            reader.onerror = (error) => {
+                console.error('Error al leer la imagen:', error);
+                errorMessage.textContent = 'Error al cargar la imagen';
             };
             reader.readAsDataURL(file);
+        } else {
+            previewImage.src = '#';
+            previewContainer.style.display = 'none';
         }
     });
 
@@ -57,24 +68,22 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.innerHTML = 'Creando...';
 
             const formData = new FormData(form);
+            const eventoId = formData.get('idevento');
 
-            const response = await fetch('/area/crear', {
+            const response = await fetch(`/area/crear/${eventoId}`, {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'Accept': 'application/json'
+                    'Accept': 'text/html'  // ⚠️ No esperamos JSON, sino HTML o redirect
                 }
             });
 
-            const result = await response.json();
-
             if (!response.ok) {
-                throw new Error(result.error || 'Error en el servidor');
+                throw new Error('Ocurrió un error en el servidor.');
             }
 
-            // Redirección al evento
-            const eventoId = formData.get('idevento');
-            window.location.href = `/evento/ver/${eventoId}`;
+            // Como no hay JSON, solo redirigimos manualmente
+            window.location.href = `/eventos/evento/${eventoId}`;
 
         } catch (error) {
             console.error('Error:', error);

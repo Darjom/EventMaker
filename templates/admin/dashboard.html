@@ -6,8 +6,43 @@
 <div class="d-flex">
   {% include "admin/_sidebar.html" %}
   <div class="flex-grow-1 p-4">
-    <h3>¡Bienvenido!</h3>
-    <p class="text-muted">Aquí puedes gestionar usuarios y eventos.</p>
+    <h1 class="text-center">
+      <span class="text-secondary">Bienvenido</span>
+      <span class="text-primary">{{user.first_name}}</span>
+    </h1>
+
+    <h4 class="mt-5 mb-4 text-secondary">Eventos Activos</h4>
+      <div class="row">
+        {% for evento in eventos %}
+          {% include "shared/_card_evento.html" %}
+        {% endfor %}
+      </div>
+
+    {% if 'tutor' in roles_usuario %}
+      <div class="mt-5">
+        <h3 class="mb-4 text-secondary">Detalles de Inscripción</h3>
+        <div class="row align-items-center">
+          <!-- Columna izquierda -->
+          <div class="col-md-6">
+            <ol class="list-group list-group-flush">
+              <li ><b>Proceso de Inscripción</b></li>
+              <li > Seleccione una convocatoria</li>
+              <li > Elija el área y categoría</li>
+              <li > Seleccione los estudiantes a inscribir</li>
+              <li > Complete el formulario de inscripción</li>
+              <li > Confirme los datos y envíe la solicitud</li>
+            </ol>
+          </div>
+
+          <!-- Columna derecha -->
+          <div class="col-md-6">
+            <img src="{{ url_for('static', filename='img/shared/inscripcion_banner.webp') }}" class="img-fluid rounded shadow" alt="Proceso de inscripción">
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+
   </div>
 </div>
 {% endblock %}

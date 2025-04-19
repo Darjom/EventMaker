@@ -68,7 +68,7 @@ def crear_area(evento_id):
             creator.execute(area_dto)
 
             flash("Área creada exitosamente.", "success")
-            return redirect(url_for("areas_bp.crear_area", evento_id=evento_id))
+            return redirect(url_for("eventos_bp.ver_evento", event_id=evento_id))
 
         except Exception as e:
             flash(f"Error al crear el área: {str(e)}", "danger")
@@ -79,3 +79,5 @@ def crear_area(evento_id):
         permisos=permisos,
         evento_id=evento_id
     )
+
+
