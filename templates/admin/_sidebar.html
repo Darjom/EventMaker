@@ -53,6 +53,16 @@
       </li>
       {% endif %}
 
+      {% if user.roles and user.roles[0].id == 4 %}
+        <li class="nav-item" title="Ver Inscripciones">
+          <a href="{{ url_for('inscripciones_bp.ver_inscripciones_estudiante') }}" class="nav-link d-flex align-items-center">
+            <img src="{{ url_for('static', filename='img/sidebar/my_events.webp') }}" width="24" class="me-2 icon">
+            <span class="label">Mis Inscripciones</span>
+          </a>
+        </li>
+        {% endif %}
+
+
 
 
 

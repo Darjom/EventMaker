@@ -1,8 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from datetime import datetime
+
+from modules.roles.application.RoleQueryService import RoleQueryService
+from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.students.application.dtos.StudentDTO import StudentDTO
 from modules.students.application.StudentCreator import StudentCreator
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
+from modules.user.infrastructure.persistence.UserMapping import UserMapping
 
 estudiantes_bp = Blueprint("estudiantes_bp", __name__)
 
@@ -47,10 +51,23 @@ def editar_perfil():
     # Obtener al estudiante
     repo = PostgresStudentRepository()
     student = repo.find_by_id(user_id)
-
     if not student:
         flash("No se encontró el perfil del estudiante", "danger")
         return redirect(url_for("home_bp.index"))
+
+    user = UserMapping.query.get(user_id)
+
+    # Obtener permisos
+    permisos = []
+    roles_usuario = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        udto = service.execute(role.id)
+        if udto:
+            if udto.permissions:
+                permisos.extend(udto.permissions)
+            if udto.name:
+                roles_usuario.append(udto.name.lower())
 
     if request.method == "POST":
         try:
@@ -72,5 +89,5 @@ def editar_perfil():
             flash(str(e), "danger")
 
     dto = StudentDTO.from_domain(student)
-    return render_template("perfil/editar_perfil_estudiante.html", student=dto, user=student)
+    return render_template("perfil/editar_perfil_estudiante.html", student=dto, user=student,permisos=permisos,roles_usuario=roles_usuario)
 

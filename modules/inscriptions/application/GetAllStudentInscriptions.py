@@ -26,7 +26,7 @@ class GetAllStudentInscriptions:
     def execute(self, student_id: int):
         student = self.student_repo.find_by_id(student_id)
         if not student:
-            raise ValueError("Student does not exist")
+            raise ValueError("St    udent does not exist")
 
         print("🔍 Buscando inscripción existente...")
         inscriptions = self.inscription_repo.find_by_id_student(student_id)
