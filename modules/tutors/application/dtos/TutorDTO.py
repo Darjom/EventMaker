@@ -20,9 +20,6 @@ class TutorDTO(BaseModel):
 
     @classmethod
     def from_domain(cls, student: Tutor):
-        print("tutor domain")
-        print(student.ci)
-        print(student.expedito_ci)
 
         """
         Convierte un objeto de dominio Tutor a un DTO TutorDTO.

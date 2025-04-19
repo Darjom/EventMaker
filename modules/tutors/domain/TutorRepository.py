@@ -24,3 +24,7 @@ class TutorRepository(ABC):
     @abstractmethod
     def assign_tutorship(self, student_id: int, tutor_id: int):
         pass
+
+    @abstractmethod
+    def update(self, tutor: Tutor) -> Tutor:
+        pass

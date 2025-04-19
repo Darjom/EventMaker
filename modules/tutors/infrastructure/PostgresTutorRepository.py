@@ -55,3 +55,23 @@ class PostgresTutorRepository(TutorRepository):
         db.session.commit()
         print("Relationship successfully added.")
         return True
+
+    def update(self, tutor: Tutor) -> Tutor:
+        tutor_mapping = db.session.query(UserMapping).filter_by(id=tutor.id).first()
+        if not tutor_mapping:
+            raise ValueError("Tutor not found")
+
+        # Actualizar los campos manualmente
+        tutor_mapping.first_name = tutor.first_name
+        tutor_mapping.last_name = tutor.last_name
+        tutor_mapping.email = tutor.email
+        tutor_mapping.password = tutor.password
+        tutor_mapping.active = tutor.active
+        tutor_mapping.confirmed_at = tutor.confirmed_at
+        tutor_mapping.fs_uniquifier = tutor.fs_uniquifier
+        tutor_mapping.ci = tutor.ci
+        tutor_mapping.expedito_ci = tutor.expedito_ci
+        tutor_mapping.fecha_nacimiento = tutor.fecha_nacimiento
+
+        db.session.commit()
+        return tutor_mapping.to_domain()
