@@ -76,3 +76,10 @@ class PostgresTutorRepository(TutorRepository):
 
         db.session.commit()
         return tutor_mapping.to_domain()
+
+    def find_students(self, tutor_id: int) -> List[int]:
+        students = db.session.query(TieneAcargoMapping).filter_by(tutor_id=tutor_id).all()
+        students_ids = []
+        for student in students:
+            students_ids.append(student.student_id)
+        return students_ids

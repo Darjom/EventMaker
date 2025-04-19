@@ -1,5 +1,6 @@
 from flask import Flask
 from config import Config
+from modules.Data.RolesAndPermissions.Seeder import seed_roles_and_permissions
 from modules.admin.controllers.routes import admin_bp
 from modules.areas.controllers.routes import areas_bp
 #from.modules.roles.controllers.routes import rol_bp
@@ -38,6 +39,8 @@ def create_app():
     jwt.init_app(app)
     with app.app_context():
         db.create_all()
+        # Inserta datos de roles y permisos
+        seed_roles_and_permissions()
 
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix="/admin")
