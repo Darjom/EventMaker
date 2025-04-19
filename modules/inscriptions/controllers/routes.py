@@ -57,7 +57,7 @@ def seleccionar_area_categoria(event_id):
 
             registrar.execute(dto)
             flash("Inscripción realizada exitosamente", "success")
-            return redirect(url_for("home_bp.index"))
+            return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
 
         except Exception as e:
             flash(str(e), "danger")
