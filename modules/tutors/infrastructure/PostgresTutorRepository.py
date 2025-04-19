@@ -38,6 +38,7 @@ class PostgresTutorRepository(TutorRepository):
 
     def find_by_id(self, id: int):
         tutor_mapping = db.session.query(UserMapping).filter_by(id=id).first()
+        print("✅ Roles del tutor:", tutor_mapping.roles[0].id)
         if tutor_mapping:
             return tutor_mapping.to_domain()
         return None
