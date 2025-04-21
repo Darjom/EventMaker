@@ -41,6 +41,6 @@ class PostgresEventsRepository(EventRepository):
     def find_active_events(self) -> List[Event]:
         now = datetime.utcnow()  # Usar UTC para consistencia
         event_mappings = EventMapping.query.filter(
-            EventMapping.fin_evento >= now
+            EventMapping.fin_evento <= now
         ).all()
         return [e.to_domain() for e in event_mappings]
