@@ -19,3 +19,4 @@ test/geckodriver.log
 test/geckodriver.exe
 geckodriver.log
 .env
+/automated_testing
