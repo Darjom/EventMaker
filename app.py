@@ -15,6 +15,7 @@ from modules.areas.infrastructure.persistence.AreaMapping import AreaMapping
 from modules.categories.infrastructure.persistence.CategoryMapping import CategoryMapping
 from modules.students.infrastructure.persistence.StudentMapping import StudentMapping
 from modules.schools.infrastructure.persistence.SchoolMapping import SchoolMapping
+from modules.inscriptions.infrastructure.persistence.InscriptionMapping import InscriptionMapping
 import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp
@@ -22,6 +23,8 @@ from modules.user.controllers.routes import users_bp
 from modules.info.controllers.routes import info_bp
 from modules.students.controllers.routes import estudiantes_bp
 from modules.tutors.controllers.routes import tutores_bp
+from modules.categories.controllers.routes import categorias_bp
+from modules.inscriptions.controllers.routes import inscripciones_bp
 
 
 
@@ -41,9 +44,13 @@ def create_app():
     app.register_blueprint(eventos_bp, url_prefix="/eventos")
     app.register_blueprint(areas_bp ,url_prefix="/area")
     app.register_blueprint(users_bp)
+    app.register_blueprint(estudiantes_bp, url_prefix="/estudiantes")
+    app.register_blueprint(tutores_bp, url_prefix="/tutores")
+    app.register_blueprint(categorias_bp, url_prefix="/categorias")
+    app.register_blueprint(inscripciones_bp, url_prefix="/inscripciones")
+
     app.register_blueprint(info_bp)
-    app.register_blueprint(estudiantes_bp)
-    app.register_blueprint(tutores_bp)
+
     return app
 
 

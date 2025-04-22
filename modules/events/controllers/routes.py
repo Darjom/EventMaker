@@ -111,11 +111,15 @@ def ver_evento(event_id):
     user = UserMapping.query.get(user_id)
     # Obtener permisos del usuario
     permisos = []
+    roles_usuario = []
     for role in user.roles:
         service = RoleQueryService(PostgresRolesRepository())
         dto = service.execute(role.id)
-        if dto and dto.permissions:
-            permisos.extend(dto.permissions)
+        if dto:
+            if dto.permissions:
+                permisos.extend(dto.permissions)
+            if dto.name:
+                roles_usuario.append(dto.name.lower())
 
     repository = PostgresEventsRepository()
     service = EventQueryService(repository)
@@ -128,4 +132,4 @@ def ver_evento(event_id):
     areas_dto = area_finder.execute(event_id)
 
 
-    return render_template("events/ver_evento.html", evento=evento, user=user, permisos=permisos, areas=areas_dto.areas)
+    return render_template("events/ver_evento.html", evento=evento, user=user, permisos=permisos, areas=areas_dto.areas,roles_usuario=roles_usuario)

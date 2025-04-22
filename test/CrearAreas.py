@@ -8,10 +8,10 @@ from modules.events.infrastructure.PostgresEventRepository import PostgresEvents
 def test_create_area():
     # Crear un DTO de área de prueba
     area_dto = AreaDTO(
-        id_evento=10,  # Debes asegurarte que exista un evento con este ID
-        nombre_area="free2222",
+        id_evento=1,  # Debes asegurarte que exista un evento con este ID
+        nombre_area="Area 5",
         descripcion="Área exclusiva con servicios fremiun",
-        precio=10,
+        precio=None,
         afiche=None
     )
 

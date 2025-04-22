@@ -46,6 +46,15 @@
       </li>
       {% endif %}
 
+      <!-- Convocatorias disponibles (todos los usuarios) -->
+      <li class="nav-item" title="Convocatorias disponibles">
+        <a href="{{ url_for('admin_bp.convocatorias_disponibles') }}" class="nav-link d-flex align-items-center">
+          <img src="{{ url_for('static', filename='img/sidebar/my_events.webp') }}" width="24" class="me-2 icon">
+          <span class="label">Convocatorias disponibles</span>
+        </a>
+      </li>
+
+
 
       <!-- Info del usuario (siempre disponible)-->
       <li class="nav-item" title="Mi informacion">
@@ -85,53 +94,5 @@
   <div class="flex-grow-1 p-4" id="main-content">
     {% block dashboard_content %}{% endblock %}
   </div>
-  <div id="modal-inscripcion" class="modal-inscripcion">
-    <div class="modal-contenido">
-        <!-- Encabezado del Modal -->
-        <div>
-            <h3 class="modal-titulo">
-                <i class="bi bi-person-plus-fill me-2"></i>
-                Inscripción de Estudiante
-            </h3>
-        </div>
 
-        <!-- Cuerpo del Modal -->
-        <div class="modal-cuerpo">            
-            <div class="row g-4">
-              <h3 style="margin-left: 5%;">Ingrese la opción</h3>
-                <!-- Opción Estudiante Nuevo -->
-                <div class="col-md-6 row">
-                  <div class="col-md-5"></div>
-                  <div class="col-md-7 Estudiantes">
-                    <center>
-                  <img src="{{ url_for('static', filename='img/sidebar/estudiante_Nuevo.webp') }}">
-                  <h4>Estudiante Nuevo</h4>
-                    </center>
-                  </div>
-                  
-                </div>
-
-                <!-- Opción Estudiante Existente -->
-                <div class="col-md-6 row">
-                  
-                  <div class="col-md-7 Estudiantes">
-                    <center>
-                    <img src="{{ url_for('static', filename='img/sidebar/estudiante_Existente.webp') }}">
-                    <h4>Estudiante Existente</h4>
-                    </center>
-                  </div>
-                  <div class="col-md-5"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pie del Modal -->
-        <div class="modal-footer justify-content-center">
-            <button id="btn-cerrar-modal" class="btn btn-secondary boton-cancelar">
-                Cancelar
-            </button>
-        </div>
-    </div>
-</div>
-  <script src="{{ url_for('static', filename='js/admin/inscribirEstudiantes.js') }}"></script>
 </div>
