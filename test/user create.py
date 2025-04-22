@@ -5,7 +5,7 @@ import os
 # Añade el directorio raíz al path de Python
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import app
-
+from datetime import datetime
 from modules.user.application.UserCreator import UserCreator
 from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
@@ -30,7 +30,10 @@ def test_create_user():
         first_name="dan",
         last_name="Reque",
         email="add@adm.com",
-        password="12345678"
+        password="12345678",
+        ci= "12345678 B",
+        expedito_ci= "CBBA",
+        fecha_nacimiento=datetime(2025, 5, 20, 9, 0, 0),
     )
 
 #adm@adm.com - admin

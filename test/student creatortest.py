@@ -1,4 +1,10 @@
 from datetime import datetime
+# En test/user_create.py
+import sys
+import os
+
+# Añade el directorio raíz al path de Python
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import app
 from modules.students.application.StudentCreator import StudentCreator
 from modules.students.application.dtos.StudentDTO import StudentDTO

@@ -42,7 +42,8 @@ def create_app():
     app.register_blueprint(areas_bp ,url_prefix="/area")
     app.register_blueprint(users_bp)
     app.register_blueprint(info_bp)
-
+    app.register_blueprint(estudiantes_bp)
+    app.register_blueprint(tutores_bp)
     return app
 
 

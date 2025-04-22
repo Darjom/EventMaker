@@ -32,10 +32,10 @@
 
         <!-- Botón crear Cuenta y inicio Sesion-->
         <div class="col-lg-2 text-lg-end text-start mt-2 mt-lg-0">
-          <a href="#" class="btn btn-outline-secondary w-100 w-lg-auto" data-bs-toggle="modal" data-bs-target="#crearCuentaModal">Crear Cuenta</a>
+          <a href="#" class="btn btn-outline-secondary w-100 w-lg-auto" data-bs-toggle="modal" id="Boton-Crear-Cuenta" data-bs-target="#crearCuentaModal">Crear Cuenta</a>
         </div>
         <div class="col-lg-2 text-lg-end text-start mt-2 mt-lg-0">
-          <a href="{{ url_for('admin_bp.login') }}" class="btn btn-secondary w-100 w-lg-auto">Iniciar Sesion</a>
+          <a href="{{ url_for('admin_bp.login') }}" class="btn btn-secondary w-100 w-lg-auto" id="Boton-Iniciar-Sesion">Iniciar Sesion</a>
         </div>
       </div>
     </div>
@@ -54,7 +54,7 @@
         <!-- Tarjeta Estudiante -->
         <a href="{{ url_for('estudiantes_bp.registro') }}" class="crear-cuenta-card text-decoration-none">
           <div class="card text-center p-3 shadow-sm rounded-4 h-100">
-            <img src="{{ url_for('static', filename='img/shared/student_icon.webp') }}" width="100" height="100" alt="Estudiante" class="mx-auto">
+            <img src="{{ url_for('static', filename='img/shared/student_icon.webp') }}" id="CrearCuentaEstudiante" width="100" height="100" alt="Estudiante" class="mx-auto">
             <h5 class="mt-3 text-primary">Estudiante</h5>
           </div>
         </a>

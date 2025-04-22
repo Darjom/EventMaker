@@ -3,6 +3,7 @@ from typing import List
 from werkzeug.security import generate_password_hash
 
 from modules.user.domain.User import User
+from datetime import datetime
 from modules.user.domain.UserRepository import UserRepository
 from modules.roles.application.RoleQueryService import RoleQueryService
 from .dtos.UserDTO import UserDTO
@@ -18,7 +19,10 @@ class UserCreator:
         first_name: str,
         last_name: str,
         email: str,
-        password: str
+        password: str,
+        ci: str,
+        expedito_ci= str,
+        fecha_nacimiento= datetime
     ) -> UserDTO:
         # Validar campos requeridos
         if not first_name.strip():
@@ -39,7 +43,10 @@ class UserCreator:
             last_name=last_name,
             email=email,
             password=generate_password_hash(password),  # Deberías hashear la contraseña aquí
-            roles=[]  # Los roles se asignan después de crear el usuario
+            roles=[],  # Los roles se asignan después de crear el usuario
+            ci=ci,
+            expedito_ci= expedito_ci,
+            fecha_nacimiento= fecha_nacimiento
         )
 
         # Persistir usuario
