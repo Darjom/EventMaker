@@ -40,3 +40,9 @@ class PostgresTutorRepository(TutorRepository):
         if tutor_mapping:
             return tutor_mapping.to_domain()
         return None
+    
+    def find_by_ci(self, ci: int):
+        tutor_mapping = db.session.query(UserMapping).filter_by(ci=ci).first()
+        if tutor_mapping:
+            return tutor_mapping.to_domain()
+        return None

@@ -50,7 +50,7 @@
       <fieldset class="border p-3 mb-4">
         <legend>Seguridad</legend>
         <input type="email" name="email" id="Correo" class="form-control mb-3" placeholder="Correo electrónico" required>
-
+        <div id="Mensaje-de-error" class="text-danger mb-3"></div>
         <input type="password" name="password" id="password" class="form-control mb-2" placeholder="Contraseña" required>
         <div class="progress mb-2" style="height: 6px;">
           <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
@@ -67,7 +67,7 @@
       </div>
 
       <div class="d-flex justify-content-center gap-3">
-        <button type="submit" id="Inscribirse" class="btn btn-primary">Inscribirse</button>
+        <button type="submit" id="Inscribirse" class="btn btn-primary">Registrarse</button>
         <a href="{{ url_for('home_bp.index') }}" class="btn btn-secondary">Cancelar</a>
       </div>
     </form>
@@ -77,12 +77,16 @@
 
 {% block scripts %}
 <script>
+  console.log("El script funciona")
   const form = document.getElementById("registro-form");
   const passwordInput = document.getElementById("password");
   const confirmInput = document.getElementById("confirm_password");
   const strengthMsg = document.getElementById("password-strength-msg");
   const strengthBar = document.getElementById("password-strength-bar");
   const matchMsg = document.getElementById("password-match-msg");
+  const DominiosPermitidos = ['gmail.com', 'live.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
+  const CorreoInput = document.getElementById("Correo");
+  const MensajeError = document.getElementById("Mensaje-de-error");
 
   const validarPassword = (password) => {
     const tests = [
@@ -136,18 +140,42 @@
       return true;
     }
   };
+  // Función para validar dominio
+  const validarEmail = (email) => {
+    const domain = email.split('@')[1]?.toLowerCase() || '';
+    return DominiosPermitidos.includes(domain);
+  };
 
+    // Validar email en tiempo real
+    CorreoInput.addEventListener("input", () => {
+    if (!validarEmail(CorreoInput.value)) {
+      MensajeError.textContent = "Solo se permiten correos de: Gmail, Hotmail, Outlook y Yahoo";
+      MensajeError.style.display = "block"; // Mostrar el mensaje
+    } else {
+      MensajeError.textContent = "";
+      MensajeError.style.display = "none"; // Ocultar cuando es válido
+    }
+  });
   passwordInput.addEventListener("input", updateStrength);
   confirmInput.addEventListener("input", checkMatch);
 
   form.addEventListener("submit", function (e) {
+    const emailValido = validarEmail(CorreoInput.value);
     const fuerte = updateStrength();
     const coincide = checkMatch();
 
-    if (!fuerte || !coincide) {
-      e.preventDefault();
-      alert(" La contraseña no es segura o no coincide.");
+    if (!emailValido || !fuerte || !coincide) { // ✅ Orden correcto
+      if (!fuerte || !coincide) {
+        e.preventDefault();
+        alert("❌ La contraseña no es segura o no coincide.");
+      }else{
+        e.preventDefault();
+          MensajeError.textContent = "Solo se permiten correos de: Gmail, Hotmail, Outlook y Yahoo";
+          MensajeError.style.display = "block"; // Forzar visibilidad al enviar
+          alert("❌ Verifica los datos del formulario");
+      }
     }
+
   });
 </script>
 {% endblock %}

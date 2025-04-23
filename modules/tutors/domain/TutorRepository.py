@@ -20,3 +20,7 @@ class TutorRepository(ABC):
     @abstractmethod
     def find_by_id(self, id: int) -> Tutor:
         pass
+
+    @abstractmethod
+    def find_by_ci(self, ci: int) -> Tutor:
+        pass
