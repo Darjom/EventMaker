@@ -40,3 +40,9 @@ class PostgresStudentRepository(StudentRepository):
         if student_mapping:
             return student_mapping.to_domain()
         return None
+    
+    def find_by_ci(self, ci: str) -> Student:
+        student_mapping = db.session.query(StudentMapping).filter_by(ci=ci).first()
+        if student_mapping:
+            return student_mapping.to_domain()
+        return None

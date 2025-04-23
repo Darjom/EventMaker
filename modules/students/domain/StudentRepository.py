@@ -20,3 +20,7 @@ class StudentRepository(ABC):
     @abstractmethod
     def find_by_id(self, id: int) -> Student:
         pass
+
+    @abstractmethod
+    def find_by_ci(self, ci: str) -> Student:
+        pass

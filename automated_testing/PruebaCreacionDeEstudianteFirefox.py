@@ -6,14 +6,10 @@ from datetime import datetime
 fecha = datetime(2025, 5, 20)
 fecha_str = fecha.strftime("%Y-%m-%d")
 def initialize_driver():
-    gecko_path = "E:/Usuarios/INTELPC/Documents/GitHub/EventMaker/test/geckodriver.exe"
+    gecko_path = "E:/Usuarios/INTELPC/Documents/GitHub/EventMaker/automated_testing/geckodriver.exe"
     service = Service(executable_path=gecko_path)
     driver = webdriver.Firefox(service=service)
     return driver
-
-def click_InicioSesion():
-    
-    return 0
 
 def main():
     driver = initialize_driver()
@@ -47,7 +43,7 @@ def main():
     Colegio.send_keys("1")
     Departamento.send_keys("La Paz")
     Provincia.send_keys("Murillo")
-    Correo.send_keys("jjissopusauffe-5213@yopmail.com")
+    Correo.send_keys("jjfjissopusauffe-5213@yopmail.com")
     password.send_keys("6zU43U%#tiv}")
     confirm_password.send_keys("6zU43U%#tiv}")
     checkbox.click()

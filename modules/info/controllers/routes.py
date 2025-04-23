@@ -28,5 +28,6 @@ def Mi_Informacion():
     return render_template(
         "info/Mi_Informacion.html",
         user=user,
-        permisos=permisos
+        permisos=permisos,
+        role=role
     )
