@@ -9,7 +9,7 @@ class ListStudentsUnderTutor:
     def __init__(self, repository: StudentRepository):
         self.__repository = repository
 
-    def execute(self, students_ids: List[int])-> StudentsDTO:
+    def execute(self, students_ids: List[int]) -> StudentsDTO:
 
         students = self.__repository.find_students_by_list_id(students_ids)
         return StudentsDTO.from_domain_list(students)
