@@ -18,6 +18,8 @@ from modules.students.infrastructure.persistence.StudentMapping import StudentMa
 from modules.schools.infrastructure.persistence.SchoolMapping import SchoolMapping
 from modules.inscriptions.infrastructure.persistence.InscriptionMapping import InscriptionMapping
 from modules.tutors.infrastructure.persistence.TieneACargoMapping import TieneAcargoMapping
+from modules.delegations.infrastructure.persistence.DelegationMapping import DelegationMapping
+from modules.delegations.infrastructure.persistence.DelegationTutorMapping import DelegationTutorMapping
 import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp

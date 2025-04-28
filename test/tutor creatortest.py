@@ -10,7 +10,7 @@ def test_create_and_get_tutor():
     tutor_dto = TutorDTO(
         first_name="Juan",
         last_name="Pérez",
-        email="jjshdhgfk@example.com",
+        email="jjquiquegfk@example.com",
         password="12345678",
         ci= "12345678 B",
         expedito_ci= "CBBA",

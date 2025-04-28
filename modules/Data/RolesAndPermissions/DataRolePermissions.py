@@ -51,4 +51,10 @@ ROLE_PERMISSIONS = {
         "inscription:create", "inscription:read", "inscription:delete",
         "student:create", "student:read", "student:update", "student:delete",
     ],
+    "master": [
+
+        ],
+    "colaborador": [
+
+        ],
 }
