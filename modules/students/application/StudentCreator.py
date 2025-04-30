@@ -17,8 +17,11 @@ class StudentCreator:
         """
         # Verificar si el estudiante ya existe
         existing_student = self.student_repository.find_by_email(student_dto.email)
+        estudiante_existente = self.student_repository.find_by_ci(student_dto.ci)
         if existing_student:
             raise ValueError("Student with this email already exists")
+        elif estudiante_existente:
+            raise ValueError("Estudiante con este CI ya existe")
 
         # Convertir DTO a dominio
         student = student_dto.to_domain()

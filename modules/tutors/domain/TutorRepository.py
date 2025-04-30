@@ -22,13 +22,5 @@ class TutorRepository(ABC):
         pass
 
     @abstractmethod
-    def assign_tutorship(self, student_id: int, tutor_id: int):
-        pass
-
-    @abstractmethod
-    def update(self, tutor: Tutor) -> Tutor:
-        pass
-
-    @abstractmethod
-    def find_students(self, tutor_id: int) -> List[int]:
+    def find_by_ci(self, ci: int) -> Tutor:
         pass

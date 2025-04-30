@@ -3,7 +3,6 @@ from typing import List
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
 from modules.tutors.domain.Tutor import Tutor
 from modules.tutors.domain.TutorRepository import TutorRepository
-from modules.tutors.infrastructure.persistence.TieneACargoMapping import TieneAcargoMapping
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from shared.extensions import db
 
@@ -38,48 +37,12 @@ class PostgresTutorRepository(TutorRepository):
 
     def find_by_id(self, id: int):
         tutor_mapping = db.session.query(UserMapping).filter_by(id=id).first()
-        print("✅ Roles del tutor:", tutor_mapping.roles[0].id)
         if tutor_mapping:
             return tutor_mapping.to_domain()
         return None
-
-    def assign_tutorship(self, student_id: int, tutor_id: int):
-
-        existing_relationship = TieneAcargoMapping.query.filter_by(student_id=student_id, tutor_id=tutor_id).first()
-        if existing_relationship:
-            print("The relationship already exists.")
-            return False
-
-        # Create the new relationship
-        new_relationship = TieneAcargoMapping(student_id=student_id, tutor_id=tutor_id)
-        db.session.add(new_relationship)
-        db.session.commit()
-        print("Relationship successfully added.")
-        return True
-
-    def update(self, tutor: Tutor) -> Tutor:
-        tutor_mapping = db.session.query(UserMapping).filter_by(id=tutor.id).first()
-        if not tutor_mapping:
-            raise ValueError("Tutor not found")
-
-        # Actualizar los campos manualmente
-        tutor_mapping.first_name = tutor.first_name
-        tutor_mapping.last_name = tutor.last_name
-        tutor_mapping.email = tutor.email
-        tutor_mapping.password = tutor.password
-        tutor_mapping.active = tutor.active
-        tutor_mapping.confirmed_at = tutor.confirmed_at
-        tutor_mapping.fs_uniquifier = tutor.fs_uniquifier
-        tutor_mapping.ci = tutor.ci
-        tutor_mapping.expedito_ci = tutor.expedito_ci
-        tutor_mapping.fecha_nacimiento = tutor.fecha_nacimiento
-
-        db.session.commit()
-        return tutor_mapping.to_domain()
-
-    def find_students(self, tutor_id: int) -> List[int]:
-        students = db.session.query(TieneAcargoMapping).filter_by(tutor_id=tutor_id).all()
-        students_ids = []
-        for student in students:
-            students_ids.append(student.student_id)
-        return students_ids
+    
+    def find_by_ci(self, ci: int):
+        tutor_mapping = db.session.query(UserMapping).filter_by(ci=ci).first()
+        if tutor_mapping:
+            return tutor_mapping.to_domain()
+        return None

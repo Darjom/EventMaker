@@ -1,3 +1,9 @@
+# En test/user_create.py
+import sys
+import os
+
+# Añade el directorio raíz al path de Python
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from datetime import datetime
 from app import app
 from modules.tutors.application.TutorCreator import TutorCreator

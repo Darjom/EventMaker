@@ -40,28 +40,9 @@ class PostgresStudentRepository(StudentRepository):
         if student_mapping:
             return student_mapping.to_domain()
         return None
-
-    def update(self, student: Student) -> Student:
-        student_mapping = db.session.query(StudentMapping).filter_by(id=student.id).first()
-        if not student_mapping:
-            raise ValueError("Estudiante no encontrado")
-
-        # Actualizar los campos manualmente
-        student_mapping.first_name = student.first_name
-        student_mapping.last_name = student.last_name
-        student_mapping.email = student.email
-        student_mapping.ci = student.ci
-        student_mapping.expedito_ci = student.expedito_ci
-        student_mapping.fecha_nacimiento = student.fecha_nacimiento
-        student_mapping.phone_number = student.phone_number
-        student_mapping.course = student.course
-        student_mapping.department = student.department
-        student_mapping.province = student.province
-        student_mapping.school_id = student.school_id
-
-        db.session.commit()
-        return student_mapping.to_domain()
-
-    def find_students_by_list_id(self, list_id: List[int]) -> list[Student]:
-        students_db = db.session.query(StudentMapping).filter(StudentMapping.id.in_(list_id)).all()
-        return [student.to_domain() for student in students_db]
+    
+    def find_by_ci(self, ci: str) -> Student:
+        student_mapping = db.session.query(StudentMapping).filter_by(ci=ci).first()
+        if student_mapping:
+            return student_mapping.to_domain()
+        return None

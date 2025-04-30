@@ -24,6 +24,7 @@ import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp
 from modules.user.controllers.routes import users_bp
+from modules.info.controllers.routes import info_bp
 from modules.students.controllers.routes import estudiantes_bp
 from modules.tutors.controllers.routes import tutores_bp
 from modules.categories.controllers.routes import categorias_bp
@@ -53,6 +54,8 @@ def create_app():
     app.register_blueprint(tutores_bp, url_prefix="/tutores")
     app.register_blueprint(categorias_bp, url_prefix="/categorias")
     app.register_blueprint(inscripciones_bp, url_prefix="/inscripciones")
+
+    app.register_blueprint(info_bp)
 
     return app
 
