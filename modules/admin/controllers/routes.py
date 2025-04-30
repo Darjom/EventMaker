@@ -74,5 +74,3 @@ def convocatorias_disponibles():
     eventos_dto = finder.execute()
 
     return render_template("admin/convocatorias_disponibles.html", eventos=eventos_dto.eventos, user=user, permisos=permisos)
-
-
