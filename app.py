@@ -20,6 +20,7 @@ from modules.inscriptions.infrastructure.persistence.InscriptionMapping import I
 from modules.tutors.infrastructure.persistence.TieneACargoMapping import TieneAcargoMapping
 from modules.delegations.infrastructure.persistence.DelegationMapping import DelegationMapping
 from modules.delegations.infrastructure.persistence.DelegationTutorMapping import DelegationTutorMapping
+from modules.groups.infrastructure.persistence.GroupMapping import GroupMapping
 import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp

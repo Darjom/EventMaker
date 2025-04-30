@@ -3,6 +3,8 @@ from ..domain.DelegationRepository import DelegationRepository
 from ..domain.Delegation import Delegation
 from .persistence.DelegationMapping import DelegationMapping
 from shared.extensions import db
+from ...user.infrastructure.persistence.UserMapping import UserMapping
+
 
 class PostgresDelegationRepository(DelegationRepository):
     def save(self, delegation: Delegation) -> Delegation:
@@ -28,3 +30,20 @@ class PostgresDelegationRepository(DelegationRepository):
             DelegationMapping.id_delegacion.in_(delegation_ids)
         ).all()
         return [d.to_domain() for d in delegations]
+
+    def assign_student_to_delegation(self, delegation_id: int, student_id: int) -> bool:
+        delegation = DelegationMapping.query.filter_by(id_delegacion=delegation_id).first()
+        if not delegation:
+            raise ValueError(f"Delegation with ID {delegation_id} not found.")
+
+
+        student = UserMapping.query.filter_by(id=student_id).first()
+        if not student:
+            raise ValueError(f"Student with ID {student_id} not found.")
+
+        if student in delegation.estudiantes:
+            return False  # Ya está asociado
+
+        delegation.estudiantes.append(student)
+        db.session.commit()
+        return True  # Se agregó exitosamente
