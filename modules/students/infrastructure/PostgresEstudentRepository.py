@@ -61,3 +61,7 @@ class PostgresStudentRepository(StudentRepository):
 
         db.session.commit()
         return student_mapping.to_domain()
+
+    def find_students_by_list_id(self, list_id: List[int]) -> list[Student]:
+        students_db = db.session.query(StudentMapping).filter(StudentMapping.id.in_(list_id)).all()
+        return [student.to_domain() for student in students_db]

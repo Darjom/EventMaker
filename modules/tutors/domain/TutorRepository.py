@@ -28,3 +28,7 @@ class TutorRepository(ABC):
     @abstractmethod
     def update(self, tutor: Tutor) -> Tutor:
         pass
+
+    @abstractmethod
+    def find_students(self, tutor_id: int) -> List[int]:
+        pass

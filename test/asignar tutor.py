@@ -5,8 +5,8 @@ from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorR
 
 def test_assign_tutor_to_student():
     # Test data — asegúrate de que estos IDs existan en tu DB
-    student_id = 6
-    tutor_id = 3
+    student_id = 5
+    tutor_id = 1
 
     # Initialize the repository
     tutor_repository = PostgresTutorRepository()

@@ -14,13 +14,15 @@ def test_create_event():
         descripcion_evento="Un evento sobre las últimas tendencias tecnológicas.",
         inicio_evento=datetime(2025, 5, 20, 9, 0, 0),
         fin_evento=datetime(2025, 5, 20, 18, 0, 0),
+        inicio_inscripcion=datetime(2025, 5, 1, 0, 0, 0),  # <-- Agregado
+        fin_inscripcion=datetime(2025, 5, 15, 23, 59, 59),  # <-- Agregado
         capacidad_evento=0,
         inscripcion="Gratis",
         requisitos="Registro previo",
         ubicacion="Centro de Convenciones",
         slogan="Innovación sin límites",
-        afiche="/ruta/prueba/imagen.png",  # No se incluye imagen en este test
-        creador_id=[1]  # Suponiendo que existe un usuario con ID 1
+        afiche="/ruta/prueba/imagen.png",
+        creador_id=[1]
     )
 
     repository = PostgresEventsRepository()
