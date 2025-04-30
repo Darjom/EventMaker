@@ -58,6 +58,13 @@
       </div>
     {% endif %}
 
+    {% if 'tutor' in roles_usuario %}
+    <div class="text-center">
+      <a href="{{ url_for('delegaciones_bp.crear_delegacion', event_id=evento.id_evento) }}" class="btn btn-outline-primary btn-sm">Crear delegación</a>
+    </div>
+    {% endif %}
+
+
 
     {% if areas and areas|length > 0 %}
     <div class="ver-evento-section mt-5">

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Crear Delegación{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <h2 class="text-center mb-4"><span class="text-primary">Crear</span> <span class="text-danger">delegación</span></h2>
+
+  <p class="text-muted"><strong>Convocatoria:</strong> {{ evento.nombre_evento }}</p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST" class="p-4 border rounded" style="border-color: red;">
+    <h5 class="text-primary">{{ evento.nombre_evento }}</h5>
+
+    <!-- Campo: Nombre de la delegación -->
+    <div class="mb-3">
+      <label for="nombre" class="form-label">Nombre delegación</label>
+      <input type="text" name="nombre" class="form-control" placeholder="Nombre delegación" required>
+    </div>
+
+    <!-- Campo: Código de la delegación -->
+    <div class="mb-3">
+      <label for="codigo" class="form-label">Código de delegación</label>
+      <input type="text" name="codigo" class="form-control" placeholder="Ej. DEL-2024" required>
+    </div>
+
+    <!-- Campo: Tutor asignado -->
+    <div class="mb-3">
+      <label class="form-label">Nombre tutor designado</label>
+      <input type="text" class="form-control" value="{{ user.first_name }} {{ user.last_name }}" disabled>
+    </div>
+
+    <!-- Campo: Correo del responsable -->
+    <div class="mb-3">
+      <label class="form-label">Correo de responsable</label>
+      <input type="email" class="form-control" value="{{ user.email }}" disabled>
+    </div>
+
+    <!-- Checkbox: Términos -->
+    <div class="form-check mb-4">
+      <input class="form-check-input" type="checkbox" required>
+      <label class="form-check-label text-primary">Acepto los términos y condiciones</label>
+    </div>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-center gap-3">
+      <button type="submit" class="btn btn-primary">Crear delegación</button>
+      <a href="{{ url_for('eventos_bp.ver_evento', event_id=evento.id_evento) }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
