@@ -38,3 +38,35 @@ class PostgresGroupRepository(GroupRepository):
         if tutor not in group.tutores:
             group.tutores.append(tutor)
             db.session.commit()
+
+    def remove_tutor_from_group(self, group_id: int, tutor_id: int) -> bool:
+        """Removes a tutor from an existing group
+
+        Returns:
+            True if the tutor was removed.
+            False if the tutor was not found in the group or if group/tutor doesn't exist.
+        """
+        from .persistence.GroupMapping import GroupMapping
+        from modules.user.infrastructure.persistence.UserMapping import UserMapping
+
+        group = GroupMapping.query.get(group_id)
+        tutor = UserMapping.query.get(tutor_id)
+
+        if not group or not tutor:
+            return False  # Either the group or tutor does not exist
+
+        if tutor in group.tutores:
+            group.tutores.remove(tutor)
+            db.session.commit()
+            return True  # Tutor successfully removed
+
+        return False  # Tutor was not assigned to the group
+
+    def get_groups_by_tutor_id(self, tutor_id: int) -> List[Group]:
+        grupos = (
+            db.session.query(GroupMapping)
+            .join(GroupMapping.tutores)
+            .filter_by(id=tutor_id)
+            .all()
+        )
+        return [grupo.to_domain() for grupo in grupos]

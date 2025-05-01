@@ -24,3 +24,7 @@ class StudentRepository(ABC):
     @abstractmethod
     def find_by_ci(self, ci: str) -> Student:
         pass
+
+    @abstractmethod
+    def find_students_by_list_id(self, list_id: List[int]) -> list[Student]:
+        pass

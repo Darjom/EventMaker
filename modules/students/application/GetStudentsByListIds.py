@@ -4,7 +4,7 @@ from modules.students.application.dtos.StudentsDTO import StudentsDTO
 from modules.students.domain.StudentRepository import StudentRepository
 
 
-class ListStudentsUnderTutor:
+class GetStudentsByListIds:
 
     def __init__(self, repository: StudentRepository):
         self.__repository = repository

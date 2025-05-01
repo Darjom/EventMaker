@@ -1,22 +1,26 @@
 from app import app
+from modules.delegations.application.GetStudentIdsByDelegation import GetStudentIdsByDelegation
+from modules.delegations.infrastructure.PostgresDelegationRepository import PostgresDelegationRepository
+from modules.students.application.GetStudentsByListIds import GetStudentsByListIds
+
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
 
 from modules.tutors.application.GetStudentsUnderTutorship import GetStudentsUnderTutorship
-from modules.students.application.ListStudentsUnderTutor import ListStudentsUnderTutor
 
-def test_list_students_under_tutor(tutor_id: int):
+
+def test_list_students_by_delegacion(delegacion_id: int):
     # Repositorios
-    tutor_repository = PostgresTutorRepository()
+    delegacion_repository = PostgresDelegationRepository()
     student_repository = PostgresStudentRepository()
 
     # Servicios
-    get_students_service = GetStudentsUnderTutorship(tutor_repository)
-    list_students_service = ListStudentsUnderTutor(student_repository)
+    get_students_service =GetStudentIdsByDelegation(delegacion_repository)
+    list_students_service =GetStudentsByListIds(student_repository)
 
     # Paso 1: Obtener lista de IDs de estudiantes bajo tutoría
-    student_ids = get_students_service.execute(tutor_id)
-    print(f"\nEstudiantes asignados al tutor con ID {tutor_id}:")
+    student_ids = get_students_service.execute(delegation_id=delegacion_id)
+    print(f"\nEstudiantes asignados a la delegacion con ID {delegacion_id}:")
     print(student_ids)
 
     # Paso 2: Obtener información detallada de cada estudiante
@@ -36,5 +40,5 @@ def test_list_students_under_tutor(tutor_id: int):
 if __name__ == "__main__":
     with app.app_context():
         print("=== Prueba: estudiantes bajo tutoría ===")
-        tutor_id = 1  # Cambia esto por el ID que desees probar
-        test_list_students_under_tutor(tutor_id)
+        delegacion = 1  # Cambia esto por el ID que desees probar
+        test_list_students_by_delegacion(delegacion_id = delegacion)

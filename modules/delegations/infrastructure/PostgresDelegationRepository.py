@@ -1,7 +1,7 @@
 from typing import Optional, List
 from ..domain.DelegationRepository import DelegationRepository
 from ..domain.Delegation import Delegation
-from .persistence.DelegationMapping import DelegationMapping
+from .persistence.DelegationMapping import DelegationMapping, delegacion_estudiante
 from shared.extensions import db
 from ...user.infrastructure.persistence.UserMapping import UserMapping
 
@@ -47,3 +47,11 @@ class PostgresDelegationRepository(DelegationRepository):
         delegation.estudiantes.append(student)
         db.session.commit()
         return True  # Se agregó exitosamente
+
+    def get_student_ids_by_delegation_id(self, delegation_id: int) -> list[int]:
+        result = db.session.execute(
+            db.select(delegacion_estudiante.c.id_estudiante).where(
+                delegacion_estudiante.c.id_delegacion == delegation_id
+            )
+        )
+        return [row[0] for row in result]
