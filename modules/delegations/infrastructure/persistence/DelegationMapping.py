@@ -3,6 +3,13 @@ from shared.extensions import db
 
 
 
+delegacion_estudiante = db.Table(
+    'delegacion_estudiante',
+    db.Column('id_delegacion', db.Integer, db.ForeignKey('delegacion.id_delegacion'), primary_key=True),
+    db.Column('id_estudiante', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
+
+
 class DelegationMapping(db.Model):
     __tablename__ = "delegacion"
 
@@ -12,6 +19,14 @@ class DelegationMapping(db.Model):
     codigo = db.Column(db.String(50), unique=True)
 
     evento = db.relationship('EventMapping', backref='delegacion')
+
+    # Relación muchos-a-muchos con Tutores
+    estudiantes = db.relationship(
+        'UserMapping',
+        secondary=delegacion_estudiante,
+        backref=db.backref('estudiantes_asignados', lazy='dynamic'),
+        lazy='dynamic'  # Para queries eficientes
+    )
 
     def to_domain(self):
         return Delegation(

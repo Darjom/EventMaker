@@ -25,12 +25,12 @@ class TutorCreator:
         tutor.confirmed_at = datetime.now()
         tutor.password =generate_password_hash(tutor.password)
         if not tutor.roles:
-            tutor.roles = [5] # id de rol tutor
+            tutor.roles = [4] # id de rol tutor
 
 
         # Guardar tutor
         tutor = self.tutor_repository.save(tutor)
-        self.tutor_repository.add_roles_to_user(tutor.id ,[3])
+        self.tutor_repository.add_roles_to_user(tutor.id ,[4])
 
         # Retornar el DTO actualizado
         return TutorDTO.from_domain(tutor)
