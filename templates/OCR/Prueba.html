@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Validación OCR{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+  
+  <div class="main-content flex-grow-1 p-4">
+    <h1 class="mb-4">Procesamiento de Papeletas</h1>
+
+    <!-- Formulario -->
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Seleccionar papeleta:</label>
+            <input 
+              type="file" 
+              class="form-control" 
+              name="file"
+              accept="image/*" 
+              required
+            >
+            <div class="form-text">Formatos soportados: PNG, JPG, JPEG</div>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search me-2"></i>Procesar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    {% if preview_numero or preview_nombre or error %}
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Datos Extraídos</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <!-- Número -->
+          <div class="col-md-6 mb-4">
+            {% if preview_numero %}
+            <div class="mb-3">
+              <h6>Número de papeleta:</h6>
+              <img src="{{ preview_numero }}" class="img-thumbnail" style="max-width: 300px">
+              {% if texto_numero %}
+              <div class="alert alert-info mt-2">
+                Número detectado: <strong>{{ texto_numero }}</strong>
+              </div>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Nombre -->
+          <div class="col-md-6 mb-4">
+            {% if preview_nombre %}
+            <div class="mb-3">
+              <h6>Nombre del titular:</h6>
+              <img src="{{ preview_nombre }}" class="img-thumbnail" style="max-width: 300px">
+              {% if texto_nombre %}
+              <div class="alert alert-info mt-2">
+                Nombre detectado: <strong>{{ texto_nombre }}</strong>
+              </div>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-6 mb-4">
+            {% if preview_monto %}
+            <div class="mb-3">
+              <h6>Monto abonado:</h6>
+              <img src="{{ preview_monto }}" class="img-thumbnail" style="max-width: 300px">
+              {% if texto_monto %}
+              <div class="alert alert-info mt-2">
+                Monto detectado: <strong>{{ texto_monto }}</strong>
+              </div>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger">
+          <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.main-content {
+  margin-left: 280px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+.img-thumbnail {
+  border: 2px solid #dee2e6;
+  border-radius: 4px;
+  padding: 4px;
+}
+</style>
+{% endblock %}

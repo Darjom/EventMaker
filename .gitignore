@@ -20,3 +20,6 @@ test/geckodriver.exe
 geckodriver.log
 .env
 /automated_testing
+/automated_testing
+automated_testing/PruebaCreacionDeEstudianteFirefox.py
+automated_testing/PruebaInicioSesionFirefox.py

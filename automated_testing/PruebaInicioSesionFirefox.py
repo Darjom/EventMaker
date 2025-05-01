@@ -5,14 +5,10 @@ from selenium.webdriver.firefox.service import Service
 import time 
 
 def initialize_driver():
-    gecko_path = "E:/Usuarios/INTELPC/Documents/GitHub/EventMaker/test/geckodriver.exe"
+    gecko_path = "E:/Usuarios/INTELPC/Documents/GitHub/EventMaker/automated_testing/geckodriver.exe"
     service = Service(executable_path=gecko_path)
     driver = webdriver.Firefox(service=service)
     return driver
-
-def click_InicioSesion():
-    
-    return 0
 
 def main():
     driver = initialize_driver()
