@@ -2,39 +2,62 @@
 {% block title %}Mis Delegaciones{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="text-primary fw-bold text-center">Mis Delegaciones</h2>
+{% include 'shared/admin_header.html' %}
 
-  {% for d in delegaciones %}
-    <div class="mt-4">
-      <h5 class="text-primary">{{ d.nombre }}</h5>
-      <p><strong>Responsable:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
 
-      <table class="table table-bordered">
-        <thead class="table-light">
-          <tr>
-            <th>Estudiantes</th>
-            <th>Documento de identidad</th>
-            <th>Areas</th>
-            <th>Categorías</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for estudiante in d.estudiantes %}
-            <tr>
-              <td>{{ estudiante.nombre }} {{ estudiante.apellido }}</td>
-              <td>{{ estudiante.ci }}</td>
-              <td>{{ estudiante.area }}</td>
-              <td>{{ estudiante.categoria }}</td>
-            </tr>
+  <div class="form-area-container container mt-4">
+    <h1 class="text-center azul-umss mb-4">Mis <span class="text-danger">Delegaciones</span></h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
           {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
-  {% if delegaciones|length == 0 %}
-    <div class="alert alert-info mt-4">No tienes delegaciones registradas.</div>
-  {% endif %}
+    {% if delegaciones %}
+      <ul class="list-unstyled">
+        {% for d in delegaciones %}
+          <li class="p-4 rounded mb-4 {% if loop.index0 is odd %}bg-light{% endif %}">
+            <h4 class="text-primary">{{ d.nombre }}</h4>
+            <p><strong>Responsable:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+
+            <div class="table-responsive">
+              <table class="table table-bordered mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Estudiantes</th>
+                    <th>Documento de identidad</th>
+                    <th>Áreas</th>
+                    <th>Categorías</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for estudiante in d.estudiantes %}
+                    <tr>
+                      <td>{{ estudiante.nombre }} {{ estudiante.apellido }}</td>
+                      <td>{{ estudiante.ci }}</td>
+                      <td>{{ estudiante.area }}</td>
+                      <td>{{ estudiante.categoria }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="alert alert-info text-center mt-4">No tienes delegaciones registradas.</div>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
