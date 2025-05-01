@@ -8,7 +8,11 @@
   {% include 'admin/_sidebar.html' %}
 
   <div class="form-area-container container mt-4">
-    <h1 class="text-center azul-umss mb-4">Mis <span class="text-danger">Delegaciones</span></h1>
+     <h1 class="text-center">
+      <span class="text-secondary">Bienvenido</span>
+      <span class="text-primary">{{user.first_name}}</span>
+    </h1>
+    <h1 class="text-secondary">Mis Delegaciones</h1>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}

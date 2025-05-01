@@ -3,58 +3,70 @@
 
 {% block content %}
 {% include 'shared/admin_header.html' %}
-<div class="container my-5">
+
+<div class="container-fluid d-flex">
   {% include 'admin/_sidebar.html' %}
-  <h2 class="text-center mb-4"><span class="text-primary">Crear</span> <span class="text-danger">delegación</span></h2>
 
-  <p class="text-muted"><strong>Convocatoria:</strong> {{ evento.nombre_evento }}</p>
+  <div class="form-area-container container mt-4">
+    <h1 class="text-center mb-5">
+      <span class="text-primary">Crear</span>
+      <span class="text-danger">delegación</span>
+    </h1>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{ 'danger' if category == 'error' else category }}">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+    <p class="text-muted"><strong>Convocatoria:</strong> {{ evento.nombre_evento }}</p>
 
-  <form method="POST" class="p-4 border rounded" style="border-color: red;">
-    <h5 class="text-primary">{{ evento.nombre_evento }}</h5>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
-    <!-- Campo: Nombre de la delegación -->
-    <div class="mb-3">
-      <label for="nombre" class="form-label">Nombre delegación</label>
-      <input type="text" name="nombre" class="form-control" placeholder="Nombre delegación" required>
-    </div>
+    <form method="POST" class="p-4 border rounded" style="border-color: red;">
+      <div class="row">
+        <!-- Parte izquierda -->
+        <div class="col-md-6">
+          <div class="mb-4">
+            <label for="nombre" class="form-label fw-bold">Nombre delegación</label>
+            <input type="text" name="nombre" class="form-control" placeholder="Nombre delegación" required>
+          </div>
 
-    <!-- Campo: Código de la delegación -->
-    <div class="mb-3">
-      <label for="codigo" class="form-label">Código de delegación</label>
-      <input type="text" name="codigo" class="form-control" placeholder="Ej. DEL-2024" required>
-    </div>
+          <div class="mb-4">
+            <label for="codigo" class="form-label fw-bold">Código de delegación</label>
+            <input type="text" name="codigo" class="form-control" placeholder="Ej. DEL-2024" required>
+          </div>
+        </div>
 
-    <!-- Campo: Tutor asignado -->
-    <div class="mb-3">
-      <label class="form-label">Nombre tutor designado</label>
-      <input type="text" class="form-control" value="{{ user.first_name }} {{ user.last_name }}" disabled>
-    </div>
+        <!-- Parte derecha -->
+        <div class="col-md-6">
+          <div class="mb-4">
+            <label class="form-label fw-bold">Nombre tutor designado</label>
+            <input type="text" class="form-control" value="{{ user.first_name }} {{ user.last_name }}" disabled>
+          </div>
 
-    <!-- Campo: Correo del responsable -->
-    <div class="mb-3">
-      <label class="form-label">Correo de responsable</label>
-      <input type="email" class="form-control" value="{{ user.email }}" disabled>
-    </div>
+          <div class="mb-4">
+            <label class="form-label fw-bold">Correo de responsable</label>
+            <input type="email" class="form-control" value="{{ user.email }}" disabled>
+          </div>
+        </div>
+      </div>
 
-    <!-- Checkbox: Términos -->
-    <div class="form-check mb-4">
-      <input class="form-check-input" type="checkbox" required>
-      <label class="form-check-label text-primary">Acepto los términos y condiciones</label>
-    </div>
+      <div class="text-center mt-4 text-primary">
+        <input type="checkbox" id="terminos" class="form-check-input me-2" required>
+        <label for="terminos" class="form-check-label">Acepto los términos y condiciones</label>
+      </div>
 
-    <!-- Botones -->
-    <div class="d-flex justify-content-center gap-3">
-      <button type="submit" class="btn btn-primary">Crear delegación</button>
-      <a href="{{ url_for('eventos_bp.ver_evento', event_id=evento.id_evento) }}" class="btn btn-secondary">Cancelar</a>
-    </div>
-  </form>
+      <div class="text-center mt-4 mb-5">
+        <button type="submit" class="btn btn-primary me-3">Crear delegación</button>
+        <a href="{{ url_for('eventos_bp.ver_evento', event_id=evento.id_evento) }}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}
