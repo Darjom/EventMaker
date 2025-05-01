@@ -17,6 +17,10 @@ class PostgresDelegationRepository(DelegationRepository):
         delegation_mapping = DelegationMapping.query.filter_by(nombre=name).first()
         return delegation_mapping.to_domain() if delegation_mapping else None
 
+    def find_by_delegation_id(self, delgation_id: int) -> Optional[Delegation]:
+        delegation_mapping = DelegationMapping.query.filter_by( id_delegacion=delgation_id).first()
+        return delegation_mapping.to_domain() if delegation_mapping else None
+
     def find_by_event_id(self, event_id: int) -> List[Delegation]:
         delegations = DelegationMapping.query.filter_by(evento_id=event_id).all()
         return [d.to_domain() for d in delegations]
