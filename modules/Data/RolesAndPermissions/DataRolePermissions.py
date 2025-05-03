@@ -28,6 +28,17 @@ ALL_PERMISSIONS = {
     "student:read":     "Ver estudiantes",
     "student:update":   "Editar información estudiante",
     "student:delete":   "Eliminar estudiante",
+    # Permisos para gestionar delegaciones
+    "delegation:addStudent": " Agregar estudiante a delegacion",
+    "delegation:addTutor": " Agregar tutor a delegacion",
+    "delegation:generateTicket": "Generar boleta de pago",
+    "delegation:uploadProofOfPayment": "Subir  comprobante de pago",
+
+    # Permisos para gestionar Grupos
+    "group:create":    "Crear grupos para delegacion",
+    "group:delete":    "Eliminar grupos de delegacion",
+    "group:update":    "Modificar grupos de delgacion"
+
 }
 
 # 2) Mapeo de qué permisos tiene cada rol
@@ -52,7 +63,8 @@ ROLE_PERMISSIONS = {
         "student:create", "student:read", "student:update", "student:delete",
     ],
     "master": [
-
+        "delegation:addStudent", "delegation:addTutor", "delegation:generateTicket", "delegation:uploadProofOfPayment",
+        "group:create", "group:delete", "group:update",
         ],
     "colaborador": [
 
