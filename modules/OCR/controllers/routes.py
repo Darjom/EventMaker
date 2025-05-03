@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, redirect, url_for, session, request, url_for
 import os
 import pytesseract
-from PIL import Image, ImageOps,ImageEnhance
+from PIL import Image, ImageOps
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
@@ -11,115 +11,107 @@ from io import BytesIO
 import numpy as np
 import cv2
 
+
 ocr_bp = Blueprint("ocr_bp", __name__)
 
 # Configurar la ruta de Tesseract si es necesario
 # pytesseract.pytesseract.tesseract_cmd = r'RUTA_A_TESSERACT'
 
-def RecortarNumero(pil_img: Image.Image) -> Image.Image:
+# Leer imagen
+
+def recortarYRescalarImagen(img):
+# 1. Redimensionamiento inicial
+    resized = cv2.resize(img, (1920, 1080), interpolation=cv2.INTER_LANCZOS4)
+    
+    # 2. Preprocesamiento para detección de bordes
+    gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blur, 50, 150)
+    
+    # 3. Detección de contornos
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # 4. Parámetros de recorte
+    img_height, img_width = resized.shape[:2]
+    x, y, w, h = 0, 0, img_width, img_height  # Valores por defecto
+    
+    if contours:
+        # Buscar el contorno más significativo
+        main_contour = max(contours, key=cv2.contourArea)
+        x, y, w, h = cv2.boundingRect(main_contour)
+        
+        # Validación de bordes con tolerancia
+        tolerancia = 10
+        bordes_tocados = (
+            x <= tolerancia or
+            y <= tolerancia or
+            (x + w) >= (img_width - tolerancia) or
+            (y + h) >= (img_height - tolerancia)
+        )
+        
+        if bordes_tocados:
+            print("Advertencia: Contorno en bordes - Usando imagen completa")
+            x, y, w, h = 0, 0, img_width, img_height
+    
+    # 5. Operación de recorte
+    cropped = resized[y:y+h, x:x+w]
+    
+    # 6. Redimensionado final
+    return cv2.resize(cropped, (1920, 1080), interpolation=cv2.INTER_LANCZOS4)
+
+def grisado(img):
+    gris = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return gris
+
+def rescalado(img):
+    factor_escala=3
+    rescalado=cv2.resize(img,
+                   None,
+                   fx=factor_escala,
+                   fy=factor_escala,
+                   interpolation=cv2.INTER_CUBIC)
+    return rescalado
+
+def nitidizacion(img):
+    blurred = cv2.GaussianBlur(img, (0, 0), sigmaX=3)
+    nitido = cv2.addWeighted(img, 1.5, blurred, -0.5, 0)
+    return nitido
+
+def binarizacion(img):
+    _, binario = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    return binario
+
+def preprocesado(img):
+    gris=grisado(img)
+    rescala=rescalado(gris)
+    nitido=nitidizacion(rescala)
+    binario=binarizacion(nitido)
+    return binario
+
+def RecortarNumero(img):
     """Recorta el área del número de la papeleta"""
     try:
-        x1, y1, x2, y2 = 1080, 40, 1280, 95
-        return pil_img.crop((x1, y1, x2, y2))
+        img=img[0:100, 1550:1920]
+        return img
     except Exception as e:
         raise RuntimeError(f"Error recortando número: {str(e)}")
 
-def RecortarNombre(pil_img: Image.Image) -> Image.Image:
+def RecortarNombre(img):
     """Recorta el área del nombre en la papeleta"""
     try:
-        x1, y1, x2, y2 = 190, 440, 620, 480
-        return pil_img.crop((x1, y1, x2, y2))
+        img=img[510:560, 330:1060]
+        return img
     except Exception as e:
         raise RuntimeError(f"Error recortando nombre: {str(e)}")
-    
-def mejorar_calidad_nombre(img: Image.Image) -> Image.Image:
-    """Preprocesamiento específico para nombres"""
-    try:
-        # Aumentar resolución
-        img = img.resize((img.width * 3, img.height * 3), Image.LANCZOS)
-        
-        # Convertir a escala de grises
-        gray = img.convert("L")
-        
-        # Mejorar contraste
-        enhancer = ImageEnhance.Contrast(gray)
-        contrast_img = enhancer.enhance(3.0)
-        
-        # Reducción de ruido adaptativo
-        np_img = np.array(contrast_img)
-        denoised = cv2.fastNlMeansDenoising(np_img, h=15, templateWindowSize=7, searchWindowSize=21)
-        
-        # Umbralización adaptativa
-        threshold_img = cv2.adaptiveThreshold(
-            denoised, 255,
-            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-            cv2.THRESH_BINARY, 21, 8
-        )
-        
-        # Dilatación para unir caracteres rotos
-        kernel = np.ones((2, 1), np.uint8)  # Kernel vertical para mantener espacios
-        dilated = cv2.dilate(threshold_img, kernel, iterations=1)
-        
-        return Image.fromarray(dilated)
-    
-    except Exception as e:
-        raise RuntimeError(f"Error procesando nombre: {str(e)}")    
 
-def limpiar_trazas_nombre(img: Image.Image) -> Image.Image:
-    """Elimina trazas negras alrededor del texto"""
-    try:
-        # Convertir a array OpenCV
-        img_np = np.array(img.convert("RGB"))
-        
-        # 1. Convertir a escala de grises
-        gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
-        
-        # 2. Eliminar ruido con filtro bilateral
-        denoised = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
-        
-        # 3. Umbralización adaptativa para aislar texto
-        thresh = cv2.adaptiveThreshold(
-            denoised, 255,
-            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-            cv2.THRESH_BINARY_INV, 21, 12
-        )
-        
-        # 4. Operación morfológica para eliminar trazas pequeñas
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
-        cleaned = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
-        
-        # 5. Invertir para tener texto negro sobre fondo blanco
-        result = cv2.bitwise_not(cleaned)
-        
-        return Image.fromarray(result)
-    
-    except Exception as e:
-        raise RuntimeError(f"Error limpiando trazas: {str(e)}")
-    
-def RecortarMonto(pil_img: Image.Image) -> Image.Image:
+def RecortarMonto(img):
     """Recorta el área del nombre en la papeleta"""
     try:
-        x1, y1, x2, y2 = 1190,570,1275,600
-        return pil_img.crop((x1, y1, x2, y2))
+        img=img[630:690, 1750:1890]
+        return img
     except Exception as e:
         raise RuntimeError(f"Error recortando monto: {str(e)}")
-        
-def mejorar_calidad_monto(img: Image.Image) -> Image.Image:
-    """Optimiza la imagen del monto para OCR"""
-    try:
-        # Convertir a escala de grises
-        gray = img.convert("L")
-        
-        # Aumentar contraste
-        enhancer = ImageEnhance.Contrast(gray)
-        contrast_img = enhancer.enhance(3.0)
-        
-        # Umbralización agresiva
-        threshold_img = contrast_img.point(lambda x: 0 if x < 200 else 255)
-        
-        return threshold_img
-    except Exception as e:
-        raise RuntimeError(f"Error procesando monto: {str(e)}")
+
     
 @ocr_bp.route('/ocr', methods=['GET', 'POST'])
 def Prueba():
@@ -140,6 +132,9 @@ def Prueba():
     texto_numero = ""
     texto_nombre = ""
     texto_monto = ""
+    numero_path = None
+    nombre_path = None
+    monto_path = None
     role_service = RoleQueryService(PostgresRolesRepository())
 
     if request.method == 'POST':
@@ -150,13 +145,13 @@ def Prueba():
                 # Procesar imagen
                 img = Image.open(BytesIO(file.read()))
                 img = ImageOps.exif_transpose(img)
-                
-                # Recortar elementos
-                numero_img = RecortarNumero(img)
-                nombre_img = RecortarNombre(img)
-                nombre_procesado = mejorar_calidad_nombre(nombre_img)
-                monto_img = RecortarMonto(img)
-                monto_procesado = mejorar_calidad_monto(monto_img)
+                img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+                img = recortarYRescalarImagen(img_cv)
+            
+            # Convertir resultado de OpenCV a PIL Image para los recortes
+                numero=RecortarNumero(img)
+                nombre=RecortarNombre(img)
+                monto=RecortarMonto(img)
                 # Guardar previews
                 upload_dir = os.path.join('static', 'uploads')
                 os.makedirs(upload_dir, exist_ok=True)
@@ -167,31 +162,32 @@ def Prueba():
                 nombre_path = os.path.join(upload_dir, f"nombre_{unique_id}.jpg")
                 monto_path = os.path.join(upload_dir, f"monto_{unique_id}.jpg")
 
-                numero_img.save(numero_path)
-                nombre_procesado.save(nombre_path)
-                monto_procesado.save(monto_path)
+                cv2.imwrite(numero_path, numero)
+                cv2.imwrite(nombre_path, nombre)
+                cv2.imwrite(monto_path, monto)
 
                 
                 # Configurar URLs
                 preview_numero = url_for('static', filename=f'uploads/numero_{unique_id}.jpg')
                 preview_nombre = url_for('static', filename=f'uploads/nombre_{unique_id}.jpg')
                 preview_monto = url_for('static', filename=f'uploads/monto_{unique_id}.jpg')
+                cv2.imwrite("debug_numero_preprocesado.jpg", preprocesado(numero))
                 
                 # Extraer texto
                 texto_numero = pytesseract.image_to_string(
-                    numero_img,
+                    preprocesado(numero),
                     lang='spa',
-                    config='--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
+                    config='--psm 8 --oem 3 -c tessedit_char_whitelist=0123456789.,'
                 ).strip()
                 
                 texto_nombre = pytesseract.image_to_string(
-                    nombre_img,
+                    preprocesado(nombre),
                     lang='spa',
-                    config='--psm 6 --oem 3 -c preserve_interword_spaces=1 -c tessedit_char_whitelist=ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚÜ '
+                    config='--psm 6 --oem 3 '
                 ).strip()
 
                 texto_monto = pytesseract.image_to_string(
-                    monto_img,
+                    preprocesado(monto),
                     lang='spa',
                     config='--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789.,'
                 ).strip()
