@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, abort
 
 from modules.delegations.application.AssignTutorToDelegationByEmail import AssignTutorToDelegationByEmail
+from modules.delegations.application.GetStudentByDelegation import GetStudentIdsByDelegation
 from modules.events.application.EventQueryService import EventQueryService
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.delegations.application.dtos.DelegationDTO import DelegationDTO
@@ -10,11 +11,13 @@ from modules.delegations.infrastructure.PostgresDelegationRepository import Post
 from modules.delegations.infrastructure.PostgresDelegationTutorRepository import PostgresDelegationTutorRepository
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
+from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.delegations.application.FindDelegationById import FindDelegationById
 from modules.delegations.application.AssignStudentToDelegationByEmail import AssignStudentToDelegationByEmail
-
+from modules.delegations.application.GetTutorsByDelegation import GetTutorsByDelegation
+from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
 
 delegaciones_bp = Blueprint("delegaciones_bp", __name__)
 
@@ -113,6 +116,8 @@ def mis_delegaciones():
         permisos=permisos,
         roles_usuario=roles_usuario
     )
+
+
 @delegaciones_bp.route("/ver-delegaciones")
 def ver_delegaciones():
     user_id = session.get("admin_user")
@@ -175,8 +180,24 @@ def ver_delegacion(delegacion_id):
         return redirect(url_for("home_bp.index"))
 
     try:
+        # Obtener delegación
         finder = FindDelegationById(PostgresDelegationRepository())
         delegacion = finder.execute(delegacion_id)
+
+        # Obtener estudiantes
+        students_service = GetStudentIdsByDelegation(
+            delegation_repository=PostgresDelegationRepository(),
+            student_repository=PostgresStudentRepository()
+        )
+        estudiantes = students_service.execute(delegacion_id)
+
+        # Obtener tutores
+        tutors_service = GetTutorsByDelegation(
+            delegation_repository=PostgresDelegationRepository(),
+            tutor_repository=PostgresTutorRepository()
+        )
+        tutores = tutors_service.execute(delegacion_id)
+
     except Exception as e:
         flash(str(e), "danger")
         return redirect(url_for("delegaciones_bp.ver_delegaciones"))
@@ -184,10 +205,14 @@ def ver_delegacion(delegacion_id):
     return render_template(
         "delegaciones/ver_delegacion.html",
         delegacion=delegacion,
+        estudiantes=estudiantes,
+        tutores=tutores,
         user=user,
         permisos=permisos,
         roles_usuario=roles_usuario
     )
+
+
 
 @delegaciones_bp.route('/delegaciones/<int:delegation_id>/agregar_estudiante', methods=['POST'])
 def assign_student(delegation_id):
