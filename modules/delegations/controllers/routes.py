@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, abort
+
+from modules.delegations.application.AssignTutorToDelegationByEmail import AssignTutorToDelegationByEmail
 from modules.events.application.EventQueryService import EventQueryService
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.delegations.application.dtos.DelegationDTO import DelegationDTO
@@ -8,8 +10,11 @@ from modules.delegations.infrastructure.PostgresDelegationRepository import Post
 from modules.delegations.infrastructure.PostgresDelegationTutorRepository import PostgresDelegationTutorRepository
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
+from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.delegations.application.FindDelegationById import FindDelegationById
+from modules.delegations.application.AssignStudentToDelegationByEmail import AssignStudentToDelegationByEmail
+
 
 delegaciones_bp = Blueprint("delegaciones_bp", __name__)
 
@@ -183,3 +188,74 @@ def ver_delegacion(delegacion_id):
         permisos=permisos,
         roles_usuario=roles_usuario
     )
+
+@delegaciones_bp.route('/delegaciones/<int:delegation_id>/agregar_estudiante', methods=['POST'])
+def assign_student(delegation_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    # Obtener correo del formulario
+    email = request.form.get('email', '').strip()
+    if not email:
+        flash('Por favor ingrese un correo electrónico.', 'warning')
+        return redirect(url_for('delegaciones_bp.ver_delegacion', delegacion_id=delegation_id))
+
+    try:
+        from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
+        servicio = AssignStudentToDelegationByEmail(
+            PostgresDelegationRepository(),
+            PostgresUserRepository()
+        )
+        resultado = servicio.execute(delegation_id, email)
+
+        if resultado == 0:
+            flash(" No se encontró un usuario con ese correo.", "danger")
+        elif resultado == 1:
+            flash(" Estudiante agregado exitosamente a la delegación.", "success")
+        elif resultado == 2:
+            flash("️ El estudiante ya pertenece a esta delegación.", "warning")
+        elif resultado == 3:
+            flash(" El usuario no tiene el rol de estudiante.", "danger")
+        else:
+            flash(f" Resultado inesperado: {resultado}", "warning")
+    except Exception as e:
+        flash(f"Ocurrió un error al asignar el estudiante: {e}", "danger")
+
+    return redirect(url_for('delegaciones_bp.ver_delegacion', delegacion_id=delegation_id))
+
+@delegaciones_bp.route('/delegaciones/<int:delegation_id>/agregar_tutor', methods=['POST'])
+def assign_tutor(delegation_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    # Obtener correo del formulario
+    email = request.form.get('email', '').strip()
+    if not email:
+        flash('Por favor ingrese un correo electrónico.', 'warning')
+        return redirect(url_for('delegaciones_bp.ver_delegacion', delegacion_id=delegation_id))
+
+    try:
+        servicio = AssignTutorToDelegationByEmail(
+            PostgresDelegationTutorRepository(),
+            PostgresUserRepository()
+        )
+        resultado = servicio.execute(delegation_id, email)
+
+        if resultado == AssignTutorToDelegationByEmail.USER_NOT_FOUND:
+            flash(" No se encontró un usuario con ese correo.", "danger")
+        elif resultado == AssignTutorToDelegationByEmail.USER_NOT_TUTOR:
+            flash(" El usuario no tiene el rol de tutor.", "danger")
+        elif resultado == AssignTutorToDelegationByEmail.SUCCESS:
+            flash(" Tutor agregado exitosamente a la delegación.", "success")
+        else:
+            flash(f" Resultado inesperado: {resultado}", "warning")
+    except Exception as e:
+        flash(f"Ocurrió un error al asignar el tutor: {e}", "danger")
+
+    return redirect(url_for('delegaciones_bp.ver_delegacion', delegacion_id=delegation_id))
