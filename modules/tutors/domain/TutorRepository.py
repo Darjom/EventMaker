@@ -23,6 +23,10 @@ class TutorRepository(ABC):
         pass
 
     @abstractmethod
+    def find_by_ids(self, tutor_ids: List[int]) -> List[Tutor]:
+        pass
+
+    @abstractmethod
     def find_by_ci(self, ci: int) -> Tutor:
         pass
 

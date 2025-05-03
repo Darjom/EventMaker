@@ -4,7 +4,7 @@ from modules.tutors.domain.TutorRepository import TutorRepository
 
 class FindTutorById:
 
-    def __init__(self,repository: TutorRepository):
+    def __init__(self, repository: TutorRepository):
         self.repository = repository
 
     def execute(self, id: int) -> TutorDTO:

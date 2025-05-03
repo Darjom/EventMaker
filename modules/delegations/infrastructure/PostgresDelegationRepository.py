@@ -1,4 +1,6 @@
 from typing import Optional, List
+
+from .persistence.DelegationTutorMapping import DelegationTutorMapping
 from ..domain.DelegationRepository import DelegationRepository
 from ..domain.Delegation import Delegation
 from .persistence.DelegationMapping import DelegationMapping, delegacion_estudiante
@@ -57,5 +59,14 @@ class PostgresDelegationRepository(DelegationRepository):
             db.select(delegacion_estudiante.c.id_estudiante).where(
                 delegacion_estudiante.c.id_delegacion == delegation_id
             )
+        )
+        return [row[0] for row in result]
+
+    def get_tutor_ids_by_delegation_id(self, delegation_id: int) -> list[int]:
+        result = (
+            db.session.query(DelegationTutorMapping.tutor_id)
+            .filter_by(delegation_id=delegation_id)
+            .distinct()
+            .all()
         )
         return [row[0] for row in result]

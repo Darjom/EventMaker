@@ -1,5 +1,5 @@
 from app import app
-from modules.delegations.application.GetStudentIdsByDelegation import GetStudentIdsByDelegation
+from modules.delegations.application.GetStudentByDelegation import GetStudentIdsByDelegation
 from modules.delegations.infrastructure.PostgresDelegationRepository import PostgresDelegationRepository
 from modules.students.application.GetStudentsByListIds import GetStudentsByListIds
 

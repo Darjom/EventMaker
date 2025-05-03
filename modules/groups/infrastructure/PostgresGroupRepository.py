@@ -62,11 +62,15 @@ class PostgresGroupRepository(GroupRepository):
 
         return False  # Tutor was not assigned to the group
 
-    def get_groups_by_tutor_id(self, tutor_id: int) -> List[Group]:
+    def get_groups_by_tutor_and_delegation(self, tutor_id: int, delegation_id: int) -> List[Group]:
+        """Obtiene los grupos de una delegación que están asignados a un tutor específico."""
         grupos = (
             db.session.query(GroupMapping)
             .join(GroupMapping.tutores)
+            .filter(GroupMapping.id_delegacion == delegation_id)
             .filter_by(id=tutor_id)
             .all()
         )
         return [grupo.to_domain() for grupo in grupos]
+
+

@@ -24,9 +24,8 @@ class GroupRepository(ABC):
     def assign_tutor_to_group(self, group_id: int, tutor_id: int) -> None:
         pass
 
-
     @abstractmethod
-    def get_groups_by_tutor_id(self, tutor_id: int) -> List[Group]:
+    def get_groups_by_tutor_and_delegation(self, tutor_id: int, delegation_id: int) -> List[Group]:
         pass
 
     @abstractmethod

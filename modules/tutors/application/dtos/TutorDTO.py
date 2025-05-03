@@ -18,25 +18,22 @@ class TutorDTO(BaseModel):
     fecha_nacimiento: Optional[datetime] = None
     roles: Optional[List[int]] = None
 
-    @classmethod
-    def from_domain(cls, student: Tutor):
 
-        """
-        Convierte un objeto de dominio Tutor a un DTO TutorDTO.
-        """
+    @classmethod
+    def from_domain(cls, tutor: Tutor):
         return cls(
-            id=student.id,
-            first_name=student.first_name,
-            last_name=student.last_name,
-            email=student.email,
-            password=student.password,
-            active=student.active,
-            confirmed_at=student.confirmed_at,
-            fs_uniquifier=student.fs_uniquifier,
-            ci=student.ci,
-            expedito_ci=student.expedito_ci,
-            fecha_nacimiento=student.fecha_nacimiento,
-            roles=student.roles
+            id=tutor.id,
+            first_name=tutor.first_name,
+            last_name=tutor.last_name,
+            email=tutor.email,
+            password=tutor.password,
+            active=tutor.active,
+            confirmed_at=tutor.confirmed_at,
+            fs_uniquifier=tutor.fs_uniquifier,
+            ci=tutor.ci,
+            expedito_ci=tutor.expedito_ci,
+            fecha_nacimiento=tutor.fecha_nacimiento,
+            roles=tutor.roles
         )
 
     def to_domain(self) -> Tutor:
