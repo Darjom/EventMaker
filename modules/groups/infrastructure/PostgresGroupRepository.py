@@ -72,3 +72,5 @@ class PostgresGroupRepository(GroupRepository):
             .all()
         )
         return [grupo.to_domain() for grupo in grupos]
+
+
