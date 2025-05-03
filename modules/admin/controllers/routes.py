@@ -64,13 +64,24 @@ def convocatorias_disponibles():
     user = UserMapping.query.get(user_id)
 
     permisos = []
+    roles_usuario = []
+
     for role in user.roles:
         service = RoleQueryService(PostgresRolesRepository())
         dto = service.execute(role.id)
-        if dto and dto.permissions:
-            permisos.extend(dto.permissions)
+        if dto:
+            if dto.permissions:
+                permisos.extend(dto.permissions)
+            if dto.name:
+                roles_usuario.append(dto.name.lower())
 
     finder = ActiveEventFinder(PostgresEventsRepository())
     eventos_dto = finder.execute()
 
-    return render_template("admin/convocatorias_disponibles.html", eventos=eventos_dto.eventos, user=user, permisos=permisos)
+    return render_template(
+        "admin/convocatorias_disponibles.html",
+        eventos=eventos_dto.eventos,
+        user=user,
+        permisos=permisos,
+        roles_usuario=roles_usuario
+    )
