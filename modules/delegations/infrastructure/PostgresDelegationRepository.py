@@ -1,7 +1,7 @@
 from typing import Optional, List
 from ..domain.DelegationRepository import DelegationRepository
 from ..domain.Delegation import Delegation
-from .persistence.DelegationMapping import DelegationMapping
+from .persistence.DelegationMapping import DelegationMapping, delegacion_estudiante
 from shared.extensions import db
 from ...user.infrastructure.persistence.UserMapping import UserMapping
 
@@ -15,6 +15,10 @@ class PostgresDelegationRepository(DelegationRepository):
 
     def find_by_name(self, name: str) -> Optional[Delegation]:
         delegation_mapping = DelegationMapping.query.filter_by(nombre=name).first()
+        return delegation_mapping.to_domain() if delegation_mapping else None
+
+    def find_by_delegation_id(self, delgation_id: int) -> Optional[Delegation]:
+        delegation_mapping = DelegationMapping.query.filter_by( id_delegacion=delgation_id).first()
         return delegation_mapping.to_domain() if delegation_mapping else None
 
     def find_by_event_id(self, event_id: int) -> List[Delegation]:
@@ -47,3 +51,11 @@ class PostgresDelegationRepository(DelegationRepository):
         delegation.estudiantes.append(student)
         db.session.commit()
         return True  # Se agregó exitosamente
+
+    def get_student_ids_by_delegation_id(self, delegation_id: int) -> list[int]:
+        result = db.session.execute(
+            db.select(delegacion_estudiante.c.id_estudiante).where(
+                delegacion_estudiante.c.id_delegacion == delegation_id
+            )
+        )
+        return [row[0] for row in result]

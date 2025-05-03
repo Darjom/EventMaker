@@ -28,4 +28,11 @@ class DelegationRepository(ABC):
     def assign_student_to_delegation(self, delegation_id: int, student_id: int) -> bool:
         pass
 
-    
+    @abstractmethod
+    def get_student_ids_by_delegation_id(self, delegation_id: int) -> list[int]:
+        pass
+
+
+    @abstractmethod
+    def find_by_delegation_id(self, delgation_id: int) -> Optional[Delegation]:
+        pass

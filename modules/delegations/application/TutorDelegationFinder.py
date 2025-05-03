@@ -6,6 +6,7 @@ from ..domain.DelegationTutorRepository import DelegationTutorRepository
 
 
 class TutorDelegationsFinder:
+    # Devuelve la delegacion a la que pertenece un tutor.
     def __init__(
             self,
             delegation_repo: DelegationRepository,

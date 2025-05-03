@@ -23,3 +23,12 @@ class GroupRepository(ABC):
     @abstractmethod
     def assign_tutor_to_group(self, group_id: int, tutor_id: int) -> None:
         pass
+
+
+    @abstractmethod
+    def get_groups_by_tutor_id(self, tutor_id: int) -> List[Group]:
+        pass
+
+    @abstractmethod
+    def remove_tutor_from_group(self, group_id: int, tutor_id: int) -> bool:
+        pass
