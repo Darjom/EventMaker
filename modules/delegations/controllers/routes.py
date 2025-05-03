@@ -9,6 +9,7 @@ from modules.delegations.infrastructure.PostgresDelegationTutorRepository import
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
+from modules.delegations.application.FindDelegationById import FindDelegationById
 
 delegaciones_bp = Blueprint("delegaciones_bp", __name__)
 
@@ -141,6 +142,43 @@ def ver_delegaciones():
     return render_template(
         "delegaciones/mis_delegaciones.html",
         delegaciones=delegaciones,
+        user=user,
+        permisos=permisos,
+        roles_usuario=roles_usuario
+    )
+@delegaciones_bp.route("/delegacion/<int:delegacion_id>")
+def ver_delegacion(delegacion_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    # Obtener roles
+    permisos = []
+    roles_usuario = []
+    for role in user.roles:
+        dto = RoleQueryService(PostgresRolesRepository()).execute(role.id)
+        if dto:
+            if dto.permissions:
+                permisos.extend(dto.permissions)
+            if dto.name:
+                roles_usuario.append(dto.name.lower())
+
+    if "tutor" not in roles_usuario:
+        flash("Acceso restringido", "danger")
+        return redirect(url_for("home_bp.index"))
+
+    try:
+        finder = FindDelegationById(PostgresDelegationRepository())
+        delegacion = finder.execute(delegacion_id)
+    except Exception as e:
+        flash(str(e), "danger")
+        return redirect(url_for("delegaciones_bp.ver_delegaciones"))
+
+    return render_template(
+        "delegaciones/ver_delegacion.html",
+        delegacion=delegacion,
         user=user,
         permisos=permisos,
         roles_usuario=roles_usuario

@@ -55,6 +55,11 @@
                   {% endfor %}
                 </tbody>
               </table>
+              <div class="text-end mt-3">
+                <a href="{{ url_for('delegaciones_bp.ver_delegacion', delegacion_id=d.id_delegacion) }}" class="btn btn-outline-primary btn-sm">
+                  Ver delegación
+                </a>
+            </div>
             </div>
           </li>
         {% endfor %}
