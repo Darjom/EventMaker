@@ -43,7 +43,16 @@ class PostgresTutorRepository(TutorRepository):
         if tutor_mapping:
             return tutor_mapping.to_domain()
         return None
-    
+
+    def find_by_ids(self, tutor_ids: List[int]) -> List[Tutor]:
+        tutor_mappings = (
+            db.session.query(UserMapping)
+            .filter(UserMapping.id.in_(tutor_ids))
+            .distinct()
+            .all()
+        )
+        return [t.to_domain() for t in tutor_mappings]
+
     def find_by_ci(self, ci: int):
         tutor_mapping = db.session.query(UserMapping).filter_by(ci=ci).first()
         if tutor_mapping:

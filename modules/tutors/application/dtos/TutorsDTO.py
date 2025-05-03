@@ -3,13 +3,14 @@ from pydantic import BaseModel
 
 
 from modules.tutors.application.dtos.TutorDTO import TutorDTO
+from modules.tutors.domain.Tutor import Tutor
 
 
-class StudentsDTO(BaseModel):
+class TutorsDTO(BaseModel):
     tutors: List[TutorDTO]
 
     @classmethod
-    def from_domain_list(cls, tutors: list):
+    def from_domain_list(cls, tutors: List[Tutor]):
         return cls(
-            students=[TutorDTO.from_domain(tutor) for tutor in tutors]
+            tutors=[TutorDTO.from_domain(tutor) for tutor in tutors]
         )

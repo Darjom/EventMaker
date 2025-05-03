@@ -36,3 +36,7 @@ class DelegationRepository(ABC):
     @abstractmethod
     def find_by_delegation_id(self, delgation_id: int) -> Optional[Delegation]:
         pass
+
+    @abstractmethod
+    def get_tutor_ids_by_delegation_id(self, delegation_id: int) -> list[int]:
+        pass
