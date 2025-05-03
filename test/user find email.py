@@ -5,7 +5,7 @@ from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepos
 
 def test_get_user_by_email():
     # Email de prueba — asegúrate de que este usuario exista en tu base de datos
-    email = "danielk@example.com"
+    email = "apazamatiasj4@gmail.com"
 
     # Inicializar el repositorio
     user_repository = PostgresUserRepository()
