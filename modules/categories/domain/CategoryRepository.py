@@ -20,3 +20,7 @@ class CategoryRepository(ABC):
     @abstractmethod
     def find_by_name(self, name: str, area_id: int) -> Optional[Category]:
         pass
+
+    @abstractmethod
+    def find_by_ids(self, ids: List[int]) -> List[Optional[Category]]:
+        pass
