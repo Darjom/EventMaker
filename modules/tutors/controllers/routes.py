@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
 from datetime import datetime
 
 from modules.tutors.application.TutorCreator import TutorCreator
@@ -34,12 +34,18 @@ def registro():
 
             creator = TutorCreator(PostgresTutorRepository())
             creator.create_tutor(tutor_dto)
-
+            session.pop('_flashes', None)
             flash("Cuenta de tutor creada exitosamente.", "success")
             return redirect(url_for("admin_bp.login"))  # o a la página de login público
 
         except Exception as e:
             flash(str(e), "danger")
+            return make_response(render_template("tutors/registro.html"))  # ✅
+    response = make_response(render_template("tutors/registro.html"))
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
     return render_template("tutors/registro.html")
 

@@ -29,7 +29,7 @@
       <!-- Crear Evento-->
       {% if 'event:create' in permisos %}
       <li class="nav-item" title="Crear Evento">
-        <a href="{{ url_for('eventos_bp.crear_evento') }}" class="nav-link d-flex align-items-center">
+        <a href="{{ url_for('eventos_bp.crear_evento') }}" id="Crear_convocatoria" class="nav-link d-flex align-items-center">
           <img src="{{ url_for('static', filename='img/sidebar/create_events.webp') }}" width="24" class="me-2 icon">
           <span class="label">Crear Convocatoria</span>
         </a>
@@ -88,6 +88,14 @@
         <a href="{{ url_for('info_bp.Mi_Informacion') }}" class="nav-link d-flex align-items-center">
           <img src="{{ url_for('static', filename='img/sidebar/Mi_Informacion.webp') }}" width="24" class="me-2 icon">
         <span class="label">Mi Información</span>
+        </a>
+      </li>
+
+      <!-- Realizar validaciones OCR (solo si se es admin)-->
+      <li class="nav-item" title="Validacion OCR">
+        <a href="{{ url_for('ocr_bp.Prueba') }}" class="nav-link d-flex align-items-center">
+          <img src="{{ url_for('static', filename='img/sidebar/OCR_logo.webp') }}" width="24" class="me-2 icon">
+        <span class="label">Validacion OCR</span>
         </a>
       </li>
 

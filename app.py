@@ -30,8 +30,8 @@ from modules.students.controllers.routes import estudiantes_bp
 from modules.tutors.controllers.routes import tutores_bp
 from modules.categories.controllers.routes import categorias_bp
 from modules.inscriptions.controllers.routes import inscripciones_bp
+from modules.OCR.controllers.routes import ocr_bp
 from modules.delegations.controllers.routes import delegaciones_bp
-
 
 
 def create_app():
@@ -55,9 +55,8 @@ def create_app():
     app.register_blueprint(tutores_bp, url_prefix="/tutores")
     app.register_blueprint(categorias_bp, url_prefix="/categorias")
     app.register_blueprint(inscripciones_bp, url_prefix="/inscripciones")
+    app.register_blueprint(ocr_bp)
     app.register_blueprint(delegaciones_bp, url_prefix="/delegaciones")
-
-
     app.register_blueprint(info_bp)
 
     return app
