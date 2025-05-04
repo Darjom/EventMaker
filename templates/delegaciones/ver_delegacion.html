@@ -17,7 +17,9 @@
     <!-- Estudiantes -->
     <div class="d-flex justify-content-between align-items-center mt-4">
       <h4>Estudiantes</h4>
-      <a href="#" class="btn btn-sm btn-outline-primary">Agregar estudiante</a>
+      <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+        Agregar estudiante
+      </button>
     </div>
     <div class="row mb-4">
       {% for estudiante in delegacion.estudiantes %}
@@ -35,7 +37,9 @@
     <!-- Tutores -->
     <div class="d-flex justify-content-between align-items-center mt-4">
       <h4>Tutores</h4>
-      <a href="#" class="btn btn-sm btn-outline-primary">Agregar tutor</a>
+      <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTutorModal">
+        Agregar tutor
+      </button>
     </div>
     <div class="row mb-4">
       {% for tutor in delegacion.tutores %}
@@ -82,4 +86,62 @@
     </div>
   </div>
 </div>
+
+<!-- Modal para agregar estudiante -->
+<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Encabezado del modal -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="addStudentModalLabel">Agregar estudiante a delegación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <!-- Formulario POST al endpoint correcto -->
+      <form method="POST" action="{{ url_for('delegaciones_bp.assign_student', delegation_id=delegacion.id_delegacion) }}">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="studentEmail" class="form-label">Correo electrónico del estudiante</label>
+            <input type="email" class="form-control" id="studentEmail" name="email" placeholder="nombre@ejemplo.com" required>
+          </div>
+        </div>
+
+        <!-- Pie del modal -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agregar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para agregar tutor -->
+<div class="modal fade" id="addTutorModal" tabindex="-1" aria-labelledby="addTutorModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Encabezado -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="addTutorModalLabel">Agregar tutor a la delegación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <!-- Formulario -->
+      <form method="POST" action="{{ url_for('delegaciones_bp.assign_tutor', delegation_id=delegacion.id_delegacion) }}">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="tutorEmail" class="form-label">Correo del tutor</label>
+            <input type="email" class="form-control" id="tutorEmail" name="email" placeholder="tutor@ejemplo.com" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agregar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
