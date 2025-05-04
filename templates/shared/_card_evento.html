@@ -19,7 +19,11 @@
         </p>
         <div class="d-flex justify-content-between mt-3">
           <span class="btn btn-secondary btn-sm">Ver más</span>
-          <span class="btn btn-outline-secondary btn-sm">Inscribirse</span>
+          {% if 'tutor' in roles_usuario %}
+            <a href="{{ url_for('delegaciones_bp.crear_delegacion', event_id=evento.id_evento) }}" class="btn btn-outline-primary btn-sm">Crear delegación</a>
+          {% else %}
+            <a href="{{ url_for('inscripciones_bp.seleccionar_area_categoria', event_id=evento.id_evento) }}" class="btn btn-outline-secondary btn-sm">Inscribirse</a>
+          {% endif %}
         </div>
       </div>
     </div>

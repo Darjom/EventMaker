@@ -7,7 +7,7 @@ class PermissionMapping(db.Model):
     description = db.Column(db.String(255))
 
     def to_domain(self):
-        from src.permissions.domain.Permission import Permission
+        from modules.permissions.domain.Permission import Permission
         return Permission(
             id=self.id,
             name=self.name,

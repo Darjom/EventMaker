@@ -12,6 +12,7 @@ from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRe
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.inscriptions.application.dtos.InscriptionDTO import InscriptionDTO
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
+from modules.inscriptions.application.GetAllStudentInscriptions import GetAllStudentInscriptions
 
 inscripciones_bp = Blueprint("inscripciones_bp", __name__)
 
@@ -57,7 +58,7 @@ def seleccionar_area_categoria(event_id):
 
             registrar.execute(dto)
             flash("Inscripción realizada exitosamente", "success")
-            return redirect(url_for("home_bp.index"))
+            return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
 
         except Exception as e:
             flash(str(e), "danger")
@@ -66,3 +67,41 @@ def seleccionar_area_categoria(event_id):
     areas = AreaFinder(PostgresAreaRepository()).execute(event_id).areas
 
     return render_template("inscripciones/form_inscripcion.html", evento=event, areas=areas, user=user, permisos=permisos,roles_usuario=roles_usuario)
+
+
+@inscripciones_bp.route("/mis-inscripciones")
+def ver_inscripciones_estudiante():
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    # Obtener permisos y roles
+    permisos = []
+    roles_usuario = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        dto = service.execute(role.id)
+        if dto:
+            if dto.permissions:
+                permisos.extend(dto.permissions)
+            if dto.name:
+                roles_usuario.append(dto.name.lower())
+
+    # Instanciar caso de uso
+    usecase = GetAllStudentInscriptions(
+        inscription_repository=PostgresInscriptionRepository(),
+        student_repository=PostgresStudentRepository(),
+        event_repository=PostgresEventsRepository(),
+        area_repository=PostgresAreaRepository(),
+        category_repository=PostgresCategoryRepository()
+    )
+
+    try:
+        inscripciones = usecase.execute(user_id)
+    except Exception as e:
+        flash(str(e), "danger")
+        inscripciones = []
+
+    return render_template("inscripciones/ver_inscripciones.html", inscripciones=inscripciones, user=user, permisos=permisos, roles_usuario=roles_usuario)

@@ -14,9 +14,9 @@ from modules.students.infrastructure.PostgresEstudentRepository import PostgresS
 def test_create_and_get_student():
     # Crear un DTO de estudiante de prueba
     student_dto = StudentDTO(
-        first_name="Juan",
+        first_name="estudnet6",
         last_name="Pérez",
-        email="danielk@example.com",
+        email="dak@exm.com",
         password="12345678",
         phone_number=987654321,
         ci= "12345678 b" ,

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Mis Inscripciones{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">
+      Bienvenido <span class="text-danger">{{ user.first_name }} {{ user.last_name }}</span>
+    </h2>
+
+    <ul class="nav nav-tabs mb-4">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('admin_bp.convocatorias_disponibles') }}">Convocatorias Disponibles</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Mis Inscripciones</a>
+      </li>
+    </ul>
+
+    <h4 class="text-primary">Mis inscripciones</h4>
+
+    {% if inscripciones|length == 0 %}
+      <p class="text-muted">No tienes inscripciones registradas aún.</p>
+    {% else %}
+      {% for evento in inscripciones %}
+      <div class="mt-4">
+        <h5 class="text-secondary fw-bold">{{ evento.event_name }}</h5>
+
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle text-center mt-2">
+            <thead class="table-light">
+              <tr>
+                <th>Áreas inscritas</th>
+                <th>Categoría</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ins in evento.inscriptions %}
+              <tr>
+                <td>{{ ins.area_name }}</td>
+                <td>{{ ins.category_name }}</td>
+                <td>{{ ins.inscription_date }}</td>
+                <td>
+                  <span class="badge bg-{{ 'success' if ins.status == 'Confirmado' else 'secondary' }}">
+                    {{ ins.status }}
+                  </span>
+                </td>
+                <td>
+                  <a href="#" class="btn btn-sm btn-outline-danger" title="Descargar PDF">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

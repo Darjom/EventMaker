@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, List
 from .Inscription import Inscription
 
 class InscriptionRepository(ABC):
@@ -15,4 +15,8 @@ class InscriptionRepository(ABC):
         area_id: int,
         category_id: int
     ) -> Optional[Inscription]:
+        pass
+
+    @abstractmethod
+    def find_by_id_student(self, student_id : int) -> List[Inscription]:
         pass

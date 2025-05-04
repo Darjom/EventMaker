@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+{% include "shared/admin_header.html" %}
+<div class="container-fluid d-flex">
+  {% include "admin/_sidebar.html" %}
+
+  <div class="container mt-5">
+    <div class="card shadow p-4">
+      <h3 class="text-center text-primary mb-4">Editar mi <b>Perfil</b></h3>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST">
+        <!-- Información Personal -->
+        <fieldset class="border p-3 mb-4">
+          <legend>Información Personal</legend>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Apellidos</label>
+              <input name="last_name" class="form-control" value="{{ user.last_name }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Nombres</label>
+              <input name="first_name" class="form-control" value="{{ user.first_name }}" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label>Carnet de Identidad</label>
+              <input name="ci" class="form-control" value="{{ user.ci }}" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label>Expedido en</label>
+              <input name="expedito_ci" class="form-control" value="{{ user.expedito_ci }}" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Fecha de Nacimiento</label>
+              <input type="date" name="fecha_nacimiento" class="form-control" value="{{ user.fecha_nacimiento }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Número de Teléfono</label>
+              <input type="number" name="phone_number" class="form-control" value="{{ user.phone_number }}">
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Datos académicos si existen -->
+        {% if user.school_id %}
+        <fieldset class="border p-3 mb-4">
+          <legend>Información Académica</legend>
+          <div class="mb-3">
+            <label>ID del Colegio</label>
+            <input name="school_id" class="form-control" value="{{ user.school_id }}">
+          </div>
+          <div class="mb-3">
+            <label>Curso</label>
+            <input name="course" class="form-control" value="{{ user.course }}">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Departamento</label>
+              <input name="department" class="form-control" value="{{ user.department }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Provincia</label>
+              <input name="province" class="form-control" value="{{ user.province }}">
+            </div>
+          </div>
+        </fieldset>
+        {% endif %}
+
+        <!-- Seguridad -->
+        <fieldset class="border p-3 mb-4">
+          <legend>Seguridad</legend>
+          <div class="mb-3">
+            <label>Correo electrónico</label>
+            <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+          </div>
+          <div class="mb-3">
+            <label>Contraseña (dejar en blanco si no se desea cambiar)</label>
+            <input type="password" name="password" class="form-control" placeholder="Nueva contraseña (opcional)">
+          </div>
+          <div class="mb-3">
+            <label>Confirmar contraseña</label>
+            <input type="password" name="confirm_password" class="form-control" placeholder="Confirmar nueva contraseña">
+          </div>
+        </fieldset>
+
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          <a href="{{ url_for('home_bp.index') }}" class="btn btn-secondary ms-3">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

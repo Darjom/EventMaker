@@ -46,7 +46,8 @@ class StudentDTO(BaseModel):
             course=student.course,
             department=student.department,
             province=student.province,
-            roles=student.roles
+            roles=[role.id if hasattr(role, "id") else int(role) for role in student.roles if isinstance(role, (int, str)) and str(role).isdigit()]
+
         )
 
     def to_domain(self) -> Student:

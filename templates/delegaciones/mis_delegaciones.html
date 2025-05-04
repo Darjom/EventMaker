@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Mis Delegaciones{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="form-area-container container mt-4">
+     <h1 class="text-center">
+      <span class="text-secondary">Bienvenido</span>
+      <span class="text-primary">{{user.first_name}}</span>
+    </h1>
+    <h1 class="text-secondary">Mis Delegaciones</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if delegaciones %}
+      <ul class="list-unstyled">
+        {% for d in delegaciones %}
+          <li class="p-4 rounded mb-4 {% if loop.index0 is odd %}bg-light{% endif %}">
+            <h4 class="text-primary">{{ d.nombre }}</h4>
+            <p><strong>Responsable:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+
+            <div class="table-responsive">
+              <table class="table table-bordered mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Estudiantes</th>
+                    <th>Documento de identidad</th>
+                    <th>Áreas</th>
+                    <th>Categorías</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for estudiante in d.estudiantes %}
+                    <tr>
+                      <td>{{ estudiante.nombre }} {{ estudiante.apellido }}</td>
+                      <td>{{ estudiante.ci }}</td>
+                      <td>{{ estudiante.area }}</td>
+                      <td>{{ estudiante.categoria }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="text-end mt-3">
+                <a href="{{ url_for('delegaciones_bp.ver_delegacion', delegacion_id=d.id_delegacion) }}" class="btn btn-outline-primary btn-sm">
+                  Ver delegación
+                </a>
+            </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="alert alert-info text-center mt-4">No tienes delegaciones registradas.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

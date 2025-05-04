@@ -10,7 +10,7 @@ class AreaRepository(ABC):
         pass
 
     @abstractmethod
-    def find_by_id(self, area_id: int) -> List[Area]:
+    def find_by_id(self, area_id: int) -> Optional[Area]:
         pass
 
 
