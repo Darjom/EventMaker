@@ -29,16 +29,16 @@ class StudentCreator:
         student.confirmed_at = datetime.now()
         student.password =generate_password_hash(student.password)
         if not student.roles:
-            student.roles = [4] # id de rol student
+            student.roles = [3] # id de rol student
 
-        school_repo=PostgresSchoolRepository()
-        school= school_repo.find_by_id(student.school_id)
+        school_repo = PostgresSchoolRepository()
+        school = school_repo.find_by_id(student.school_id)
         if school is None:
             return None
 
         # Guardar el estudiante
         student = self.student_repository.save(student)
-        self.student_repository.add_roles_to_user(student.id,[4])
+        self.student_repository.add_roles_to_user(student.id,[3])
 
         # Retornar el DTO actualizado
         return StudentDTO.from_domain(student)

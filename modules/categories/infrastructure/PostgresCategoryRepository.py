@@ -27,3 +27,18 @@ class PostgresCategoryRepository(CategoryRepository):
             area_id=area_id
         ).first()
         return category.to_domain() if category else None
+
+    def find_by_ids(self, ids: List[int]) -> List[Optional[Category]]:
+        """
+        Retorna una lista de categorías alineadas con la lista de IDs proporcionada.
+        Si una categoría no se encuentra, se incluye None en su lugar.
+        """
+        if not ids:
+            return []
+
+        # Obtener todas las categorías encontradas en un solo query
+        found_categories = CategoryMapping.query.filter(CategoryMapping.category_id.in_(ids)).all()
+        found_map = {cat.category_id: cat.to_domain() for cat in found_categories}
+
+        # Mantener el orden original y agregar None donde no se encontró
+        return [found_map.get(cat_id, None) for cat_id in ids]
