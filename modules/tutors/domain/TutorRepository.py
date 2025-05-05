@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from modules.permissions.domain.Permission import Permission
 from modules.tutors.domain.Tutor import Tutor
 
 
@@ -19,4 +20,16 @@ class TutorRepository(ABC):
 
     @abstractmethod
     def find_by_id(self, id: int) -> Tutor:
+        pass
+
+    @abstractmethod
+    def find_by_ids(self, tutor_ids: List[int]) -> List[Tutor]:
+        pass
+
+    @abstractmethod
+    def find_by_ci(self, ci: int) -> Tutor:
+        pass
+
+    @abstractmethod
+    def get_delegation_permissions(self, tutor_id: int, delegation_id: int) -> List[Permission]:
         pass

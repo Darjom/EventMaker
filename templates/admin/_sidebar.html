@@ -15,6 +15,17 @@
       </li>
       {% endif %}
 
+      <!-- Ejemplo: Inscribir Estudiante -->
+      
+      <li class="nav-item" title="Inscribir Estudiante">
+        <a href="#" id="btn-abrir-modal" class="nav-link d-flex align-items-center">
+          <img src="{{ url_for('static', filename='img/sidebar/inscripciones.webp') }}" width="24" class="me-2 icon">
+          <span class="label">Inscribir Estudiante</span>
+        </a>
+      </li>
+
+      
+      <!-- Ejemplo: Crear Evento (solo si 'event:create' en permisos) -->
       <!-- Crear Evento-->
       {% if 'event:create' in permisos %}
       <li class="nav-item" title="Crear Evento">
@@ -43,6 +54,43 @@
         </a>
       </li>
 
+      <!-- Editar Perfil Estudiantes -->
+      {% if user.roles and user.roles[0].id == 4 %}
+      <li class="nav-item" title="Editar Perfil">
+        <a href="{{ url_for('estudiantes_bp.editar_perfil') }}" class="nav-link d-flex align-items-center">
+          <img src="{{ url_for('static', filename='img/sidebar/user.webp') }}" width="24" class="me-2 icon">
+          <span class="label">Editar Perfil</span>
+        </a>
+      </li>
+      {% endif %}
+
+
+      {% if user.roles and user.roles[0].id == 4 %}
+        <li class="nav-item" title="Ver Inscripciones">
+          <a href="{{ url_for('inscripciones_bp.ver_inscripciones_estudiante') }}" class="nav-link d-flex align-items-center">
+            <img src="{{ url_for('static', filename='img/sidebar/my_events.webp') }}" width="24" class="me-2 icon">
+            <span class="label">Mis Inscripciones</span>
+          </a>
+        </li>
+        {% endif %}
+
+      {% if 'tutor' in roles_usuario %}
+      <li class="nav-item" title="Mis Delegaciones">
+        <a href="{{ url_for('delegaciones_bp.ver_delegaciones') }}" class="nav-link d-flex align-items-center">
+          <img src="{{ url_for('static', filename='img/sidebar/mis_delegaciones.webp') }}" width="24" class="me-2 icon">
+          <span class="label">Mis Delegaciones</span>
+        </a>
+      </li>
+      {% endif %}
+
+      <!-- Info del usuario (siempre disponible)-->
+      <li class="nav-item" title="Mi informacion">
+        <a href="{{ url_for('info_bp.Mi_Informacion') }}" class="nav-link d-flex align-items-center">
+          <img src="{{ url_for('static', filename='img/sidebar/Mi_Informacion.webp') }}" width="24" class="me-2 icon">
+        <span class="label">Mi Información</span>
+        </a>
+      </li>
+
 
       <!-- Perfil/Cerrar Sesión -->
       <li class="nav-item mt-auto" title="Perfil">
@@ -51,7 +99,6 @@
           <span class="label">Cerrar sesión</span>
         </a>
       </li>
-
       <!-- Info del usuario -->
       <li class="nav-item mt-3 px-3 text-center">
         <span class="label d-block">
@@ -67,8 +114,12 @@
         </span>
       </li>
 
-
     </ul>
+  </div>
+
+  <!-- Contenido principal al lado del sidebar -->
+  <div class="flex-grow-1 p-4" id="main-content">
+    {% block dashboard_content %}{% endblock %}
   </div>
 
 </div>

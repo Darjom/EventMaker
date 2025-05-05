@@ -1,4 +1,10 @@
 # test_school_creator.py
+# En test/user_create.py
+import sys
+import os
+
+# Añade el directorio raíz al path de Python
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import app
 from shared.extensions import db
 from modules.schools.infrastructure.PostgresSchoolRepository import PostgresSchoolRepository
@@ -16,7 +22,7 @@ def test_school_creation():
         school_creator = SchoolCreator(school_repo)
 
         # Create DTO PROPERLY using keyword arguments
-        school_dto = SchoolDTO(name="Exb mmmUniversity")
+        school_dto = SchoolDTO(name="ExUnersity")
 
         # Create school
 

@@ -1,5 +1,4 @@
-from typing import Optional
-
+from typing import Optional, List
 
 from ..domain.Inscription import Inscription
 from .persistence.InscriptionMapping import InscriptionMapping
@@ -22,3 +21,7 @@ class PostgresInscriptionRepository(InscriptionRepository):
             category_id=category_id
         ).first()
         return inscription.to_domain() if inscription else None
+
+    def find_by_id_student(self, student_id: int) -> List[Inscription]:
+        inscriptions = InscriptionMapping.query.filter_by(student_id=student_id).all()
+        return [inscription.to_domain() for inscription in inscriptions]

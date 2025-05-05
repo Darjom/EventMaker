@@ -6,7 +6,7 @@ from datetime import datetime
 # Añade el directorio raíz al path de Python
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import app
-
+from datetime import datetime
 from modules.user.application.UserCreator import UserCreator
 from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository

@@ -40,3 +40,13 @@ class PostgresStudentRepository(StudentRepository):
         if student_mapping:
             return student_mapping.to_domain()
         return None
+    
+    def find_by_ci(self, ci: str) -> Student:
+        student_mapping = db.session.query(StudentMapping).filter_by(ci=ci).first()
+        if student_mapping:
+            return student_mapping.to_domain()
+        return None
+
+    def find_students_by_list_id(self, list_id: List[int]) -> list[Student]:
+        students_db = db.session.query(StudentMapping).filter(StudentMapping.id.in_(list_id)).all()
+        return [student.to_domain() for student in students_db]
