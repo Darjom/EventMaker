@@ -8,13 +8,13 @@ from modules.inscriptions.infrastructure.PostgresInscriptionRepository import Po
 
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
-from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
+
 
 
 def test_get_student_inscriptions(student_id: int = 6):
     # Instanciar repositorios concretos
     inscription_repo = PostgresInscriptionRepository()
-    student_repo = PostgresStudentRepository()
+    student_repo = PostgresEstudentRepository()
     event_repo = PostgresEventsRepository()
     area_repo = PostgresAreaRepository()
     category_repo = PostgresCategoryRepository()

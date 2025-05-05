@@ -21,7 +21,7 @@ class GetStudentInscriptionsByEvent:
 
     def execute(self, event_id: int, student_id: int):
         inscriptions = self.__repository.find_by_student_and_event(student_id, event_id)
-        inc, name_event = self.__group_inscriptions_by_event(inscriptions = inscriptions)
+        inc, name_event = self.__group_inscriptions_by_event(inscriptions=inscriptions)
         inscriptions_dto = [InscriptionDTO.from_domain(insc) for insc in inscriptions]
         return self.transformar_areas_para_orden_pago(inc), name_event, inscriptions_dto
 

@@ -18,7 +18,7 @@ class InscriptionDTO(BaseModel):
 
     @field_validator('status')
     def validate_status(cls, v):
-        valid_statuses = ['Pendiente', 'Confirmado']
+        valid_statuses = ['Pendiente', 'Confirmado', "En Proceso"]
         if v not in valid_statuses:
             raise ValueError(f"Invalid status. Allowed values: {', '.join(valid_statuses)}")
         return v
