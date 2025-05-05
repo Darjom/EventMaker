@@ -1,5 +1,4 @@
 from typing import Optional, List
-
 from ..domain.Inscription import Inscription
 from .persistence.InscriptionMapping import InscriptionMapping
 from shared.extensions import db
@@ -52,6 +51,4 @@ class PostgresInscriptionRepository(InscriptionRepository):
 
         db.session.commit()
 
-        return [insc.to_domain() for insc in inscriptions]
-
-
+        return inscriptions

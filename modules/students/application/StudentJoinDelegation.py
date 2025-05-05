@@ -16,7 +16,7 @@ class StudentJoinDelegation:
 
     def execute(self, code: str, student_id: int) -> int:
         # Verifica si el usuario existe
-        student = self.__user_repository.get_by_id(student_id)
+        student = self.__user_repository.find_by_id(student_id)
         if student is None:
             return self.USER_NOT_FOUND
 
