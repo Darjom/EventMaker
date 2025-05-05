@@ -1,6 +1,7 @@
 # En test/user_create.py
 import sys
 import os
+from datetime import datetime
 
 # Añade el directorio raíz al path de Python
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -29,10 +30,14 @@ def test_create_user():
         first_name="dan",
         last_name="Reque",
         email="add@adm.com",
-        password="12345678"
+        password="12345678",
+        ci= "12345678 B",
+        expedito_ci= "CBBA",
+        fecha_nacimiento=datetime(2025, 5, 20, 9, 0, 0),
     )
 
 #adm@adm.com - admin
+
 #mod@modmod.com - moderador
 if __name__ == "__main__":
     with app.app_context():
