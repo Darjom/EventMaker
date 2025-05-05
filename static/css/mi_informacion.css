@@ -1,0 +1,124 @@
+.rojo-umss {
+    color: var(--bs-red-umss);
+  }
+  .azul-umss {
+    color: var(--bs-blue-umss);
+  }
+  h2{
+    color: var(--bs-blue-umss);
+  }
+  h3{
+    color: var(--bs-blue-umss);
+  }
+  input{
+    width: 100%;
+    color: black;
+  }
+
+/* static/css/info.css */
+.info-header {
+    background-color: #D6E2EA;      /* el tono azul claro de tu ejemplo */
+    padding: 1rem;                  /* espacio interior */
+    border-radius: 0.5rem;          /* esquinas redondeadas */
+    box-shadow: 0 2px 6px rgba(33, 150, 243, 0.08); /* sombra suave */
+    display: flex;
+    align-items: left;
+    margin-bottom: 1.5rem;          /* separación inferior */
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espacio entre filas */
+  }
+  
+  .info-header img {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.75rem;
+  }
+  
+  .info-header__top {
+    display: flex;
+    align-items: left;
+    margin-bottom: 0.5rem;
+  }
+  .info-header__icon {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.75rem;
+  }
+  .info-header__title {
+    margin: 0;
+    color: #0b3d91;
+  }
+  .info-header__desc {
+    margin: 0;
+    color: #333;
+    margin-left: 40px; /* Alineación con el título */
+  }
+
+.ListadoInscripciones {
+    border-radius: 8px;
+    padding: 1%;
+    box-shadow: 10px 20px 30px rgba(0,0,0,0.05);
+    background-color: #D6E2EA;
+}
+
+
+.btn-back {
+    background-color: #f8f9fa;
+    color: #2a5a8d;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+    padding: 8px 20px;
+    border-radius: 8px;
+    margin-top: 5%;
+}
+
+.btn-back:hover {
+    background-color: #e9ecef;
+    color: #1d3d63;
+    border-color: #ced4da;
+    transform: translateY(-1px);
+}
+
+.btn-back svg {
+    margin-bottom: 2px;
+}
+
+.botones-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem; /* separación entre botones */
+  margin-top: 2rem;
+}
+
+.btn-outline {
+  background-color: white;
+  color: #13477b;
+  border: 1px solid #ccc;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-primary {
+  background-color: #13477b;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0f3963;
+}

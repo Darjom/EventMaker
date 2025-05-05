@@ -1,3 +1,9 @@
+# En test/user_create.py
+import sys
+import os
+
+# Añade el directorio raíz al path de Python
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from datetime import datetime
 from app import app
 from modules.tutors.application.TutorCreator import TutorCreator
@@ -10,7 +16,7 @@ def test_create_and_get_tutor():
     tutor_dto = TutorDTO(
         first_name="Juan",
         last_name="Pérez",
-        email="jjshdhgfk@example.com",
+        email="jjquiquegfk@example.com",
         password="12345678",
         ci= "12345678 B",
         expedito_ci= "CBBA",

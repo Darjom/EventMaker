@@ -1,9 +1,13 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
 from datetime import datetime
 
 from modules.tutors.application.TutorCreator import TutorCreator
 from modules.tutors.application.dtos.TutorDTO import TutorDTO
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
+
+from modules.tutors.application.TutorStudentAssigner import TutorStudentAssigner
+from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
+from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 
 tutores_bp = Blueprint("tutores_bp", __name__)
 
@@ -30,11 +34,46 @@ def registro():
 
             creator = TutorCreator(PostgresTutorRepository())
             creator.create_tutor(tutor_dto)
-
+            session.pop('_flashes', None)
             flash("Cuenta de tutor creada exitosamente.", "success")
             return redirect(url_for("admin_bp.login"))  # o a la página de login público
 
         except Exception as e:
             flash(str(e), "danger")
+            return make_response(render_template("tutors/registro.html"))  # ✅
+    response = make_response(render_template("tutors/registro.html"))
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
     return render_template("tutors/registro.html")
+
+@tutores_bp.route("/agregar-estudiante", methods=["POST"])
+def agregar_estudiante():
+    tutor_id = session.get("admin_user")
+    if not tutor_id:
+        flash("Debes iniciar sesión como tutor.", "danger")
+        return redirect(url_for("admin_bp.login"))
+
+    student_email = request.form.get("student_email")
+    if not student_email:
+        flash("El correo electrónico es obligatorio.", "danger")
+        return redirect(url_for("tutores_bp.dashboard"))
+
+    # Buscar al estudiante por correo electrónico
+    student_repo = PostgresStudentRepository()
+    student = student_repo.find_by_email(student_email)
+    if not student:
+        flash("No se encontró un estudiante con ese correo electrónico.", "danger")
+        return redirect(url_for("tutores_bp.dashboard"))
+
+    # Asignar el estudiante al tutor
+    assigner = TutorStudentAssigner(PostgresTutorRepository())
+    try:
+        assigner.execute(student_id=student.id, tutor_id=tutor_id)
+        flash("Estudiante agregado exitosamente.", "success")
+    except Exception as e:
+        flash(str(e), "danger")
+
+    return redirect(url_for("tutores_bp.dashboard"))

@@ -15,11 +15,22 @@
         <img src="{{ url_for('static', filename='img/shared/logo_umss.webp') }}" alt="Logo UMSS" class="logo">
         <h4 class="text-center text-primary mb-4">Iniciar Sesión en EventMaker</h4>
 
-        {% if error %}
+        <!--{% if error %}
         <div class="alert alert-danger" role="alert">
           {{ error }}
         </div>
-        {% endif %}
+        {% endif %}-->
+                <!-- MENSAJES FLASH (AGREGAR ESTO) -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                  {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                      {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
 
         <form method="POST" action="{{ url_for('admin_bp.login') }}">
           <div class="mb-3">
@@ -28,7 +39,9 @@
           <div class="mb-3">
             <input type="password" name="password" id="Contraseña" class="form-control" placeholder="Contraseña" required>
           </div>
-          <button type="submit" id="Boton-Iniciar-Sesion2" class="btn btn-primary w-100">Iniciar Sesión</button>
+
+          <button type="submit" class="btn btn-primary w-100" id="Boton-Iniciar-Sesion2">Iniciar Sesión</button>
+
         </form>
 
         <p class="text-center text-muted mt-3 mb-0">© 2025 EventMaker · UMSS</p>

@@ -16,26 +16,28 @@
         <div class="col-lg-8">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-lg-row gap-lg-3">
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'home_bp.index' %}active{% endif %}" href="{{ url_for('home_bp.index') }}">Inicio</a>
+              <a id="Inicio" class="nav-link {% if request.endpoint == 'home_bp.index' %}active{% endif %}" href="{{ url_for('home_bp.index') }}">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'home_bp.eventos' %}active{% endif %}" href="{{ url_for('home_bp.eventos') }}">Convocatorias</a>
+              <a id="Convocatorias" class="nav-link {% if request.endpoint == 'home_bp.eventos' %}active{% endif %}" href="{{ url_for('home_bp.eventos') }}">Convocatorias</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'home_bp.ayuda' %}active{% endif %}" href="{{ url_for('home_bp.ayuda') }}">Ayuda</a>
+              <a id="Ayuda" class="nav-link {% if request.endpoint == 'home_bp.ayuda' %}active{% endif %}" href="{{ url_for('home_bp.ayuda') }}">Ayuda</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'home_bp.contactos' %}active{% endif %}" href="{{ url_for('home_bp.contactos') }}">Contactos</a>
+              <a id="Contactos" class="nav-link {% if request.endpoint == 'home_bp.contactos' %}active{% endif %}" href="{{ url_for('home_bp.contactos') }}">Contactos</a>
             </li>
           </ul>
         </div>
 
         <!-- Botón crear Cuenta y inicio Sesion-->
         <div class="col-lg-2 text-lg-end text-start mt-2 mt-lg-0">
-          <a href="#" class="btn btn-outline-secondary w-100 w-lg-auto" data-bs-toggle="modal" data-bs-target="#crearCuentaModal">Crear Cuenta</a>
+          <a href="#" class="btn btn-outline-secondary w-100 w-lg-auto" data-bs-toggle="modal" id="Boton-Crear-Cuenta" data-bs-target="#crearCuentaModal">Crear Cuenta</a>
         </div>
         <div class="col-lg-2 text-lg-end text-start mt-2 mt-lg-0">
-          <a href="{{ url_for('admin_bp.login') }}" id="Boton-Iniciar-Sesion" class="btn btn-secondary w-100 w-lg-auto">Iniciar Sesion</a>
+
+          <a href="{{ url_for('admin_bp.login') }}" class="btn btn-secondary w-100 w-lg-auto" id="Boton-Iniciar-Sesion">Iniciar Sesion</a>
+
         </div>
       </div>
     </div>
@@ -54,7 +56,7 @@
         <!-- Tarjeta Estudiante -->
         <a href="{{ url_for('estudiantes_bp.registro') }}" class="crear-cuenta-card text-decoration-none">
           <div class="card text-center p-3 shadow-sm rounded-4 h-100">
-            <img src="{{ url_for('static', filename='img/shared/student_icon.webp') }}" width="100" height="100" alt="Estudiante" class="mx-auto">
+            <img src="{{ url_for('static', filename='img/shared/student_icon.webp') }}" id="CrearCuentaEstudiante" width="100" height="100" alt="Estudiante" class="mx-auto">
             <h5 class="mt-3 text-primary">Estudiante</h5>
           </div>
         </a>
@@ -62,7 +64,7 @@
         <!-- Tarjeta Tutor -->
         <a href="{{ url_for('tutores_bp.registro') }}" class="crear-cuenta-card text-decoration-none">
           <div class="card text-center p-3 shadow-sm rounded-4 h-100">
-            <img src="{{ url_for('static', filename='img/shared/tutor_icon.webp') }}" width="100" height="100" alt="Tutor" class="mx-auto">
+            <img src="{{ url_for('static', filename='img/shared/tutor_icon.webp') }}" id="CrearCuentaTutor" width="100" height="100" alt="Tutor" class="mx-auto">
             <h5 class="mt-3 text-primary">Tutor</h5>
           </div>
         </a>

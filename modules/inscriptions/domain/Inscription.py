@@ -8,6 +8,7 @@ class Inscription:
     :param event_id: Identificador del evento.
     :param area_id: Identificador del área.
     :param category_id: Identificador de la categoría.
+    :param delegation_id Infrtificador de la delegation
     :param inscription_date: Fecha de la inscripción.
     :param status: Estado de la inscripción.
     """
