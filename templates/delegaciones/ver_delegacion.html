@@ -22,14 +22,12 @@
       </button>
     </div>
     <div class="row mb-4">
-      {% for estudiante in delegacion.estudiantes %}
+      {% for estudiante in estudiantes %}
         <div class="col-md-6 mb-2">
-          <label class="form-label">Estudiante</label>
-          <input class="form-control" value="{{ estudiante.nombre }} {{ estudiante.apellido }}" disabled>
+          <p><strong>Nombre:</strong> {{ estudiante.first_name }} {{ estudiante.last_name }}</p>
         </div>
         <div class="col-md-6 mb-2">
-          <label class="form-label">Cédula de identidad</label>
-          <input class="form-control" value="{{ estudiante.ci }}" disabled>
+          <p><strong>C.I.:</strong> {{ estudiante.ci }}</p>
         </div>
       {% endfor %}
     </div>
@@ -42,14 +40,12 @@
       </button>
     </div>
     <div class="row mb-4">
-      {% for tutor in delegacion.tutores %}
+      {% for tutor in tutores %}
         <div class="col-md-6 mb-2">
-          <label class="form-label">Nombre del tutor</label>
-          <input class="form-control" value="{{ tutor.nombre }}" disabled>
+          <p><strong>Nombre:</strong> {{ tutor.first_name }} {{ tutor.last_name }}</p>
         </div>
         <div class="col-md-6 mb-2">
-          <label class="form-label">Cédula de identidad</label>
-          <input class="form-control" value="{{ tutor.ci }}" disabled>
+          <p><strong>C.I.:</strong> {{ tutor.ci }}</p>
         </div>
       {% endfor %}
     </div>

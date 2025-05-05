@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Unirse a una delegación{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="form-area-container container mt-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h2 class="text-center text-primary">Unirse a una delegación</h2>
+
+    <div class="alert alert-info text-center mt-3">
+      Pide a tu tutor el <strong>código de la delegación</strong> para poder unirte.
+    </div>
+
+    <form method="POST" class="mt-4">
+      <div class="mb-3">
+        <label for="codigo" class="form-label">Código de la delegación</label>
+        <input type="text" class="form-control" id="codigo" name="codigo" placeholder="Ej. ABC123" required>
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Unirme</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
