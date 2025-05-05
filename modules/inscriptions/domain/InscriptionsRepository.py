@@ -20,3 +20,15 @@ class InscriptionRepository(ABC):
     @abstractmethod
     def find_by_id_student(self, student_id : int) -> List[Inscription]:
         pass
+
+    @abstractmethod
+    def find_by_student_and_event(self, student_id: int, event_id: int) -> List[Inscription]:
+        pass
+
+    @abstractmethod
+    def find_by_delegation_id(self, delegation_id: int) -> List[Inscription]:
+        pass
+
+    @abstractmethod
+    def update_all(self, inscriptions: List[Inscription]) -> List[Inscription]:
+        pass

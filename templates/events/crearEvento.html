@@ -37,38 +37,38 @@
         <div class="col-md-5">
           <div class="mb-4">
             <h2>Título</h2>
-            <input type="text" name="titulo" class="crear-evento-input" placeholder="Título de la convocatoria" required>
+            <input type="text" name="titulo" id="titulo" class="crear-evento-input" placeholder="Título de la convocatoria" required>
           </div>
 
           <div class="mb-4">
             <h2>Descripción</h2>
-            <textarea name="descripcion" class="crear-evento-textarea" rows="4" placeholder="Descripción de la convocatoria" required></textarea>
+            <textarea name="descripcion" id="descripcion" class="crear-evento-textarea" rows="4" placeholder="Descripción de la convocatoria" required></textarea>
           </div>
 
           <div class="row mb-4">
             <div class="col">
               <h3>Fecha de inicio</h3>
-              <input type="date" name="fecha_inicio" class="crear-evento-input" required>
+              <input type="date" name="fecha_inicio" id="fecha_inicio" class="crear-evento-input" required>
             </div>
             <div class="col">
               <h3>Fecha de fin</h3>
-              <input type="date" name="fecha_fin" class="crear-evento-input" required>
+              <input type="date" name="fecha_fin" id="fecha_fin" class="crear-evento-input" required>
             </div>
           </div>
           <div class="row mb-4">
             <div class="col">
               <h3>Fecha de inicio de inscripcion</h3>
-              <input type="date" name="fecha_inicio-inscripcion" class="crear-evento-input" required>
+              <input type="date" name="fecha_inicio-inscripcion" id="fecha_inicio_inscripcion" class="crear-evento-input" required>
             </div>
             <div class="col">
               <h3>Fecha de fin de inscripcion</h3>
-              <input type="date" name="fecha_fin-inscripcion" class="crear-evento-input" required>
+              <input type="date" name="fecha_fin-inscripcion" id="fecha_fin_inscripcion" class="crear-evento-input" required>
             </div>
           </div>
 
           <div class="mb-4">
             <h2>Tipo de convocatoria</h2>
-            <select name="tipo_evento" class="crear-evento-select" required>
+            <select name="tipo_evento" id="tipo_evento" class="crear-evento-select" required>
               <option disabled selected value="">Selecciona una opción</option>
               <option value="Virtual">Virtual</option>
               <option value="Presencial">Presencial</option>
@@ -86,17 +86,17 @@
 
           <div class="mb-4">
             <h2>Requisitos</h2>
-            <input type="text" name="requisitos" class="crear-evento-input" placeholder="Ej: Registro previo" required>
+            <input type="text" name="requisitos" id="requisitos" class="crear-evento-input" placeholder="Ej: Registro previo" required>
           </div>
 
           <div class="mb-4">
             <h2>Lugar de la convocatoria</h2>
-            <input type="text" name="lugar" class="crear-evento-input" placeholder="Ej: Auditorio UMSS" required>
+            <input type="text" name="lugar" id="lugar" class="crear-evento-input" placeholder="Ej: Auditorio UMSS" required>
           </div>
 
           <div class="mb-4">
             <h2>Slogan de la convocatoria</h2>
-            <input type="text" name="slogan" class="crear-evento-input" placeholder="Ej: La innovación nos une" required>
+            <input type="text" name="slogan" id="slogan" class="crear-evento-input" placeholder="Ej: La innovación nos une" required>
           </div>
 
           <div class="crear-evento-upload-box" onclick="document.getElementById('file-input').click()">
@@ -109,12 +109,12 @@
       </div>
 
       <div class="text-center mt-4">
-        <input type="checkbox" name="terminos" required>
+        <input type="checkbox" name="terminos" id="terminos" required>
         <label for="terminos">Acepto los términos, condiciones y políticas del sistema</label>
       </div>
 
       <div class="text-center mt-4 mb-5">
-        <button type="submit" class="crear-evento-boton">
+        <button type="submit" id="Crear_convocatoria" class="crear-evento-boton">
           <span class="crear-evento-icono">✏️</span>Crear convocatoria
         </button>
       </div>

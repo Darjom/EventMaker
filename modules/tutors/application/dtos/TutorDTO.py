@@ -16,7 +16,7 @@ class TutorDTO(BaseModel):
     ci: str = ""
     expedito_ci: str = ""
     fecha_nacimiento: Optional[datetime] = None
-    roles: Optional[List[int]] = None
+    roles: Optional[List[str]] = None
 
 
     @classmethod

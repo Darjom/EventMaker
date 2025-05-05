@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 def initialize_driver():
-    chrome_path = "E:/Usuarios/INTELPC/Documents/GitHub/EventMaker/automated_testing/chromedriver.exe"
+    chrome_path = "C:/Users/ARACELI/OneDrive/Documentos/GitHub/EventMaker/automated_testing/chromedriver.exe"
     service = Service(executable_path=chrome_path)
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")  # Maximiza la ventana
@@ -28,12 +28,12 @@ def main():
         Correo_electronico = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "Correo-Electronico"))
         )
-        Correo_electronico.send_keys("add@adm.com")
+        Correo_electronico.send_keys("ledezma@gmail.com")
         
         Contraseña = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "Contraseña"))
         )
-        Contraseña.send_keys("12345678")
+        Contraseña.send_keys("Brunomars0131.")
         
         boton2 = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.ID, "Boton-Iniciar-Sesion2"))

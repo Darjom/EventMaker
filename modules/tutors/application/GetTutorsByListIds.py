@@ -1,6 +1,6 @@
 from typing import List
 
-from modules.tutors.application.dtos import TutorsDTO
+from modules.tutors.application.dtos.TutorsDTO import TutorsDTO
 from modules.tutors.domain.TutorRepository import TutorRepository
 
 
