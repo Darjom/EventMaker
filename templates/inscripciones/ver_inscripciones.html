@@ -52,7 +52,8 @@
                   </span>
                 </td>
                 <td>
-                  <a href="#" class="btn btn-sm btn-outline-danger" title="Descargar PDF">
+                  <a href="{{ url_for('inscripciones_bp.generar_orden_pago_estudiante', event_id=evento.event_id) }}"
+                     class="btn btn-sm btn-outline-danger" title="Descargar orden de pago">
                     <i class="bi bi-file-earmark-pdf"></i>
                   </a>
                 </td>
