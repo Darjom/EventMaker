@@ -1,25 +1,18 @@
-from flask import Blueprint, render_template, session, redirect, url_for, flash, request, send_file
+from flask import Blueprint, render_template, session, redirect, url_for, flash, request
+from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.events.application.EventQueryService import EventQueryService
+from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.areas.application.AreaFinder import AreaFinder
+from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
+from modules.categories.application.CategoryFinder import CategoryFinder
 from modules.inscriptions.application.InscriptionRegister import InscriptionRegistrar
+from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
+from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.inscriptions.application.dtos.InscriptionDTO import InscriptionDTO
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.inscriptions.application.GetAllStudentInscriptions import GetAllStudentInscriptions
-from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
-from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
-from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
-from modules.inscriptions.application.FindInscripPaymentStatusDelegation import FindInscripPaymentStatusDelegation
-from modules.inscriptions.application.GetStudentInscriptionsByDelegation import GetStudentInscriptionsByDelegation
-from modules.inscriptions.application.UpdateInscriptionStatus import UpdateInscriptionStatus
-from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
-from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
-from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
-from modules.tutors.application.FindTutorById import FindTutorById
-from modules.vouchers.infrastructure.PostgresVoucherRepository import PostgresVoucherRepository
-from modules.vouchers.application.VoucherCreator import VoucherCreator
-from modules.inscriptions.application.GenerateDelegationPaymentOrder import GenerateDelegationPaymentOrder
 
 inscripciones_bp = Blueprint("inscripciones_bp", __name__)
 
@@ -112,28 +105,3 @@ def ver_inscripciones_estudiante():
         inscripciones = []
 
     return render_template("inscripciones/ver_inscripciones.html", inscripciones=inscripciones, user=user, permisos=permisos, roles_usuario=roles_usuario)
-
-@inscripciones_bp.route("/orden-pago/evento/<int:event_id>", methods=["GET"])
-def generar_orden_pago_estudiante(event_id):
-    user_id = session.get("admin_user")
-    if not user_id:
-        return redirect(url_for("admin_bp.login"))
-
-    try:
-        from modules.inscriptions.application.FindInscripPaymentStatusStudent import FindInscripPaymentStatusStudent
-
-        servicio = FindInscripPaymentStatusStudent(
-            repository=PostgresInscriptionRepository(),
-            student_repository=PostgresStudentRepository(),
-            event_repository=PostgresEventsRepository(),
-            area_repository=PostgresAreaRepository(),
-            category_repository=PostgresCategoryRepository(),
-            voucher_repository=PostgresVoucherRepository()
-        )
-
-        pdf_buffer = servicio.execute(student_id=user_id, event_id=event_id)
-        return send_file(pdf_buffer, as_attachment=True, download_name="orden_pago.pdf", mimetype="application/pdf")
-
-    except Exception as e:
-        flash(f"Error al generar la orden de pago: {str(e)}", "danger")
-        return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))

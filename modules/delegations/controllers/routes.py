@@ -18,8 +18,6 @@ from modules.delegations.application.FindDelegationById import FindDelegationByI
 from modules.delegations.application.AssignStudentToDelegationByEmail import AssignStudentToDelegationByEmail
 from modules.delegations.application.GetTutorsByDelegation import GetTutorsByDelegation
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
-from modules.students.application.StudentJoinDelegation import StudentJoinDelegation
-from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 
 delegaciones_bp = Blueprint("delegaciones_bp", __name__)
 
@@ -186,21 +184,19 @@ def ver_delegacion(delegacion_id):
         finder = FindDelegationById(PostgresDelegationRepository())
         delegacion = finder.execute(delegacion_id)
 
-        # Obtener estudiantes (como lista de DTOs)
+        # Obtener estudiantes
         students_service = GetStudentIdsByDelegation(
             delegation_repository=PostgresDelegationRepository(),
             student_repository=PostgresStudentRepository()
         )
-        estudiantes_dto = students_service.execute(delegacion_id)
-        estudiantes = estudiantes_dto.students  # lista lista
+        estudiantes = students_service.execute(delegacion_id)
 
-        # Obtener tutores (como lista de DTOs)
+        # Obtener tutores
         tutors_service = GetTutorsByDelegation(
             delegation_repository=PostgresDelegationRepository(),
             tutor_repository=PostgresTutorRepository()
         )
-        tutores_dto = tutors_service.execute(delegacion_id)
-        tutores = tutores_dto.tutors  # también lista
+        tutores = tutors_service.execute(delegacion_id)
 
     except Exception as e:
         flash(str(e), "danger")
@@ -288,47 +284,3 @@ def assign_tutor(delegation_id):
         flash(f"Ocurrió un error al asignar el tutor: {e}", "danger")
 
     return redirect(url_for('delegaciones_bp.ver_delegacion', delegacion_id=delegation_id))
-
-
-@delegaciones_bp.route("/unirse-delegacion", methods=["GET", "POST"])
-def unirse_delegacion():
-    user_id = session.get("admin_user")  # ✅ mantenido como pediste
-    if not user_id:
-        return redirect(url_for("admin_bp.login"))
-
-    user = UserMapping.query.get(user_id)
-
-    # ✅ Validar que tenga el rol de estudiante
-    roles_usuario = [role.name.lower() for role in user.roles]
-
-    if "student" not in roles_usuario:
-        flash("Acceso restringido a estudiantes.", "danger")
-        return redirect(url_for("home_bp.index"))
-
-    if request.method == "POST":
-        codigo = request.form.get("codigo")
-
-        servicio = StudentJoinDelegation(
-            user_repository=PostgresUserRepository(),
-            delegation_repository=PostgresDelegationRepository()
-        )
-        resultado = servicio.execute(code=codigo, student_id=user_id)
-
-        if resultado == StudentJoinDelegation.USER_NOT_FOUND:
-            flash("Usuario no encontrado.", "danger")
-        elif resultado == StudentJoinDelegation.NOT_A_STUDENT:
-            flash("Solo los estudiantes pueden unirse a una delegación.", "warning")
-        elif resultado == StudentJoinDelegation.DELEGATION_NOT_FOUND:
-            flash("No se encontró una delegación con ese código.", "danger")
-        elif resultado == StudentJoinDelegation.ALREADY_ASSOCIATED:
-            flash("Ya estás inscrito en esta delegación.", "info")
-        elif resultado == StudentJoinDelegation.SUCCESSFULLY_ASSOCIATED:
-            flash("Te uniste exitosamente a la delegación.", "success")
-
-        return redirect(url_for("delegaciones_bp.unirse_delegacion"))
-
-    return render_template(
-        "delegaciones/unirse_delegacion.html",
-        user=user,
-        roles_usuario=roles_usuario
-    )

@@ -73,15 +73,6 @@
           </a>
         </li>
         {% endif %}
-      {% if 'student' in roles_usuario %}
-        <li class="nav-item">
-          <a href="{{ url_for('delegaciones_bp.unirse_delegacion') }}" class="nav-link d-flex align-items-center">
-            <img src="{{ url_for('static', filename='img/sidebar/my_events.webp') }}" width="24" class="me-2 icon">
-            <span class="label">Unirse a delegación</span>
-          </a>
-        </li>
-        {% endif %}
-
 
       {% if 'tutor' in roles_usuario %}
       <li class="nav-item" title="Mis Delegaciones">
