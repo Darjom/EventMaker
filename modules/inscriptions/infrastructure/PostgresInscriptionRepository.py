@@ -1,5 +1,4 @@
 from typing import Optional, List
-
 from ..domain.Inscription import Inscription
 from .persistence.InscriptionMapping import InscriptionMapping
 from shared.extensions import db
@@ -25,3 +24,31 @@ class PostgresInscriptionRepository(InscriptionRepository):
     def find_by_id_student(self, student_id: int) -> List[Inscription]:
         inscriptions = InscriptionMapping.query.filter_by(student_id=student_id).all()
         return [inscription.to_domain() for inscription in inscriptions]
+
+    def find_by_student_and_event(self, student_id: int, event_id: int) -> List[Inscription]:
+        inscriptions = InscriptionMapping.query.filter_by(
+            student_id=student_id,
+            event_id=event_id
+        ).all()
+        return [inscription.to_domain() for inscription in inscriptions]
+
+    def find_by_delegation_id(self, delegation_id: int) -> List[Inscription]:
+        inscriptions = InscriptionMapping.query.filter_by(delegation_id=delegation_id).all()
+        return [inscription.to_domain() for inscription in inscriptions]
+
+    def update_all(self, inscriptions: List[Inscription]) -> List[Inscription]:
+        for insc in inscriptions:
+            existing = InscriptionMapping.query.filter_by(
+                student_id=insc.student_id,
+                event_id=insc.event_id,
+                area_id=insc.area_id,
+                category_id=insc.category_id
+            ).first()
+
+            if existing:
+                existing.status = insc.status
+                existing.voucher_id = insc.voucher_id
+
+        db.session.commit()
+
+        return inscriptions
