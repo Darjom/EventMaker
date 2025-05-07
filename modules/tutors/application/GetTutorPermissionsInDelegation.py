@@ -8,4 +8,7 @@ class GetTutorPermissionsInDelegation:
     def execute(self, tutor_id: int, delegation_id: int) :
 
         permissions = self.__repository.get_delegation_permissions(tutor_id, delegation_id)
-        return permissions
+        lista =[]
+        for permission in permissions:
+            lista.append(permission.name)
+        return lista
