@@ -1,10 +1,12 @@
 from app import app
 from modules.tutors.application.GetTutorPermissionsInDelegation import GetTutorPermissionsInDelegation
 from modules.delegations.infrastructure.PostgresDelegationTutorRepository import PostgresDelegationTutorRepository
+from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
 
-def test_get_tutor_permissions_in_delegation(tutor_id: int = 10, delegation_id: int = 3):
+
+def test_get_tutor_permissions_in_delegation(tutor_id: int = 10, delegation_id: int = 2):
     # Inicializar repositorio y servicio
-    tutor_repo = PostgresDelegationTutorRepository()
+    tutor_repo = PostgresTutorRepository()
     service = GetTutorPermissionsInDelegation(tutor_repo)
 
     # Ejecutar el caso de uso
