@@ -22,14 +22,12 @@
       </button>
     </div>
     <div class="row mb-4">
-      {% for estudiante in delegacion.estudiantes %}
+      {% for estudiante in estudiantes %}
         <div class="col-md-6 mb-2">
-          <label class="form-label">Estudiante</label>
-          <input class="form-control" value="{{ estudiante.nombre }} {{ estudiante.apellido }}" disabled>
+          <p><strong>Nombre:</strong> {{ estudiante.first_name }} {{ estudiante.last_name }}</p>
         </div>
         <div class="col-md-6 mb-2">
-          <label class="form-label">Cédula de identidad</label>
-          <input class="form-control" value="{{ estudiante.ci }}" disabled>
+          <p><strong>C.I.:</strong> {{ estudiante.ci }}</p>
         </div>
       {% endfor %}
     </div>
@@ -42,14 +40,12 @@
       </button>
     </div>
     <div class="row mb-4">
-      {% for tutor in delegacion.tutores %}
+      {% for tutor in tutores %}
         <div class="col-md-6 mb-2">
-          <label class="form-label">Nombre del tutor</label>
-          <input class="form-control" value="{{ tutor.nombre }}" disabled>
+          <p><strong>Nombre:</strong> {{ tutor.first_name }} {{ tutor.last_name }}</p>
         </div>
         <div class="col-md-6 mb-2">
-          <label class="form-label">Cédula de identidad</label>
-          <input class="form-control" value="{{ tutor.ci }}" disabled>
+          <p><strong>C.I.:</strong> {{ tutor.ci }}</p>
         </div>
       {% endfor %}
     </div>
@@ -81,9 +77,16 @@
       </tbody>
     </table>
 
-    <div class="text-center mt-4">
-      <button class="btn btn-outline-secondary me-2">Agregar grupos</button>
-    </div>
+    {% if 'group:create' in permisos_delegacion %}
+      <!-- Botón para crear grupo -->
+      <div class="text-center mt-4">
+        <a href="{{ url_for('grupos_bp.crear_grupo', delegacion_id=delegacion.id_delegacion) }}" class="btn btn-outline-secondary me-2">
+          Crear grupo
+        </a>
+      </div>
+    {% endif %}
+
+
   </div>
 </div>
 

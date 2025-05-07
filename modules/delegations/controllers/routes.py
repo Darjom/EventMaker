@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, abort
 
+from modules.areas.application.AreaFinder import AreaFinder
+from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.delegations.application.AssignTutorToDelegationByEmail import AssignTutorToDelegationByEmail
 from modules.delegations.application.GetStudentByDelegation import GetStudentIdsByDelegation
 from modules.events.application.EventQueryService import EventQueryService
@@ -12,12 +14,19 @@ from modules.delegations.infrastructure.PostgresDelegationTutorRepository import
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
-from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
-from modules.delegations.application.FindDelegationById import FindDelegationById
 from modules.delegations.application.AssignStudentToDelegationByEmail import AssignStudentToDelegationByEmail
 from modules.delegations.application.GetTutorsByDelegation import GetTutorsByDelegation
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
+from modules.students.application.StudentJoinDelegation import StudentJoinDelegation
+from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
+from modules.groups.application.GroupCreator import GroupCreator
+from modules.groups.infrastructure.PostgresGroupRepository import PostgresGroupRepository
+from modules.groups.application.dtos.GroupDTO import GroupDTO
+from modules.delegations.application.FindDelegationById import FindDelegationById
+from modules.tutors.application.GetTutorPermissionsInDelegation import GetTutorPermissionsInDelegation
+from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
+
 
 delegaciones_bp = Blueprint("delegaciones_bp", __name__)
 
@@ -164,7 +173,7 @@ def ver_delegacion(delegacion_id):
 
     user = UserMapping.query.get(user_id)
 
-    # Obtener roles
+    # Obtener roles y permisos globales
     permisos = []
     roles_usuario = []
     for role in user.roles:
@@ -189,18 +198,29 @@ def ver_delegacion(delegacion_id):
             delegation_repository=PostgresDelegationRepository(),
             student_repository=PostgresStudentRepository()
         )
-        estudiantes = students_service.execute(delegacion_id)
+        estudiantes_dto = students_service.execute(delegacion_id)
+        estudiantes = estudiantes_dto.students
 
         # Obtener tutores
         tutors_service = GetTutorsByDelegation(
             delegation_repository=PostgresDelegationRepository(),
             tutor_repository=PostgresTutorRepository()
         )
-        tutores = tutors_service.execute(delegacion_id)
+        tutores_dto = tutors_service.execute(delegacion_id)
+        tutores = tutores_dto.tutors
+
+        # ✅ Obtener permisos del tutor en la delegación
+        permisos_delegacion = GetTutorPermissionsInDelegation(
+            repository=PostgresTutorRepository()
+        ).execute(tutor_id=user_id, delegation_id=delegacion_id)
 
     except Exception as e:
         flash(str(e), "danger")
         return redirect(url_for("delegaciones_bp.ver_delegaciones"))
+
+    # Debug
+    print("Permisos globales:", permisos)
+    print("Permisos en delegación:", permisos_delegacion)
 
     return render_template(
         "delegaciones/ver_delegacion.html",
@@ -209,7 +229,8 @@ def ver_delegacion(delegacion_id):
         tutores=tutores,
         user=user,
         permisos=permisos,
-        roles_usuario=roles_usuario
+        roles_usuario=roles_usuario,
+        permisos_delegacion=permisos_delegacion
     )
 
 
@@ -284,3 +305,98 @@ def assign_tutor(delegation_id):
         flash(f"Ocurrió un error al asignar el tutor: {e}", "danger")
 
     return redirect(url_for('delegaciones_bp.ver_delegacion', delegacion_id=delegation_id))
+
+
+@delegaciones_bp.route("/unirse-delegacion", methods=["GET", "POST"])
+def unirse_delegacion():
+    user_id = session.get("admin_user")  # ✅ mantenido como pediste
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    # ✅ Validar que tenga el rol de estudiante
+    roles_usuario = [role.name.lower() for role in user.roles]
+
+    if "student" not in roles_usuario:
+        flash("Acceso restringido a estudiantes.", "danger")
+        return redirect(url_for("home_bp.index"))
+
+    if request.method == "POST":
+        codigo = request.form.get("codigo")
+
+        servicio = StudentJoinDelegation(
+            user_repository=PostgresUserRepository(),
+            delegation_repository=PostgresDelegationRepository()
+        )
+        resultado = servicio.execute(code=codigo, student_id=user_id)
+
+        if resultado == StudentJoinDelegation.USER_NOT_FOUND:
+            flash("Usuario no encontrado.", "danger")
+        elif resultado == StudentJoinDelegation.NOT_A_STUDENT:
+            flash("Solo los estudiantes pueden unirse a una delegación.", "warning")
+        elif resultado == StudentJoinDelegation.DELEGATION_NOT_FOUND:
+            flash("No se encontró una delegación con ese código.", "danger")
+        elif resultado == StudentJoinDelegation.ALREADY_ASSOCIATED:
+            flash("Ya estás inscrito en esta delegación.", "info")
+        elif resultado == StudentJoinDelegation.SUCCESSFULLY_ASSOCIATED:
+            flash("Te uniste exitosamente a la delegación.", "success")
+
+        return redirect(url_for("delegaciones_bp.unirse_delegacion"))
+
+    return render_template(
+        "delegaciones/unirse_delegacion.html",
+        user=user,
+        roles_usuario=roles_usuario
+    )
+@delegaciones_bp.route("/delegacion/<int:delegacion_id>/crear-grupo", methods=["GET", "POST"])
+def crear_grupo(delegacion_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    # Obtener permisos
+    permisos = []
+    for role in user.roles:
+        dto = RoleQueryService(PostgresRolesRepository()).execute(role.id)
+        if dto and dto.permissions:
+            permisos.extend(dto.permissions)
+
+    if "group:create" not in permisos:
+        flash("No tienes permiso para crear grupos.", "danger")
+        return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
+
+    # Obtener delegación y sus áreas
+    delegacion = FindDelegationById(PostgresDelegationRepository()).execute(delegacion_id)
+    areas = AreaFinder(PostgresAreaRepository()).execute(delegacion.evento_id).areas
+
+    if request.method == "POST":
+        nombre = request.form.get("nombre_grupo")
+        id_area = request.form.get("id_area")
+
+        if not nombre or not id_area:
+            flash("Debes llenar todos los campos.", "warning")
+            return redirect(request.url)
+
+        dto = GroupDTO(
+            nombre_grupo=nombre,
+            id_area=int(id_area),
+            id_delegacion=delegacion_id
+        )
+
+        try:
+            GroupCreator(PostgresGroupRepository()).execute(dto)
+            flash("Grupo creado exitosamente.", "success")
+            return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
+        except Exception as e:
+            flash(f"Error al crear grupo: {e}", "danger")
+    print(permisos)
+    return render_template(
+        "grupos/crear_grupo.html",
+        delegacion=delegacion,
+        areas=areas,
+        user=user,
+        permisos=permisos
+    )
