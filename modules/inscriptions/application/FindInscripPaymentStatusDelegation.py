@@ -46,18 +46,22 @@ class FindInscripPaymentStatusDelegation:
 
     def execute(self, tutor_id: int, delegation_id: int):
         inscriptions_dic, name_event, inscriptions_dto = self.__get_student_inscriptions.execute(delegation_id)
+
         tutor = self.__get_tutor_by_id.execute(tutor_id)
 
-        order_payment, total = self.__generate_order(tutor, name_event, inscriptions_dic)
+        total = self.__calcular_total(inscriptions_dic)
         voucher = self.__create_voucher(total)
+
+        order_payment = self.__generate_order(tutor, name_event, inscriptions_dic, total, voucher.order_number)
+
         self.__update_status(voucher, inscriptions_dto)
 
         return order_payment
 
-    def __generate_order(self, tutor, name_event: str, inscriptions_dic: dict):
+    def __generate_order(self, tutor, name_event: str, inscriptions_dic: dict, total, orden_number):
         tutor_name = f"{tutor.first_name} {tutor.last_name}"
         payment_order = self.__generate_payment_order(
-            tutor_name, tutor.ci, tutor_name, name_event, inscriptions_dic
+            tutor_name, tutor.ci, tutor_name, name_event, inscriptions_dic, total, orden_number
         )
         return payment_order.generar_orden_pago()  # Devuelve (order_payment, total)
 
@@ -70,3 +74,11 @@ class FindInscripPaymentStatusDelegation:
             voucher_id=voucher.voucher_id,
             inscriptions_dto=inscriptions_dto
         )
+
+    def __calcular_total(self, estudiantes_info: dict):
+        total = 0.0
+        for estudiante_data in estudiantes_info.values():
+            for insc in estudiante_data["inscripciones"]:
+                monto = insc.get("category_monto") or 0.0
+                total += monto
+        return total

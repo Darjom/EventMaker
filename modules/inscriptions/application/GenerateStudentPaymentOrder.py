@@ -3,19 +3,25 @@ from reportlab.lib.pagesizes import LETTER
 from reportlab.pdfgen import canvas
 from io import BytesIO
 
-
 class GenerateStudentPaymentOrder:
-    def __init__(self, nombre_estudiante, ci, correo, convocatoria_nombre, areas):
-        self.nombre_estudiante = nombre_estudiante
-        self.ci = ci
-        self.correo = correo
+    def __init__(
+        self,
+        nombre_estudiante: str,
+        ci: str,
+        correo: str,
+        convocatoria_nombre: str,
+        areas: list,
+        total: float,
+        orden_number: str
+    ):
+        self.nombre_estudiante   = nombre_estudiante
+        self.ci                  = ci
+        self.correo              = correo
         self.convocatoria_nombre = convocatoria_nombre
-        self.fecha_emision = datetime.today().strftime('%d/%m/%Y')
-        self.areas = areas
-        self.total = self.__calcular_total()
-
-    def __calcular_total(self):
-        return sum((area.get('monto') or 0.0) for area in self.areas)
+        self.fecha_emision       = datetime.today().strftime('%d/%m/%Y')
+        self.areas               = areas
+        self.total               = total
+        self.orden_number        = orden_number
 
     def generar_orden_pago(self):
         buffer = BytesIO()
@@ -29,14 +35,24 @@ class GenerateStudentPaymentOrder:
         c.setFont("Helvetica-Bold", 14)
         c.drawString(x_margin, y, "UNIVERSIDAD MAYOR DE SAN SIMÓN")
         c.setFont("Helvetica", 10)
-        c.drawRightString(width - x_margin, y, f"Fecha de emisión: {self.fecha_emision}")
+        c.drawRightString(width - x_margin,
+                          y,
+                          f"Fecha de emisión: {self.fecha_emision}")
         y -= 20
 
+        # Aquí imprimimos el número de orden:
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(x_margin, y, f"Código de Orden: {self.orden_number}")
+        y -= 30
+
+        # Título de la convocatoria
         c.setFont("Helvetica-Bold", 14)
         c.drawString(x_margin, y, "FACULTAD DE CIENCIAS Y TECNOLOGÍA")
         y -= 20
-
-        c.drawCentredString(width / 2, y, f"ORDEN DE PAGO – {self.convocatoria_nombre}")
+        c.setFont("Helvetica-Bold", 14)
+        c.drawCentredString(width / 2,
+                            y,
+                            f"ORDEN DE PAGO – {self.convocatoria_nombre}")
         y -= 40
 
         # Datos del Estudiante
@@ -66,8 +82,8 @@ class GenerateStudentPaymentOrder:
         c.setFont("Helvetica", 10)
         for i, area in enumerate(self.areas, 1):
             nombre_area = area.get('area', 'N/D')
-            categoria = area.get('categoria', 'N/D')
-            monto = area.get('monto') or 0.0
+            categoria   = area.get('categoria', 'N/D')
+            monto       = area.get('monto') or 0.0
 
             c.drawString(x_margin, y, str(i))
             c.drawString(x_margin + 30, y, nombre_area)
@@ -75,10 +91,13 @@ class GenerateStudentPaymentOrder:
             c.drawString(x_margin + 370, y, f"{monto:.2f}")
             y -= 15
 
+        # Total
         y -= 20
         c.setFont("Helvetica-Bold", 10)
-        c.drawString(x_margin + 300, y, f"Total a pagar: Bs. {self.total:.2f}")
+        c.drawString(x_margin + 300,
+                     y,
+                     f"Total a pagar: Bs. {self.total:.2f}")
 
         c.save()
         buffer.seek(0)
-        return buffer, self.total
+        return buffer
