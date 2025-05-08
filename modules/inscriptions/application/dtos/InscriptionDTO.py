@@ -13,6 +13,7 @@ class InscriptionDTO(BaseModel):
     inscription_date: date = None
     status: str = None
     id: Optional[str] = None  # ID compuesto generado
+    inscription_id: Optional[int] = None
     delegation_id: Optional[int] = None
     voucher_id: Optional[int] = None
 
@@ -26,6 +27,7 @@ class InscriptionDTO(BaseModel):
     @classmethod
     def from_domain(cls, inscription) -> 'InscriptionDTO':
         return cls(
+            inscription_id=inscription.inscription_id,
             student_id=inscription.student_id,
             event_id=inscription.event_id,
             area_id=inscription.area_id,
@@ -40,6 +42,7 @@ class InscriptionDTO(BaseModel):
     def to_domain(self):
 
         return Inscription(
+            inscription_id=self.inscription_id,
             student_id=self.student_id,
             event_id=self.event_id,
             area_id=self.area_id,

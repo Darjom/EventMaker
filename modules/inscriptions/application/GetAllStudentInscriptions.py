@@ -26,7 +26,7 @@ class GetAllStudentInscriptions:
     def execute(self, student_id: int):
         student = self.student_repo.find_by_id(student_id)
         if not student:
-            raise ValueError("St    udent does not exist")
+            raise ValueError("Student does not exist")
 
         print("🔍 Buscando inscripción existente...")
         inscriptions = self.inscription_repo.find_by_id_student(student_id)
@@ -62,6 +62,7 @@ class GetAllStudentInscriptions:
                 category_id, category_name = self.__nameAndIdCategory(ins.category_id)
 
                 inscription_items.append({
+                    "inscription_id": ins.inscription_id,
                     "area_id": area_id,
                     "area_name": area_name,
                     "category_id": category_id,

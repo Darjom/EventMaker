@@ -18,7 +18,7 @@ class InscriptionRepository(ABC):
         pass
 
     @abstractmethod
-    def find_by_id_student(self, student_id : int) -> List[Inscription]:
+    def find_by_id_student(self, student_id: int) -> List[Inscription]:
         pass
 
     @abstractmethod
@@ -32,3 +32,17 @@ class InscriptionRepository(ABC):
     @abstractmethod
     def update_all(self, inscriptions: List[Inscription]) -> List[Inscription]:
         pass
+
+    @abstractmethod
+    def update(self, inscription: Inscription) -> Inscription:
+        pass
+
+    @abstractmethod
+    def find_by_id(self, inscription_id: int) -> Optional[Inscription]:
+        pass
+
+    @abstractmethod
+    def delete(self, inscription: Inscription) -> None:
+        pass
+
+
