@@ -84,9 +84,9 @@ class GenerateDelegationPaymentOrder:
         for estudiante_nombre, datos in self.estudiantes_info.items():
             curso = datos.get("curso") or "N/D"
             for insc in datos["inscripciones"]:
-                area      = insc.get("area_name", "N/D")
+                area = insc.get("area_name", "N/D")
                 categoria = insc.get("category_name", "N/D")
-                monto     = insc.get("category_monto") or 0.0
+                monto = insc.get("category_monto") or 0.0
 
                 c.drawString(x_margin, y, estudiante_nombre)
                 c.drawString(x_margin + 150, y, curso)

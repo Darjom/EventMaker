@@ -14,8 +14,8 @@ class GenerateStudentPaymentOrder:
         total: float,
         orden_number: str
     ):
-        self.nombre_estudiante   = nombre_estudiante
-        self.ci                  = ci
+        self.nombre_estudiante = nombre_estudiante
+        self.ci = ci
         self.correo              = correo
         self.convocatoria_nombre = convocatoria_nombre
         self.fecha_emision       = datetime.today().strftime('%d/%m/%Y')
@@ -82,8 +82,8 @@ class GenerateStudentPaymentOrder:
         c.setFont("Helvetica", 10)
         for i, area in enumerate(self.areas, 1):
             nombre_area = area.get('area', 'N/D')
-            categoria   = area.get('categoria', 'N/D')
-            monto       = area.get('monto') or 0.0
+            categoria = area.get('categoria', 'N/D')
+            monto = area.get('monto') or 0.0
 
             c.drawString(x_margin, y, str(i))
             c.drawString(x_margin + 30, y, nombre_area)

@@ -39,7 +39,7 @@ class DelegationInscriptionValidator:
         self._update_voucher_data(voucher, invoice_number, invoice_url)
         self.voucher_updater.execute(voucher)
 
-        self.update_status_service.execute("Confirmado", voucher.voucher_id, inscriptions)
+        self.update_status_service.execute("Confirmado", voucher.voucher_id, valid_inscriptions)
         return "Inscripciones validadas"
 
     def _extract_invoice_data(self, image_invoice):
