@@ -76,11 +76,7 @@ class GetAllStudentInscriptions:
                 "event_name": event_name,
                 "inscriptions": inscription_items
             })
-
         return grouped_result
-
-
-
 
     def __extract_next_event_group(self, inscriptions_pool: List[Inscription]) -> Tuple[List[Inscription], List[Inscription]]:
         """
