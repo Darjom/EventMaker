@@ -44,10 +44,17 @@ class FindInscripPaymentStatusStudent:
             student = self.__get_student_by_id.execute(student_id)
             student_name = f"{student.first_name} {student.last_name}"
 
-            order_payment, total = self.__generate_payment_order(student_name, student.ci, student.email, name_event, inscriptions_dic).generar_orden_pago()
-
+            total = self.__calcular_total(inscriptions_dic)
             voucher = self.__voucher_creator.execute(VoucherDTO(total_voucher=total))
+
+
+            order_payment = self.__generate_payment_order(student_name, student.ci, student.email, name_event, inscriptions_dic, total, voucher.order_number).generar_orden_pago()
+
+
 
             self.__update_inscription_status.execute(status_new="En Proceso", voucher_id=voucher.voucher_id, inscriptions_dto=inscriptions_dto)
             return order_payment
 
+
+    def __calcular_total(self, areas: dict):
+        return sum((area.get('monto') or 0.0) for area in areas)

@@ -12,3 +12,7 @@ class VoucherRepository(ABC):
     @abstractmethod
     def find_by_id(self, voucher_id: int) -> Optional[Voucher]:
         pass
+
+    @abstractmethod
+    def update(self, voucher: Voucher) -> Optional[Voucher]:
+        pass

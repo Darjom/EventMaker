@@ -8,15 +8,19 @@ class VoucherDTO(BaseModel):
     total_voucher: int
     invoice_code: Optional[str] = None
     invoice_url: Optional[str] = None
+    # Esta variable no se guarda en la base de datos
+    order_number: Optional[str] = None
 
     @classmethod
     def from_domain(cls, voucher: Voucher) -> "VoucherDTO":
-        return cls(
+        dto = cls(
             voucher_id=voucher.voucher_id,
             total_voucher=voucher.total_voucher,
             invoice_code=voucher.invoice_code,
-            invoice_url=voucher.invoice_url
+            invoice_url=voucher.invoice_url,
         )
+        dto.order_number = voucher.order_number
+        return dto
 
     def to_domain(self) -> Voucher:
         return Voucher(
