@@ -6,11 +6,12 @@ from shared.extensions import db
 class InscriptionMapping(db.Model):
     __tablename__ = "inscription"
 
+    inscription_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # Composite primary keys and foreign keys:
-    student_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('evento.id_evento'), primary_key=True)
-    area_id = db.Column(db.Integer, db.ForeignKey('area.id_area'), primary_key=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.category_id'), primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('evento.id_evento'), nullable=False)
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id_area'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.category_id'), nullable=False)
     delegation_id = db.Column(db.Integer, db.ForeignKey('delegacion.id_delegacion'), nullable=True)
     voucher_id = db.Column(db.Integer, db.ForeignKey('vouchers.voucher_id'), nullable=True)
 
@@ -22,6 +23,7 @@ class InscriptionMapping(db.Model):
     def to_domain(self):
 
         return Inscription(
+            inscription_id=self.inscription_id,
             student_id=self.student_id,
             event_id=self.event_id,
             area_id=self.area_id,
@@ -39,6 +41,7 @@ class InscriptionMapping(db.Model):
         It is assumed that the 'inscription' object has the same attributes as defined in this model.
         """
         return cls(
+            inscription_id=inscription.inscription_id,
             student_id=inscription.student_id,
             event_id=inscription.event_id,
             area_id=inscription.area_id,
