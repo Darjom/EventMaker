@@ -38,7 +38,7 @@ class StudentCreator:
 
         # Guardar el estudiante
         student = self.student_repository.save(student)
-        self.student_repository.add_roles_to_user(student.id,[3])
+        self.student_repository.add_roles_to_user(user_id=student.id, role_ids=[3])
 
         # Retornar el DTO actualizado
         return StudentDTO.from_domain(student)

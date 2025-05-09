@@ -27,7 +27,20 @@
     {% else %}
       {% for evento in inscripciones %}
       <div class="mt-4">
-        <h5 class="text-secondary fw-bold">{{ evento.event_name }}</h5>
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="text-secondary fw-bold">{{ evento.event_name }}</h5>
+                <a href="{{ url_for('inscripciones_bp.generar_orden_pago_estudiante', event_id=evento.event_id) }}"
+                   class="btn btn-sm btn-outline-danger">
+                  <i class="bi bi-file-earmark-pdf"></i> Descargar orden de pago
+                </a>
+              {% if evento.inscriptions[0].status == "En Proceso" %}
+                <!-- Botón que lanza modal -->
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalRecibo_{{ evento.event_id }}">
+                  Comprobar recibo de inscripción
+                </button>
+                {% endif %}
+
+              </div>
 
         <div class="table-responsive">
           <table class="table table-bordered align-middle text-center mt-2">
@@ -51,11 +64,6 @@
                     {{ ins.status }}
                   </span>
                 </td>
-                <td>
-                  <a href="#" class="btn btn-sm btn-outline-danger" title="Descargar PDF">
-                    <i class="bi bi-file-earmark-pdf"></i>
-                  </a>
-                </td>
               </tr>
               {% endfor %}
             </tbody>
@@ -66,4 +74,27 @@
     {% endif %}
   </div>
 </div>
+
+<!-- Modal de comprobación -->
+<div class="modal fade" id="modalRecibo_{{ evento.event_id }}" tabindex="-1" aria-labelledby="modalReciboLabel_{{ evento.event_id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('inscripciones_bp.comprobar_recibo_ocr', event_id=evento.event_id) }}" enctype="multipart/form-data">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalReciboLabel_{{ evento.event_id }}">Comprobar recibo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <label for="recibo">Suba una foto del recibo:</label>
+          <input class="form-control" type="file" name="recibo" accept="image/*" required>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Verificar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 {% endblock %}

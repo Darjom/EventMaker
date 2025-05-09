@@ -13,6 +13,11 @@ class Voucher:
         self.invoice_code = invoice_code
         self.invoice_url = invoice_url
 
+    @property
+    def order_number(self) -> str:
+        # PREFIJO "ORD-" y 7 dígitos con ceros a la izquierda
+        return f"ORD-{self.voucher_id:07d}"
+
     def __repr__(self):
         return (
             f"Voucher(voucher_id={self.voucher_id}, "

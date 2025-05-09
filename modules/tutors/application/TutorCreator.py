@@ -30,7 +30,7 @@ class TutorCreator:
 
         # Guardar tutor
         tutor = self.tutor_repository.save(tutor)
-        self.tutor_repository.add_roles_to_user(tutor.id ,[4])
+        self.tutor_repository.add_roles_to_user(tutor_id=tutor.id,role_ids=[4])
 
         # Retornar el DTO actualizado
         return TutorDTO.from_domain(tutor)
