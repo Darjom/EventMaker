@@ -25,3 +25,4 @@ automated_testing/PruebaCreacionDeEstudianteFirefox.py
 automated_testing/PruebaInicioSesionFirefox.py
 /static/uploads
 
+test/user create.py

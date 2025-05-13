@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image, ImageOps
+from pdf2image import convert_from_bytes
 
 class ImageProcessorService:
     def __init__(self):
@@ -9,7 +10,6 @@ class ImageProcessorService:
 
     @staticmethod
     def process_uploaded_image(file_stream):
-        """Procesa la imagen subida y la prepara para OCR"""
         img = Image.open(file_stream)
         img = ImageOps.exif_transpose(img)
         img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)

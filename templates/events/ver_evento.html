@@ -105,7 +105,7 @@
 
     {% if 'area:create' in permisos %}
     <div class="text-end me-5">
-      <a href="{{ url_for('areas_bp.crear_area', evento_id=evento.id_evento) }}" class="btn btn-outline-primary crear-area-boton">
+      <a href="{{ url_for('areas_bp.crear_area', evento_id=evento.id_evento) }}" id="btn_Crear_Area" class="btn btn-outline-primary crear-area-boton">
         ➕ Crear Área
       </a>
     </div>

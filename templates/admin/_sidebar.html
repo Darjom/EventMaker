@@ -29,7 +29,7 @@
       <!-- Crear Evento-->
       {% if 'event:create' in permisos %}
       <li class="nav-item" title="Crear Evento">
-        <a href="{{ url_for('eventos_bp.crear_evento') }}" id="Crear_convocatoria" class="nav-link d-flex align-items-center">
+        <a href="{{ url_for('eventos_bp.crear_evento') }}" id="nav_Crear_convocatoria" class="nav-link d-flex align-items-center">
           <img src="{{ url_for('static', filename='img/sidebar/create_events.webp') }}" width="24" class="me-2 icon">
           <span class="label">Crear Convocatoria</span>
         </a>
@@ -39,7 +39,7 @@
       <!-- Mis Eventos  -->
       {% if 'event:create' in permisos %}
       <li class="nav-item" title="Mis Eventos">
-        <a href="{{ url_for('eventos_bp.mis_eventos') }}" class="nav-link d-flex align-items-center">
+        <a href="{{ url_for('eventos_bp.mis_eventos') }}" id="nav_Ver_convocatorias" class="nav-link d-flex align-items-center">
             <img src="{{ url_for('static', filename='img/sidebar/my_events.webp') }}" width="24" class="me-2 icon">
           <span class="label">Mis Convocatorias</span>
         </a>
@@ -85,7 +85,7 @@
 
       <!-- Info del usuario (siempre disponible)-->
       <li class="nav-item" title="Mi informacion">
-        <a href="{{ url_for('info_bp.Mi_Informacion') }}" class="nav-link d-flex align-items-center">
+        <a href="{{ url_for('info_bp.Mi_Informacion') }}" id="Ver_informacion" class="nav-link d-flex align-items-center">
           <img src="{{ url_for('static', filename='img/sidebar/Mi_Informacion.webp') }}" width="24" class="me-2 icon">
         <span class="label">Mi Información</span>
         </a>
