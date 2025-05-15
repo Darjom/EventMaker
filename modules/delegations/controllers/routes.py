@@ -366,13 +366,10 @@ def crear_grupo(delegacion_id):
         if dto and dto.permissions:
             permisos.extend(dto.permissions)
 
-    if "group:create" not in permisos:
-        flash("No tienes permiso para crear grupos.", "danger")
-        return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
-
     # Obtener delegación y sus áreas
     delegacion = FindDelegationById(PostgresDelegationRepository()).execute(delegacion_id)
-    areas = AreaFinder(PostgresAreaRepository()).execute(delegacion.evento_id).areas
+    evento = EventQueryService(PostgresEventsRepository()).execute(delegacion.evento_id)
+    areas = AreaFinder(PostgresAreaRepository()).execute(evento.id_evento).areas
 
     if request.method == "POST":
         nombre = request.form.get("nombre_grupo")
@@ -394,9 +391,8 @@ def crear_grupo(delegacion_id):
             return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
         except Exception as e:
             flash(f"Error al crear grupo: {e}", "danger")
-    print(permisos)
     return render_template(
-        "grupos/crear_grupo.html",
+        "grupo/crear_grupo.html",
         delegacion=delegacion,
         areas=areas,
         user=user,

@@ -120,7 +120,20 @@ def ver_inscripciones_estudiante():
         flash(str(e), "danger")
         inscripciones = []
 
-    return render_template("inscripciones/ver_inscripciones.html", inscripciones=inscripciones, user=user, permisos=permisos, roles_usuario=roles_usuario)
+    # Recuperar resultado del OCR si existe
+    ocr_resultado = None
+    if "ocr_resultado" in session:
+        ocr_resultado = session.get("ocr_resultado")
+        session.pop("ocr_resultado")  # limpiar después de mostrar
+
+    return render_template(
+        "inscripciones/ver_inscripciones.html",
+        inscripciones=inscripciones,
+        user=user,
+        permisos=permisos,
+        roles_usuario=roles_usuario,
+        ocr_resultado=ocr_resultado
+    )
 
 @inscripciones_bp.route("/orden-pago/evento/<int:event_id>", methods=["GET"])
 def generar_orden_pago_estudiante(event_id):

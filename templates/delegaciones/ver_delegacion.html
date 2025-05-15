@@ -8,6 +8,17 @@
   {% include 'admin/_sidebar.html' %}
 
   <div class="form-area-container container mt-4">
+                    <!-- MENSAJES FLASH (AGREGAR ESTO) -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                  {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                      {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
     <h1 class="text-primary text-center">{{ delegacion.nombre }}</h1>
 
     <div class="bg-light p-3 rounded text-end fw-bold">
@@ -89,8 +100,6 @@
         </a>
       </div>
     {% endif %}
-
-
   </div>
 </div>
 
