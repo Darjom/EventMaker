@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from reportlab.lib.pagesizes import LETTER
 from reportlab.pdfgen import canvas
@@ -44,7 +45,8 @@ class GenerateStudentPaymentOrder:
         c.rect(logo_x, logo_y, logo_width, logo_height)
 
         # Imagen dentro del recuadro
-        image_path = "EventMaker/static/img/FondoBoleta/logo_umss.png"
+        PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))  # Sube desde el módulo
+        image_path = os.path.join(PROJECT_ROOT, 'static', 'img', 'FondoBoleta', 'logo_umss.png')
         padding = 5
 
         c.drawImage(
