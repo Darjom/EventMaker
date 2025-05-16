@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Grupo {{ grupo.nombre_grupo }}{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Grupo: {{ grupo.nombre_grupo }}</h4>
+    </div>
+    <div class="card-body">
+      <p><strong>ID del Grupo:</strong> {{ grupo.id_grupo }}</p>
+      <p><strong>Área Asignada:</strong> {{ nombre_area }}</p>
+    </div>
+    <div class="card-footer text-end">
+      <a href="{{ url_for('delegaciones_bp.ver_delegacion', delegacion_id=grupo.id_delegacion) }}" class="btn btn-secondary">Volver a delegación</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
