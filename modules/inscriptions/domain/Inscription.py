@@ -22,8 +22,10 @@ class Inscription:
                  inscription_date: date,
                  status: str,
                  delegation_id: Optional[int] = None,
+                 inscription_id: Optional[int] = None,
                  voucher_id: Optional[int] = None):
 
+        self.inscription_id = inscription_id
         self.student_id = student_id
         self.event_id = event_id
         self.area_id = area_id
@@ -32,5 +34,17 @@ class Inscription:
         self.voucher_id = voucher_id
         self.inscription_date = inscription_date
         self.status = status
+
+    def is_confirmed(self) -> bool:
+        if self.status == "Confirmado":
+            return True
+        else:
+            return False
+
+    def remove_voucher(self):
+        self.voucher_id = None
+
+    def update_status(self):
+        self.status = "Pendiente"
 
 

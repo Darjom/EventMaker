@@ -52,3 +52,44 @@ class PostgresInscriptionRepository(InscriptionRepository):
         db.session.commit()
 
         return inscriptions
+
+    def update(self, inscription: Inscription) -> Inscription:
+        # Buscar la inscripción existente en la base de datos por ID
+        existing = InscriptionMapping.query.filter_by(inscription_id=inscription.inscription_id).first()
+
+        if not existing:
+            raise ValueError("Inscription not found")
+
+        # Actualizar los campos editables
+        existing.area_id = inscription.area_id
+        existing.category_id = inscription.category_id
+        existing.voucher_id = inscription.voucher_id if inscription.voucher_id else None
+        existing.status = inscription.status
+
+        # Guardar cambios en la base de datos
+        db.session.commit()
+
+        # Retornar la inscripción actualizada
+        return existing.to_domain()
+
+    def find_by_id(self, inscription_id: int) -> Optional[Inscription]:
+        inscription = InscriptionMapping.query.filter_by(inscription_id=inscription_id).first()
+        return inscription.to_domain() if inscription else None
+
+    def delete(self, inscription: Inscription) -> None:
+        inscription_mapping = InscriptionMapping.query.filter_by(
+            inscription_id=inscription.inscription_id
+        ).first()
+
+        if inscription_mapping:
+            db.session.delete(inscription_mapping)
+            db.session.commit()
+
+    def find_by_id_event(self, event_id: int) -> List[Inscription]:
+        """
+        Recupera todas las inscripciones de un evento y las transforma a dominio.
+        Siempre retorna una lista (vacía si no hay registros).
+        """
+        mappings = InscriptionMapping.query.filter_by(event_id=event_id).all()
+        # Convertir cada mapping al objeto de dominio Inscription
+        return [m.to_domain() for m in mappings]
