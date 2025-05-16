@@ -20,6 +20,9 @@ from modules.tutors.application.FindTutorById import FindTutorById
 from modules.vouchers.infrastructure.PostgresVoucherRepository import PostgresVoucherRepository
 from modules.vouchers.application.VoucherCreator import VoucherCreator
 from modules.inscriptions.application.GenerateDelegationPaymentOrder import GenerateDelegationPaymentOrder
+from modules.OCR.application.PreprocesamientoOCRService import ImageProcessorService
+from modules.OCR.application.ProcesamientoOCRService import ProcesadorOCR
+from modules.OCR.application.ManejoArchivosService import GestorArchivosOriginales
 
 inscripciones_bp = Blueprint("inscripciones_bp", __name__)
 
@@ -111,7 +114,20 @@ def ver_inscripciones_estudiante():
         flash(str(e), "danger")
         inscripciones = []
 
-    return render_template("inscripciones/ver_inscripciones.html", inscripciones=inscripciones, user=user, permisos=permisos, roles_usuario=roles_usuario)
+    # Recuperar resultado del OCR si existe
+    ocr_resultado = None
+    if "ocr_resultado" in session:
+        ocr_resultado = session.get("ocr_resultado")
+        session.pop("ocr_resultado")  # limpiar después de mostrar
+
+    return render_template(
+        "inscripciones/ver_inscripciones.html",
+        inscripciones=inscripciones,
+        user=user,
+        permisos=permisos,
+        roles_usuario=roles_usuario,
+        ocr_resultado=ocr_resultado
+    )
 
 @inscripciones_bp.route("/orden-pago/evento/<int:event_id>", methods=["GET"])
 def generar_orden_pago_estudiante(event_id):
@@ -137,3 +153,47 @@ def generar_orden_pago_estudiante(event_id):
     except Exception as e:
         flash(f"Error al generar la orden de pago: {str(e)}", "danger")
         return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
+
+@inscripciones_bp.route("/comprobar-recibo/<int:event_id>", methods=["POST"])
+def comprobar_recibo_ocr(event_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+    if not user:
+        flash("Usuario no válido", "danger")
+        return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
+
+    try:
+        file = request.files.get("recibo")
+        if not file:
+            flash("Debe subir una imagen del recibo", "warning")
+            return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
+
+        gestor_archivos = GestorArchivosOriginales()
+        ruta = gestor_archivos.guardar_original(file)
+        ruta_original = gestor_archivos.obtener_ruta_original(ruta)
+
+        procesador = ImageProcessorService()
+        ocr = ProcesadorOCR()
+
+        with open(ruta_original, "rb") as f:
+            imagen = procesador.process_uploaded_image(f)
+
+        numero = procesador.RecortarNumero(imagen)
+        nombre = procesador.RecortarNombre(imagen)
+        monto = procesador.RecortarMonto(imagen)
+
+        resultado = ocr.procesar_todo(
+            procesador.preprocesar_para_ocr(numero),
+            procesador.preprocesar_para_ocr(nombre),
+            procesador.preprocesar_para_ocr(monto),
+        )
+
+        flash(f"Resultado del OCR: {resultado}", "info")
+
+    except Exception as e:
+        flash(f"Error al procesar la imagen: {str(e)}", "danger")
+
+    return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
