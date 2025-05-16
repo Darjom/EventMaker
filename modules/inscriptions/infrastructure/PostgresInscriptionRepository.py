@@ -85,3 +85,6 @@ class PostgresInscriptionRepository(InscriptionRepository):
             db.session.delete(inscription_mapping)
             db.session.commit()
 
+    def find_by_id_event(self, event_id: int) -> Optional[List[Inscription]]:
+        inscription = InscriptionMapping.query.filter_by(event_id=event_id).first()
+        return inscription.to_domain() if inscription else None
