@@ -26,6 +26,10 @@ from modules.groups.application.dtos.GroupDTO import GroupDTO
 from modules.delegations.application.FindDelegationById import FindDelegationById
 from modules.tutors.application.GetTutorPermissionsInDelegation import GetTutorPermissionsInDelegation
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
+from modules.groups.application.FindGroupsOfTutorInDelegation import FindGroupsOfTutorInDelegation
+from modules.groups.infrastructure.PostgresGroupRepository import PostgresGroupRepository
+from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
+
 
 
 delegaciones_bp = Blueprint("delegaciones_bp", __name__)
@@ -214,6 +218,17 @@ def ver_delegacion(delegacion_id):
             repository=PostgresTutorRepository()
         ).execute(tutor_id=user_id, delegation_id=delegacion_id)
 
+        # Obtener grupos del tutor
+        groups_dto = FindGroupsOfTutorInDelegation(
+            repository=PostgresGroupRepository(),
+            delegationTutor_repository=PostgresDelegationTutorRepository(),
+            repository_user=PostgresUserRepository()
+        ).execute(delegation_id=delegacion_id, tutor_id=user_id)
+
+        # Obtener todas las áreas del evento asociado a la delegación
+        areas_dto = AreaFinder(PostgresAreaRepository()).execute(delegacion.evento_id)
+        areas_dict = {area.id_area: area.nombre_area for area in areas_dto.areas}
+
     except Exception as e:
         flash(str(e), "danger")
         return redirect(url_for("delegaciones_bp.ver_delegaciones"))
@@ -230,7 +245,9 @@ def ver_delegacion(delegacion_id):
         user=user,
         permisos=permisos,
         roles_usuario=roles_usuario,
-        permisos_delegacion=permisos_delegacion
+        permisos_delegacion=permisos_delegacion,
+        grupos=groups_dto.groups,
+        areas_dict=areas_dict
     )
 
 
