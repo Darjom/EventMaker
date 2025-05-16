@@ -46,9 +46,12 @@ class GenerateStudentPaymentOrder:
 
         # Imagen dentro del recuadro
         PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))  # Sube desde el archivo actual
+
+        PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))  # Sube desde el módulo
+
         image_path = os.path.join(PROJECT_ROOT, 'static', 'img', 'FondoBoleta', 'logo_umss.png')
         padding = 5
-
+ 
         c.drawImage(
             image_path,
             logo_x + padding,
