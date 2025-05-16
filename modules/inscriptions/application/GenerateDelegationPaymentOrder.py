@@ -33,24 +33,21 @@ class GenerateDelegationPaymentOrder:
         x_margin = 50
         y = height - 50
 
-        # === Encabezado ===
+        # Encabezado
+        # Posición y tamaño de la imagen
         logo_x = x_margin
         logo_y = height - 120
         logo_width = 100
         logo_height = 100
 
-        c.setStrokeColorRGB(1, 0, 0)  # rojo
-        c.setLineWidth(1.5)
-        c.rect(logo_x, logo_y, logo_width, logo_height)
+        # Ruta de la imagen
+        PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))
+        image_path = os.path.join(PROJECT_ROOT, 'static', 'img', 'FondoBoleta', 'logo_umss.png')
 
-        try:
-            PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))
-            image_path = os.path.join(PROJECT_ROOT, 'static', 'img', 'FondoBoleta', 'logo_umss.png')
-        except Exception:
-            # fallback si __file__ no está definido
-            image_path = "EventMaker/static/img/FondoBoleta/logo_umss.png"
-
+        # Padding interno de la imagen
         padding = 5
+
+        # imagen sin cuadro
         c.drawImage(
             image_path,
             logo_x + padding,
