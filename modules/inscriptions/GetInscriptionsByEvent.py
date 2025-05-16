@@ -96,12 +96,10 @@ class GetInscriptionsByEvent:
             student_name = "Desconocido"
             course = None
         else:
-            student_name = student_dto.name
+            student_name = student_dto.first_name + " " + student_dto.last_name
             course = getattr(student_dto, 'course', None)
 
         return {
-            "area_id": area_id,
-            "category_id": category_id,
             "student_id": insc.student_id,
             "student_name": student_name,
             "course": course,

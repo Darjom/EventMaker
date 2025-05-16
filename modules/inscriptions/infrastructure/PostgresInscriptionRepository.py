@@ -85,6 +85,11 @@ class PostgresInscriptionRepository(InscriptionRepository):
             db.session.delete(inscription_mapping)
             db.session.commit()
 
-    def find_by_id_event(self, event_id: int) -> Optional[List[Inscription]]:
-        inscription = InscriptionMapping.query.filter_by(event_id=event_id).first()
-        return inscription.to_domain() if inscription else None
+    def find_by_id_event(self, event_id: int) -> List[Inscription]:
+        """
+        Recupera todas las inscripciones de un evento y las transforma a dominio.
+        Siempre retorna una lista (vacía si no hay registros).
+        """
+        mappings = InscriptionMapping.query.filter_by(event_id=event_id).all()
+        # Convertir cada mapping al objeto de dominio Inscription
+        return [m.to_domain() for m in mappings]

@@ -46,5 +46,5 @@ class InscriptionRepository(ABC):
         pass
 
     @abstractmethod
-    def find_by_id_event(self, event_id: int) -> Optional[List[Inscription]]:
+    def find_by_id_event(self, event_id: int) -> List[Inscription]:
         pass
