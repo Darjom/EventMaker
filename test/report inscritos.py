@@ -1,5 +1,6 @@
 import os
 from app import app
+from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.inscriptions.application.ExportStudentInscriptionsService import ExportStudentInscriptionsService
 
 from modules.inscriptions.application.GetStudentInscriptionsByCategory import GetStudentInscriptionsByCategory
@@ -18,6 +19,7 @@ def test_export_student_inscriptions_service(event_id: int):
     student_repo = PostgresStudentRepository()
     school_repo = PostgresSchoolRepository()
     category_repo = PostgresCategoryRepository()
+    event_repo = PostgresEventsRepository()
 
     # Casos de uso secundarios
     student_service = GetStudentById(student_repo)
@@ -31,7 +33,7 @@ def test_export_student_inscriptions_service(event_id: int):
         category_service=category_repo
     )
 
-    export_service = ExportStudentInscriptionsService(use_case)
+    export_service = ExportStudentInscriptionsService(use_case, event_repo)
 
     # Exportar Excel
     excel_buffer = export_service.generate_excel(event_id)
