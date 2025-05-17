@@ -18,7 +18,7 @@ def test_create_and_get_tutor():
         last_name="Pérez",
         email="jjquiquegfk@example.com",
         password="12345678",
-        ci= "12345678 B",
+        ci= "12345678 BA",
         expedito_ci= "CBBA",
         fecha_nacimiento=datetime(2025, 5, 20, 9, 0, 0),
     )

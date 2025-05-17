@@ -202,6 +202,7 @@ def ver_delegacion(delegacion_id):
             delegation_repository=PostgresDelegationRepository(),
             student_repository=PostgresStudentRepository()
         )
+        estudiantes = students_service.execute(delegacion_id)
         estudiantes_dto = students_service.execute(delegacion_id)
         estudiantes = estudiantes_dto.students
 
@@ -210,6 +211,7 @@ def ver_delegacion(delegacion_id):
             delegation_repository=PostgresDelegationRepository(),
             tutor_repository=PostgresTutorRepository()
         )
+        tutores = tutors_service.execute(delegacion_id)
         tutores_dto = tutors_service.execute(delegacion_id)
         tutores = tutores_dto.tutors
 

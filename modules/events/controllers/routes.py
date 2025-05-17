@@ -73,9 +73,7 @@ def crear_evento():
 
         creator = EventCreator(repository)
         creator.execute(event_dto)
-
         return redirect(url_for("admin_bp.dashboard"))
-
     return render_template("events/crearEvento.html", user=user, permisos=permisos)
 
 @eventos_bp.route("/mis-eventos")
