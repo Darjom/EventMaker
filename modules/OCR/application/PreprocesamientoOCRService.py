@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from PIL import Image, ImageOps
-from pdf2image import convert_from_bytes
 
 class ImageProcessorService:
     def __init__(self):
