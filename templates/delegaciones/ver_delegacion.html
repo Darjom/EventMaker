@@ -33,14 +33,15 @@
       </button>
     </div>
     <div class="row mb-4">
-      {% for estudiante in delegacion.estudiantes %}
+      {% for estudiante in estudiantes %}
         <div class="col-md-6 mb-2">
           <label class="form-label">Estudiante</label>
-          <input class="form-control" value="{{ estudiante.nombre }} {{ estudiante.apellido }}" disabled>
+          <p>{{estudiante.first_name}} {{estudiante.last_name}}</p>
+
         </div>
         <div class="col-md-6 mb-2">
           <label class="form-label">Cédula de identidad</label>
-          <input class="form-control" value="{{ estudiante.ci }}" disabled>
+          <p>{{estudiante.ci}}</p>
         </div>
       {% endfor %}
     </div>
@@ -53,43 +54,18 @@
       </button>
     </div>
     <div class="row mb-4">
-      {% for tutor in delegacion.tutores %}
+    {% for tutor in tutores %}
         <div class="col-md-6 mb-2">
           <label class="form-label">Nombre del tutor</label>
-          <input class="form-control" value="{{ tutor.nombre }}" disabled>
+          <p>{{tutor.first_name}} {{tutor.last_name}}</p>
         </div>
         <div class="col-md-6 mb-2">
           <label class="form-label">Cédula de identidad</label>
-          <input class="form-control" value="{{ tutor.ci }}" disabled>
+          <p>{{tutor.ci}}</p>
         </div>
       {% endfor %}
     </div>
-
-    <!-- Grupos -->
-    <h4 class="mt-4">Grupos</h4>
-    <table class="table table-bordered">
-      <thead class="table-light">
-        <tr>
-          <th>Nombre del grupo</th>
-          <th>Encargado</th>
-          <th>Correo</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for grupo in delegacion.grupos %}
-          <tr>
-            <td>{{ grupo.nombre }}</td>
-            <td>{{ grupo.encargado }}</td>
-            <td>{{ grupo.correo }}</td>
-            <td class="text-center">
-              <a href="#" class="text-dark me-2"><i class="bi bi-pencil"></i></a>
-              <a href="#" class="text-dark me-2"><i class="bi bi-trash"></i></a>
-              <a href="#" class="text-dark"><i class="bi bi-plus"></i></a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
+    
     </table>
 
     {% if 'group:create' in permisos_delegacion %}
@@ -121,6 +97,11 @@
         {% endfor %}
       </ul>
     {% endif %}
+    <div class="text-center mt-5">
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCargaMasiva">
+        Agregar estudiantes por Excel
+      </button>
+    </div>
   </div>
 </div>
 
@@ -178,6 +159,43 @@
         </div>
       </form>
     </div>
+  </div>
+</div>
+<!-- Modal de carga masiva -->
+<div class="modal fade" id="modalCargaMasiva" tabindex="-1" aria-labelledby="modalCargaMasivaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form method="POST" action="{{ url_for('delegaciones_bp.cargar_estudiantes_excel', delegacion_id=delegacion.id_delegacion) }}" enctype="multipart/form-data">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCargaMasivaLabel">Carga Masiva de Estudiantes</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body row">
+          <div class="col-md-6 border-end">
+            <p><strong>Pasos para cargar estudiantes:</strong></p>
+            <ol>
+              <li>Descargue el archivo Excel de ejemplo.</li>
+              <li>Llene el archivo con la información de los estudiantes.</li>
+              <li>Seleccione el archivo en el campo de la derecha.</li>
+              <li>Presione el botón "Cargar".</li>
+            </ol>
+            <a href="{{ url_for('static', filename='excel/Registrar_example.xlsx') }}" class="btn btn-outline-secondary mt-3">
+              Descargar plantilla Excel
+            </a>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="excel_file" class="form-label">Seleccionar archivo Excel</label>
+              <input class="form-control" type="file" name="excel_file" id="excel_file" accept=".xlsx,.xls" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Cargar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
 
