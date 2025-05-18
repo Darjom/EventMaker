@@ -15,21 +15,11 @@
       </li>
       {% endif %}
 
-      <!-- Ejemplo: Inscribir Estudiante -->
-      
-      <li class="nav-item" title="Inscribir Estudiante">
-        <a href="#" id="btn-abrir-modal" class="nav-link d-flex align-items-center">
-          <img src="{{ url_for('static', filename='img/sidebar/inscripciones.webp') }}" width="24" class="me-2 icon">
-          <span class="label">Inscribir Estudiante</span>
-        </a>
-      </li>
 
-      
-      <!-- Ejemplo: Crear Evento (solo si 'event:create' en permisos) -->
       <!-- Crear Evento-->
       {% if 'event:create' in permisos %}
       <li class="nav-item" title="Crear Evento">
-        <a href="{{ url_for('eventos_bp.crear_evento') }}" id="Crear_convocatoria" class="nav-link d-flex align-items-center">
+        <a href="{{ url_for('eventos_bp.crear_evento') }}" id="nav_Crear_convocatoria" class="nav-link d-flex align-items-center">
           <img src="{{ url_for('static', filename='img/sidebar/create_events.webp') }}" width="24" class="me-2 icon">
           <span class="label">Crear Convocatoria</span>
         </a>
@@ -39,7 +29,7 @@
       <!-- Mis Eventos  -->
       {% if 'event:create' in permisos %}
       <li class="nav-item" title="Mis Eventos">
-        <a href="{{ url_for('eventos_bp.mis_eventos') }}" class="nav-link d-flex align-items-center">
+        <a href="{{ url_for('eventos_bp.mis_eventos') }}" id="nav_Ver_convocatorias" class="nav-link d-flex align-items-center">
             <img src="{{ url_for('static', filename='img/sidebar/my_events.webp') }}" width="24" class="me-2 icon">
           <span class="label">Mis Convocatorias</span>
         </a>
@@ -55,7 +45,7 @@
       </li>
 
       <!-- Editar Perfil Estudiantes -->
-      {% if user.roles and user.roles[0].id == 4 %}
+      {% if 'student' in roles_usuario %}
       <li class="nav-item" title="Editar Perfil">
         <a href="{{ url_for('estudiantes_bp.editar_perfil') }}" class="nav-link d-flex align-items-center">
           <img src="{{ url_for('static', filename='img/sidebar/user.webp') }}" width="24" class="me-2 icon">
@@ -73,6 +63,7 @@
           </a>
         </li>
         {% endif %}
+
       {% if 'student' in roles_usuario %}
         <li class="nav-item">
           <a href="{{ url_for('delegaciones_bp.unirse_delegacion') }}" class="nav-link d-flex align-items-center">
@@ -81,7 +72,6 @@
           </a>
         </li>
         {% endif %}
-
 
       {% if 'tutor' in roles_usuario %}
       <li class="nav-item" title="Mis Delegaciones">
@@ -94,7 +84,7 @@
 
       <!-- Info del usuario (siempre disponible)-->
       <li class="nav-item" title="Mi informacion">
-        <a href="{{ url_for('info_bp.Mi_Informacion') }}" class="nav-link d-flex align-items-center">
+        <a href="{{ url_for('info_bp.Mi_Informacion') }}" id="Ver_informacion" class="nav-link d-flex align-items-center">
           <img src="{{ url_for('static', filename='img/sidebar/Mi_Informacion.webp') }}" width="24" class="me-2 icon">
         <span class="label">Mi Información</span>
         </a>

@@ -26,3 +26,4 @@ automated_testing/PruebaInicioSesionFirefox.py
 /static/uploads
 
 .env
+test/user create.py

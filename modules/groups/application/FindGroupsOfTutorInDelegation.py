@@ -29,4 +29,4 @@ class FindGroupsOfTutorInDelegation:
         else:
             groups = self.__repository.find_by_delegation(delegation_id)
 
-        return GroupsDTO.from_groups(groups)
+        return GroupsDTO.from_domain_list(groups)

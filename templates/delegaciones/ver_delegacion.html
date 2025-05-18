@@ -33,12 +33,14 @@
       </button>
     </div>
     <div class="row mb-4">
-      {% for estudiante in estudiantes %}
+      {% for estudiante in delegacion.estudiantes %}
         <div class="col-md-6 mb-2">
-          <p><strong>Nombre:</strong> {{ estudiante.first_name }} {{ estudiante.last_name }}</p>
+          <label class="form-label">Estudiante</label>
+          <input class="form-control" value="{{ estudiante.nombre }} {{ estudiante.apellido }}" disabled>
         </div>
         <div class="col-md-6 mb-2">
-          <p><strong>C.I.:</strong> {{ estudiante.ci }}</p>
+          <label class="form-label">Cédula de identidad</label>
+          <input class="form-control" value="{{ estudiante.ci }}" disabled>
         </div>
       {% endfor %}
     </div>
@@ -51,12 +53,14 @@
       </button>
     </div>
     <div class="row mb-4">
-      {% for tutor in tutores %}
+      {% for tutor in delegacion.tutores %}
         <div class="col-md-6 mb-2">
-          <p><strong>Nombre:</strong> {{ tutor.first_name }} {{ tutor.last_name }}</p>
+          <label class="form-label">Nombre del tutor</label>
+          <input class="form-control" value="{{ tutor.nombre }}" disabled>
         </div>
         <div class="col-md-6 mb-2">
-          <p><strong>C.I.:</strong> {{ tutor.ci }}</p>
+          <label class="form-label">Cédula de identidad</label>
+          <input class="form-control" value="{{ tutor.ci }}" disabled>
         </div>
       {% endfor %}
     </div>
@@ -95,6 +99,27 @@
           Crear grupo
         </a>
       </div>
+    {% endif %}
+    <h4 class="mt-5">Grupos</h4>
+
+    {% if grupos|length == 0 %}
+      <p class="text-muted">Aún no se te ha asignado ningún grupo.</p>
+    {% else %}
+      <ul class="list-group mt-3">
+        {% for grupo in grupos %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{ grupo.nombre_grupo }}</strong><br>
+              <small class="text-muted">
+                Área: {{ areas_dict[grupo.id_area] if grupo.id_area in areas_dict else "Sin área asignada" }}
+              </small>
+            </div>
+            <a href="{{ url_for('grupos_bp.ver_grupo', grupo_id=grupo.id_grupo) }}" class="btn btn-outline-primary btn-sm">
+              Ver grupo
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
     {% endif %}
   </div>
 </div>

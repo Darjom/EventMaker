@@ -5,14 +5,10 @@ from selenium.webdriver.firefox.service import Service
 import time 
 
 def initialize_driver():
-    gecko_path = "E:/Usuarios/INTELPC/Documents/GitHub/EventMaker/test/geckodriver.exe"
+    gecko_path = "E:/Usuarios/INTELPC/Documents/GitHub/EventMaker/automated_testing/geckodriver.exe"
     service = Service(executable_path=gecko_path)
     driver = webdriver.Firefox(service=service)
     return driver
-
-def click_InicioSesion():
-    
-    return 0
 
 def main():
     driver = initialize_driver()
@@ -26,7 +22,6 @@ def main():
     CI=driver.find_element(By.ID,"CI")
     Complemento=driver.find_element(By.ID,"Complemento")
     Expedido=driver.find_element(By.ID,"Expedido")
-    status = "EXISTE ✅" if exists else "NO EXISTE ❌"
     if():
         print("")
     time.sleep(4)
