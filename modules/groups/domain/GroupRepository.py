@@ -31,3 +31,7 @@ class GroupRepository(ABC):
     @abstractmethod
     def remove_tutor_from_group(self, group_id: int, tutor_id: int) -> bool:
         pass
+
+    @abstractmethod
+    def assign_student_to_group(self, group_id: int, student_id: int) -> None:
+        pass

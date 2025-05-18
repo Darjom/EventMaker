@@ -7,6 +7,11 @@ tutor_grupo = db.Table(
     db.Column('id_grupo', db.Integer, db.ForeignKey('grupo.id_grupo'), primary_key=True),
     db.Column('id_tutor', db.Integer, db.ForeignKey('user.id'), primary_key=True)
 )
+student_grupo = db.Table(
+    'estudiante_grupo',
+    db.Column('id_grupo', db.Integer, db.ForeignKey('grupo.id_grupo'), primary_key=True),
+    db.Column('id_student', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
 
 
 class GroupMapping(db.Model):
@@ -29,6 +34,14 @@ class GroupMapping(db.Model):
         secondary=tutor_grupo,
         backref=db.backref('grupos_asignados', lazy='dynamic'),
         lazy='dynamic'  # Para queries eficientes
+    )
+
+    # Relación muchos-a-muchos con Estudiantes
+    estudiantes = db.relationship(
+        'UserMapping',
+        secondary=student_grupo,
+        backref=db.backref('grupos_estudiante', lazy='dynamic'),
+        lazy='dynamic'
     )
 
     def to_domain(self):
