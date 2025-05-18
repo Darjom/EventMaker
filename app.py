@@ -49,6 +49,11 @@ def create_app():
         # Inserta datos de roles y permisos
         seed_roles_and_permissions()
 
+        # cargar colegios
+        from modules.Data.DatosColegios.cargar_colegios import CargarColegios
+        cargador = CargarColegios()
+        cargador.main()
+
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix="/admin")
     app.register_blueprint(eventos_bp, url_prefix="/eventos")
