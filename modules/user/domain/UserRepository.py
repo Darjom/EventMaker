@@ -20,4 +20,5 @@ class UserRepository(ABC):
     @abstractmethod
     def add_roles_to_user(self, user_id: int, role_ids: List[int]) -> None:
         pass
+
     
