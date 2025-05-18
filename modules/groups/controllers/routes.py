@@ -3,6 +3,7 @@ from modules.areas.application.AreaFinder import AreaFinder
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.events.application.EventQueryService import EventQueryService
+from modules.groups.application.AssignGroupToStudent import AssignGroupToStudent
 from modules.groups.application.AssignGroupToTutor import AssignGroupToTutor
 from modules.groups.infrastructure.PostgresGroupRepository import PostgresGroupRepository
 from modules.groups.application.GroupFinder import GroupFinder
@@ -13,6 +14,9 @@ from modules.groups.application.GroupFinder import GroupFinder
 from modules.groups.infrastructure.PostgresGroupRepository import PostgresGroupRepository
 from modules.groups.application.GetStudentsOfGroup import GetStudentsOfGroup
 from modules.groups.application.GetTutorsOfGroup import GetTutorsOfGroup
+from modules.delegations.application.GetStudentByDelegation import GetStudentIdsByDelegation
+from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
+
 
 grupos_bp = Blueprint("grupos_bp", __name__)
 
@@ -41,13 +45,19 @@ def ver_grupo(grupo_id):
             PostgresTutorRepository()
         ).execute(grupo_dto.id_delegacion)
 
+        estudiantes_delegacion = GetStudentIdsByDelegation(
+            PostgresDelegationRepository(),
+            PostgresStudentRepository()
+        ).execute(grupo_dto.id_delegacion)
+
         return render_template(
             "grupo/ver_grupo.html",
             grupo=grupo_dto,
             nombre_area=nombre_area,
             estudiantes=estudiantes,
             tutores_grupo=tutores_grupo,
-            tutores_delegacion=tutores_delegacion
+            tutores_delegacion=tutores_delegacion,
+            estudiantes_delegacion=estudiantes_delegacion
         )
 
     except Exception as e:
@@ -67,3 +77,16 @@ def asignar_tutor_a_grupo():
     # Obtener el grupo para redirigir correctamente
     grupo = GroupFinder(PostgresGroupRepository()).execute(group_id)
     return redirect(url_for("grupos_bp.ver_grupo", grupo_id=grupo.id_grupo))
+
+@grupos_bp.route("/asignar-estudiante", methods=["POST"])
+def asignar_estudiante_a_grupo():
+    try:
+        group_id = int(request.form.get("group_id"))
+        student_id = int(request.form.get("student_id"))
+
+        AssignGroupToStudent(PostgresGroupRepository()).execute(group_id, student_id)
+        flash("Estudiante asignado correctamente al grupo.", "success")
+    except Exception as e:
+        flash(f"Error al asignar estudiante: {e}", "danger")
+
+    return redirect(url_for("grupos_bp.ver_grupo", grupo_id=group_id))
