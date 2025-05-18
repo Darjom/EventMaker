@@ -8,6 +8,7 @@ tutor_grupo = db.Table(
     db.Column('id_tutor', db.Integer, db.ForeignKey('user.id'), primary_key=True)
 )
 
+
 class GroupMapping(db.Model):
     __tablename__ = "grupo"
 

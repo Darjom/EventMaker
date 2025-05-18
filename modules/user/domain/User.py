@@ -15,7 +15,7 @@ class User:
         confirmed_at: Optional[datetime] = None,
         fs_uniquifier: Optional[str] = None,
         roles: Optional[List[str]] = None,
-        ci = None,
+        ci=None,
         expedito_ci = None,
         fecha_nacimiento = None
 

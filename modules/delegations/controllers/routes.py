@@ -26,6 +26,10 @@ from modules.groups.application.dtos.GroupDTO import GroupDTO
 from modules.delegations.application.FindDelegationById import FindDelegationById
 from modules.tutors.application.GetTutorPermissionsInDelegation import GetTutorPermissionsInDelegation
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
+from modules.groups.application.FindGroupsOfTutorInDelegation import FindGroupsOfTutorInDelegation
+from modules.groups.infrastructure.PostgresGroupRepository import PostgresGroupRepository
+from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
+
 
 
 delegaciones_bp = Blueprint("delegaciones_bp", __name__)
@@ -198,6 +202,7 @@ def ver_delegacion(delegacion_id):
             delegation_repository=PostgresDelegationRepository(),
             student_repository=PostgresStudentRepository()
         )
+        estudiantes = students_service.execute(delegacion_id)
         estudiantes_dto = students_service.execute(delegacion_id)
         estudiantes = estudiantes_dto.students
 
@@ -206,6 +211,7 @@ def ver_delegacion(delegacion_id):
             delegation_repository=PostgresDelegationRepository(),
             tutor_repository=PostgresTutorRepository()
         )
+        tutores = tutors_service.execute(delegacion_id)
         tutores_dto = tutors_service.execute(delegacion_id)
         tutores = tutores_dto.tutors
 
@@ -213,6 +219,17 @@ def ver_delegacion(delegacion_id):
         permisos_delegacion = GetTutorPermissionsInDelegation(
             repository=PostgresTutorRepository()
         ).execute(tutor_id=user_id, delegation_id=delegacion_id)
+
+        # Obtener grupos del tutor
+        groups_dto = FindGroupsOfTutorInDelegation(
+            repository=PostgresGroupRepository(),
+            delegationTutor_repository=PostgresDelegationTutorRepository(),
+            repository_user=PostgresUserRepository()
+        ).execute(delegation_id=delegacion_id, tutor_id=user_id)
+
+        # Obtener todas las áreas del evento asociado a la delegación
+        areas_dto = AreaFinder(PostgresAreaRepository()).execute(delegacion.evento_id)
+        areas_dict = {area.id_area: area.nombre_area for area in areas_dto.areas}
 
     except Exception as e:
         flash(str(e), "danger")
@@ -230,7 +247,9 @@ def ver_delegacion(delegacion_id):
         user=user,
         permisos=permisos,
         roles_usuario=roles_usuario,
-        permisos_delegacion=permisos_delegacion
+        permisos_delegacion=permisos_delegacion,
+        grupos=groups_dto.groups,
+        areas_dict=areas_dict
     )
 
 
@@ -364,13 +383,10 @@ def crear_grupo(delegacion_id):
         if dto and dto.permissions:
             permisos.extend(dto.permissions)
 
-    if "group:create" not in permisos:
-        flash("No tienes permiso para crear grupos.", "danger")
-        return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
-
     # Obtener delegación y sus áreas
     delegacion = FindDelegationById(PostgresDelegationRepository()).execute(delegacion_id)
-    areas = AreaFinder(PostgresAreaRepository()).execute(delegacion.evento_id).areas
+    evento = EventQueryService(PostgresEventsRepository()).execute(delegacion.evento_id)
+    areas = AreaFinder(PostgresAreaRepository()).execute(evento.id_evento).areas
 
     if request.method == "POST":
         nombre = request.form.get("nombre_grupo")
@@ -392,9 +408,8 @@ def crear_grupo(delegacion_id):
             return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
         except Exception as e:
             flash(f"Error al crear grupo: {e}", "danger")
-    print(permisos)
     return render_template(
-        "grupos/crear_grupo.html",
+        "grupo/crear_grupo.html",
         delegacion=delegacion,
         areas=areas,
         user=user,

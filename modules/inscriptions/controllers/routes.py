@@ -1,9 +1,17 @@
-from flask import Blueprint, render_template, session, redirect, url_for, flash, request, send_file
+from flask import Blueprint, render_template, session, redirect, url_for, flash, request,send_file
+from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.events.application.EventQueryService import EventQueryService
+from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.areas.application.AreaFinder import AreaFinder
+from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
+from modules.categories.application.CategoryFinder import CategoryFinder
+from modules.inscriptions.application.GetStudentInscriptionsByEvent import GetStudentInscriptionsByEvent
+from modules.inscriptions.application.StudentInscriptionValidator import StudentInscriptionValidator
 from modules.inscriptions.application.InscriptionRegister import InscriptionRegistrar
+from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
+from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.inscriptions.application.dtos.InscriptionDTO import InscriptionDTO
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.inscriptions.application.GetAllStudentInscriptions import GetAllStudentInscriptions
@@ -17,9 +25,15 @@ from modules.inscriptions.infrastructure.PostgresInscriptionRepository import Po
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
 from modules.tutors.application.FindTutorById import FindTutorById
+from modules.vouchers.application.GetVoucherByInscriptions import GetVoucherByInscriptions
+from modules.vouchers.application.VoucherUpdater import VoucherUpdater
 from modules.vouchers.infrastructure.PostgresVoucherRepository import PostgresVoucherRepository
 from modules.vouchers.application.VoucherCreator import VoucherCreator
 from modules.inscriptions.application.GenerateDelegationPaymentOrder import GenerateDelegationPaymentOrder
+from modules.OCR.application.PreprocesamientoOCRService import ImageProcessorService
+from modules.OCR.application.ProcesamientoOCRService import ProcesadorOCR
+from modules.OCR.application.ManejoArchivosService import GestorArchivosOriginales
+from modules.OCR.application.OrquestadorOCRService import OrquestadorOCRService
 
 inscripciones_bp = Blueprint("inscripciones_bp", __name__)
 
@@ -111,7 +125,20 @@ def ver_inscripciones_estudiante():
         flash(str(e), "danger")
         inscripciones = []
 
-    return render_template("inscripciones/ver_inscripciones.html", inscripciones=inscripciones, user=user, permisos=permisos, roles_usuario=roles_usuario)
+    # Recuperar resultado del OCR si existe
+    ocr_resultado = None
+    if "ocr_resultado" in session:
+        ocr_resultado = session.get("ocr_resultado")
+        session.pop("ocr_resultado")  # limpiar después de mostrar
+
+    return render_template(
+        "inscripciones/ver_inscripciones.html",
+        inscripciones=inscripciones,
+        user=user,
+        permisos=permisos,
+        roles_usuario=roles_usuario,
+        ocr_resultado=ocr_resultado
+    )
 
 @inscripciones_bp.route("/orden-pago/evento/<int:event_id>", methods=["GET"])
 def generar_orden_pago_estudiante(event_id):
@@ -137,3 +164,94 @@ def generar_orden_pago_estudiante(event_id):
     except Exception as e:
         flash(f"Error al generar la orden de pago: {str(e)}", "danger")
         return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
+
+@inscripciones_bp.route("/comprobar-recibo/<int:event_id>", methods=["POST"])
+def comprobar_recibo_ocr(event_id):
+    print(f"\n--- Entrando en comprobar_recibo_ocr para event_id: {event_id} ---") 
+    try:
+        # 1. Validar y obtener datos básicos
+        student_id = session.get("admin_user")
+        print(f"Sesión obtenida - student_id: {student_id}")  # Debug 2
+        if not student_id:
+            print("Redirigiendo a login")  # Debug 3
+            return redirect(url_for("admin_bp.login"))
+        
+        print("Verificando archivo...")  # Debug 4
+        if 'recibo' not in request.files:
+            print("No se encontró archivo 'recibo' en request.files")  # Debug 5
+            flash("No se envió ningún archivo", "danger")
+            return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
+
+        file = request.files['recibo']
+        print(f"Archivo recibido: {file.filename}")  # Debug 6
+
+        if file.filename == '':
+            print("Nombre de archivo vacío")  # Debug 7
+            flash("Archivo no seleccionado", "danger")
+            return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
+
+        # 2. Configurar dependencias
+        inscription_repo = PostgresInscriptionRepository()
+        student_repo = PostgresStudentRepository()
+        voucher_repo = PostgresVoucherRepository()
+        area_repo=PostgresAreaRepository(),
+        category_repo=PostgresCategoryRepository()
+        # Instanciar OCR service con dependencias explícitas
+
+        
+        ocr_service = OrquestadorOCRService(
+            gestor=GestorArchivosOriginales(),
+            procesador_img=ImageProcessorService(),
+            ocr_proc=ProcesadorOCR()
+        )
+
+        # 3. Instanciar servicios
+        get_inscriptions_service = GetStudentInscriptionsByEvent(
+            inscription_repo, 
+            PostgresEventsRepository(),                   # EventRepository
+            PostgresAreaRepository(),                     # AreaRepository
+            PostgresCategoryRepository()                  # CategoryRepository
+        )
+        
+        get_voucher_service = GetVoucherByInscriptions(voucher_repo)
+        voucher_updater = VoucherUpdater(voucher_repo)
+        update_status_service = UpdateInscriptionStatus(inscription_repo)
+
+        # 4. Crear validador
+        validator = StudentInscriptionValidator(
+            ocr_service=ocr_service,
+            get_inscriptions_service=get_inscriptions_service,
+            get_voucher_service=get_voucher_service,
+            voucher_updater=voucher_updater,
+            update_status_service=update_status_service
+        )
+
+        # 5. Ejecutar validación
+        result_message = validator.validate(
+            image_invoice=file,  # Asegurar que el OCR acepte este formato
+            event_id=event_id,
+            student_id=student_id
+        )
+
+         # Nueva implementación de impresión
+        print("\n" + "="*50)
+        print(f"RESULTADO DE VALIDACIÓN PARA EVENTO {event_id}")
+        print(f"Estudiante: {student_id}")
+        print(f"Mensaje: {result_message}")
+        print("="*50 + "\n")
+
+        # 6. Manejar resultado
+        if "no es el mismo" in result_message:
+            flash(result_message, "warning")
+        else:
+            flash(result_message, "success")
+
+    except Exception as e:
+        import traceback  # Añade esto al inicio de tu archivo
+        print(f"\n!!! ERROR: {str(e)}\n")
+        traceback.print_exc()  # Esto imprimirá el traceback completo
+        flash(f"Error en validación: {str(e)}", "danger")
+
+    return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
+
+

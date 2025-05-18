@@ -45,4 +45,6 @@ class InscriptionRepository(ABC):
     def delete(self, inscription: Inscription) -> None:
         pass
 
-
+    @abstractmethod
+    def find_by_id_event(self, event_id: int) -> List[Inscription]:
+        pass

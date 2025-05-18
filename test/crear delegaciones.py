@@ -1,4 +1,10 @@
 from datetime import datetime
+# En test/user_create.py
+import sys
+import os
+
+# Añade el directorio raíz al path de Python
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import app
 from modules.delegations.application.TutorDelegationFinder import TutorDelegationsFinder
 from modules.delegations.application.dtos.DelegationDTO import DelegationDTO
@@ -8,7 +14,7 @@ from modules.delegations.application.DelegationCreator import DelegationCreator
 from modules.delegations.infrastructure.PostgresDelegationTutorRepository import PostgresDelegationTutorRepository
 
 
-def test_create_delegation(tutor_id: int = 7):
+def test_create_delegation(tutor_id: int = 9):
     # Crear DTO de delegación de prueba
     delegation_dto = DelegationDTO(
         nombre="Delegación Ejemplo",

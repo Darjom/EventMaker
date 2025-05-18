@@ -1,4 +1,3 @@
-# excel_students_loader/loader.py
 
 from typing import List
 from datetime import datetime
@@ -29,7 +28,7 @@ class ExcelStudentLoader:
         expected = [h.value for h in H]
         return headers == expected
 
-    def load(self) -> List[StudentDTO]:
+    def load(self) -> List[dict]:
         raw_data = self.reader.read()
         if not raw_data:
             raise ValueError("El archivo está vacío o no tiene datos.")
@@ -45,21 +44,27 @@ class ExcelStudentLoader:
 
         students = []
         for row in raw_data:
-            # Reemplazamos valores None por cadenas vacías
-            dto = StudentDTO(
-                first_name=str(row.get(H.FIRST_NAME) or "").strip(),
-                last_name=str(row.get(H.LAST_NAME) or "").strip(),
-                email=str(row.get(H.EMAIL) or "").strip(),
-                password="temporal",  # se puede generar temporalmente si no viene
-                ci=str(row.get(H.CI) or "").strip(),
-                expedito_ci=str(row.get(H.EXPEDITO_CI) or "").strip(),
-                fecha_nacimiento=self.parse_date(row.get(H.BIRTHDATE)),
-                phone_number=None,  # no está en el Excel
-                school_id=None,  # no está en el Excel, usamos colegio como string
-                course=str(row.get(H.COURSE) or "").strip(),
-                department=str(row.get(H.DEPARTMENT) or "").strip(),
-                province=str(row.get(H.PROVINCE) or "").strip(),
-            )
-            students.append(dto)
+            # Aquí conviertes manualmente cada campo para que quede en el formato correcto
+            student_dict = {
+                "id": None,  # no tienes dato aquí, opcional
+                "first_name": str(row.get(H.FIRST_NAME) or "").strip(),
+                "last_name": str(row.get(H.LAST_NAME) or "").strip(),
+                "email": str(row.get(H.EMAIL) or "").strip(),
+                "password": str(row.get(H.CI) or "").strip(),  # si no tienes dato real
+                "active": True,  # valor por defecto
+                "confirmed_at": None,  # no viene en Excel?
+                "fs_uniquifier": None,  # no viene en Excel?
+                "ci": str(row.get(H.CI) or "").strip(),
+                "expedito_ci": str(row.get(H.EXPEDITO_CI) or "").strip(),
+                "fecha_nacimiento": self.parse_date(row.get(H.BIRTHDATE)),  # datetime o None
+                "phone_number": None,  # no viene en Excel
+                "school_name":str(row.get(H.SCHOOL) or "").strip(),
+                "course": str(row.get(H.COURSE) or "").strip(),
+                "department": str(row.get(H.DEPARTMENT) or "").strip(),
+                "province": str(row.get(H.PROVINCE) or "").strip(),
+                "roles": None,  # no viene en Excel
+            }
+            students.append(student_dict)
 
         return students
+
