@@ -73,4 +73,32 @@ class PostgresGroupRepository(GroupRepository):
         )
         return [grupo.to_domain() for grupo in grupos]
 
+    def assign_student_to_group(self, group_id: int, student_id: int) -> None:
+        """Assigns a student to an existing group"""
+        from .persistence.GroupMapping import GroupMapping
+        from modules.user.infrastructure.persistence.UserMapping import UserMapping
+
+        group = GroupMapping.query.get(group_id)
+        student = UserMapping.query.get(student_id)
+
+        if not group or not student:
+            raise ValueError("Group or Student not found")
+
+        if student not in group.estudiantes:
+            group.estudiantes.append(student)
+            db.session.commit()
+
+    def get_students_by_group_id(self, group_id: int):
+        grupo = GroupMapping.query.get(group_id)
+        if not grupo:
+            return []
+
+        return [student.to_domain() for student in grupo.estudiantes]
+
+    def get_tutors_by_group_id(self, group_id: int):
+        grupo = GroupMapping.query.get(group_id)
+        if not grupo:
+            return []
+
+        return [tutor.to_domain() for tutor in grupo.tutores]
 
