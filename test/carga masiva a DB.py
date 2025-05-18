@@ -1,5 +1,6 @@
 import os
 
+from app import app
 from modules.delegations.application.BulkStudentDelegationAdder import BulkStudentDelegationAdder
 from modules.delegations.infrastructure.PostgresDelegationRepository import PostgresDelegationRepository
 from modules.schools.application.FindSchoolByName import FindSchoolByName
@@ -65,5 +66,6 @@ def test_bulk_add_students_to_delegation_real(excel_file_path: str, delegacion_i
 
 
 if __name__ == "__main__":
-    ruta_excel = "/Users/jose/Documents/Pycharm/EventMaker/test/Registrar estudiantes-2.xlsx"
-    test_bulk_add_students_to_delegation_real(ruta_excel)
+    with app.app_context():
+        ruta_excel = "/Users/jose/Documents/Pycharm/EventMaker/test/Registrar estudiantes-2.xlsx"
+        test_bulk_add_students_to_delegation_real(ruta_excel)
