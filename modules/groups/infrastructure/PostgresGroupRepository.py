@@ -88,5 +88,17 @@ class PostgresGroupRepository(GroupRepository):
             group.estudiantes.append(student)
             db.session.commit()
 
+    def get_students_by_group_id(self, group_id: int):
+        grupo = GroupMapping.query.get(group_id)
+        if not grupo:
+            return []
 
+        return [student.to_domain() for student in grupo.estudiantes]
+
+    def get_tutors_by_group_id(self, group_id: int):
+        grupo = GroupMapping.query.get(group_id)
+        if not grupo:
+            return []
+
+        return [tutor.to_domain() for tutor in grupo.tutores]
 
