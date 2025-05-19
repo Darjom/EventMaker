@@ -31,6 +31,7 @@
           <div class="col-md-4 mb-3"><input name="complemento" id="Complemento" class="form-control" placeholder="Complemento (opcional)"></div>
           <div class="col-md-4 mb-3"><input name="expedito_ci" id="Expedido" class="form-control" placeholder="Expedido en" required></div>
         </div>
+        <label for="Fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
         <input type="date" name="fecha_nacimiento" id="Fecha_nacimiento" class="form-control mb-3" required>
         <input type="number" name="phone_number" id="Número" class="form-control mb-3" placeholder="Número de teléfono">
       </fieldset>
@@ -38,14 +39,14 @@
       <!-- Información Académica -->
       <fieldset class="border p-3 mb-4">
         <legend>Información Académica</legend>
-        <label for="Colegio" class="form-label">Nombre del colegio</label>
+        <label for="Colegio" class="form-label">Nombre del colegio, Universidad o "Profeciona"</label>
         <input list="colegiosList" name="school_name" id="Colegio" class="form-control mb-3" placeholder="Escriba o seleccione un colegio" required>
         <datalist id="colegiosList">
           {% for colegio in colegios %}
             <option value="{{ colegio.name }}">
           {% endfor %}
         </datalist>
-        <input name="course" id="Curso" class="form-control mb-3" placeholder="Curso actual" required>
+        <input name="course" id="Curso" class="form-control mb-3" placeholder="Curso actual, Semestre actual o Profesion" required>
         <div class="row">
           <div class="col-md-6 mb-3"><input name="department" id="Departamento" class="form-control" placeholder="Departamento" required></div>
           <div class="col-md-6 mb-3"><input name="province" id="Provincia" class="form-control" placeholder="Provincia" required></div>
