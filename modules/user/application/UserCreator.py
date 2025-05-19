@@ -21,8 +21,9 @@ class UserCreator:
         email: str,
         password: str,
         ci: str,
-        expedito_ci= str,
-        fecha_nacimiento= datetime
+        expedito_ci: str | None = None,
+        fecha_nacimiento: datetime | None = None
+
     ) -> UserDTO:
         # Validar campos requeridos
         if not first_name.strip():
@@ -60,5 +61,5 @@ class UserCreator:
 
         # Obtener usuario actualizado con roles
         user_with_roles = self.user_repo.find_by_id(saved_user.id)
-
+        print("estamos aquiiiii")
         return UserDTO.from_domain(user_with_roles)
