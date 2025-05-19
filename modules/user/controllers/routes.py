@@ -37,6 +37,7 @@ def crear_usuario():
             role_ids=[rol_id],
             first_name=form.get("nombre"),
             last_name=form.get("apellido"),
+            ci="",
             email=form.get("correo"),
             password=form.get("contraseña")
         )
