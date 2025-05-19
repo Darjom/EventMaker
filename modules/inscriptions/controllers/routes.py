@@ -186,26 +186,19 @@ def generar_orden_pago_estudiante(event_id):
 
 @inscripciones_bp.route("/comprobar-recibo/<int:event_id>", methods=["POST"])
 def comprobar_recibo_ocr(event_id):
-    print(f"\n--- Entrando en comprobar_recibo_ocr para event_id: {event_id} ---") 
     try:
         # 1. Validar y obtener datos básicos
-        student_id = session.get("admin_user")
-        print(f"Sesión obtenida - student_id: {student_id}")  # Debug 2
-        if not student_id:
-            print("Redirigiendo a login")  # Debug 3
+        student_id = session.get("admin_user") # Debug 2
+        if not student_id: # Debug 3
             return redirect(url_for("admin_bp.login"))
-        
-        print("Verificando archivo...")  # Debug 4
-        if 'recibo' not in request.files:
-            print("No se encontró archivo 'recibo' en request.files")  # Debug 5
+         # Debug 4
+        if 'recibo' not in request.files:  # Debug 5
             flash("No se envió ningún archivo", "danger")
             return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
 
-        file = request.files['recibo']
-        print(f"Archivo recibido: {file.filename}")  # Debug 6
+        file = request.files['recibo'] # Debug 6
 
-        if file.filename == '':
-            print("Nombre de archivo vacío")  # Debug 7
+        if file.filename == '':  # Debug 7
             flash("Archivo no seleccionado", "danger")
             return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
 
@@ -252,13 +245,6 @@ def comprobar_recibo_ocr(event_id):
             student_id=student_id
         )
 
-         # Nueva implementación de impresión
-        print("\n" + "="*50)
-        print(f"RESULTADO DE VALIDACIÓN PARA EVENTO {event_id}")
-        print(f"Estudiante: {student_id}")
-        print(f"Mensaje: {result_message}")
-        print("="*50 + "\n")
-
         # 6. Manejar resultado
         if "no es el mismo" in result_message:
             flash(result_message, "warning")
@@ -266,9 +252,6 @@ def comprobar_recibo_ocr(event_id):
             flash(result_message, "success")
 
     except Exception as e:
-        import traceback  # Añade esto al inicio de tu archivo
-        print(f"\n!!! ERROR: {str(e)}\n")
-        traceback.print_exc()  # Esto imprimirá el traceback completo
         flash(f"Error en validación: {str(e)}", "danger")
 
     return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
