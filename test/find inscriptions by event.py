@@ -2,7 +2,7 @@ import json
 from app import app
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
-from modules.inscriptions.GetInscriptionsByEvent import GetInscriptionsByEvent
+from modules.inscriptions.application.GetInscriptionsByEvent import GetInscriptionsByEvent
 from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
 from modules.students.application.GetStudentById import GetStudentById
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
