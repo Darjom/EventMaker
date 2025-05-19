@@ -31,7 +31,51 @@
         </form>
       </div>
     </div>
-
+<div class="card shadow mb-4">
+      <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="bi bi-image-alt me-2"></i>Ejemplo de documento válido</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <img src="{{ url_for('static', filename='/img/OCR/ejemplo_recibo.gif') }}" 
+                 class="img-fluid border rounded"
+                 alt="Ejemplo de recibo válido">
+          </div>
+          
+          <div class="col-md-6 mt-3 mt-md-0">
+            <h5 class="text-info mb-3">Requisitos del documento:</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Debe incluir <strong>nombre completo del titular</strong>
+              </li>
+              <li class="list-group-item">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Número de recibo <strong>visible y legible</strong>
+              </li>
+              <li class="list-group-item">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Monto total <strong>en números y letras</strong>
+              </li>
+              <li class="list-group-item">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Fecha de emisión <strong>actualizada</strong>
+              </li>
+              <li class="list-group-item">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <strong>Sellos oficiales</strong> visibles
+              </li>
+            </ul>
+            
+            <div class="alert alert-warning mt-4">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              La imagen debe ser <strong>nítida y completa</strong>, sin reflejos ni partes cortadas.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Resultados -->
     {% if preview_numero or preview_nombre or error %}
     <div class="card shadow">
@@ -39,6 +83,12 @@
         <h5 class="mb-0">Datos Extraídos</h5>
       </div>
       <div class="card-body">
+        {% if texto_numero or texto_nombre or texto_monto %}
+          <div class="alert alert-success mb-4">
+            <h4 class="alert-heading"><i class="bi bi-check-circle-fill"></i> Comprobante verificado exitosamente</h4>
+            <p class="mb-0">Si los datos detectados concuerdan con su informacion,entoces el recibo será aceptado en nuestro sistema y puede ingresarlo en su inscripción correspondiente.Caso contrario suba de nuevo la imagen</p>
+          </div>
+        {% endif %}
         <div class="row">
           <!-- Número -->
           <div class="col-md-6 mb-4">
