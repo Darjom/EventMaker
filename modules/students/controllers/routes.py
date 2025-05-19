@@ -7,14 +7,35 @@ from modules.students.application.dtos.StudentDTO import StudentDTO
 from modules.students.application.StudentCreator import StudentCreator
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
+from modules.schools.application.GetAllSchools import GetAllSchools
+from modules.schools.infrastructure.PostgresSchoolRepository import PostgresSchoolRepository
+from modules.schools.application.SchoolCreator import SchoolCreator
+from modules.schools.application.dtos.SchoolDTO import SchoolDTO
 
 estudiantes_bp = Blueprint("estudiantes_bp", __name__)
 
+
 @estudiantes_bp.route("/registro", methods=["GET", "POST"])
 def registro():
+    school_repo = PostgresSchoolRepository()
+
     if request.method == "POST":
         try:
-            # Capturar datos del formulario
+            school_name = request.form.get("school_name").strip()
+            school_service = GetAllSchools(school_repo)
+            all_schools = school_service.execute().schools
+
+            # Verificar si existe
+            matched_school = next((s for s in all_schools if s.name.lower() == school_name.lower()), None)
+
+            # Si no existe, crearla
+            if not matched_school:
+                nuevo_school_dto = SchoolDTO(name=school_name)
+                school_creator = SchoolCreator(school_repo)
+                matched_school = school_creator.execute(nuevo_school_dto)
+
+            school_id = matched_school.id  # ahora sí tenemos el ID del colegio
+
             student_dto = StudentDTO(
                 first_name=request.form.get("first_name"),
                 last_name=request.form.get("last_name"),
@@ -24,7 +45,7 @@ def registro():
                 ci=request.form.get("ci"),
                 expedito_ci=request.form.get("expedito_ci"),
                 fecha_nacimiento=datetime.strptime(request.form.get("fecha_nacimiento"), "%Y-%m-%d"),
-                school_id=int(request.form.get("school_id")),
+                school_id=school_id,
                 course=request.form.get("course"),
                 department=request.form.get("department"),
                 province=request.form.get("province"),
@@ -40,7 +61,9 @@ def registro():
         except Exception as e:
             flash(str(e), "danger")
 
-    return render_template("students/registro.html")
+    # GET → pasar colegios
+    colegios = GetAllSchools(school_repo).execute().schools
+    return render_template("students/registro.html", colegios=colegios)
 
 @estudiantes_bp.route("/perfil", methods=["GET", "POST"])
 def editar_perfil():
