@@ -8,7 +8,7 @@
   {% include 'admin/_sidebar.html' %}
 
   <div class="form-area-container container mt-4">
-                    <!-- MENSAJES FLASH (AGREGAR ESTO) -->
+                    <!-- MENSAJES FLASH-->
                 {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                   {% for category, message in messages %}

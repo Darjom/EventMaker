@@ -5,6 +5,17 @@
 {% include 'shared/admin_header.html' %}
 
 <div class="container mt-4">
+                      <!-- MENSAJES FLASH -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                  {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                      {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
   <!-- Card con información general del grupo -->
   <div class="card mb-4">
     <div class="card-header bg-primary text-white">
@@ -63,6 +74,14 @@
         {% endif %}
     </div>
   </div>
+  <!-- Botón centrado para inscribir estudiantes -->
+<div class="container mt-4">
+  <div class="text-center my-4">
+    <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#modalInscribirEstudiantes">
+      Inscribir estudiantes al evento
+    </button>
+  </div>
+</div>
 </div>
 
 <!-- Modal para asignar tutor -->
@@ -131,5 +150,56 @@
   </div>
 </div>
 
+<!-- Modal para inscribir estudiantes -->
+<div class="modal fade" id="modalInscribirEstudiantes" tabindex="-1" aria-labelledby="modalInscribirEstudiantesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form method="POST" action="{{ url_for('grupos_bp.inscribir_estudiantes') }}">
+      <input type="hidden" name="group_id" value="{{ grupo.id_grupo }}">
+      <input type="hidden" name="delegation_id" value="{{grupo.id_delegacion }}">
+      <input type="hidden" name="event_id" value="{{ delegacion.evento_id }}">
+      <input type="hidden" name="area_id" value="{{ grupo.id_area }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalInscribirEstudiantesLabel">Inscripción de estudiantes</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Selecciona los estudiantes que deseas inscribir:</p>
+          {% if estudiantes %}
+            <div class="form-check">
+              {% for estudiante in estudiantes %}
+                <div>
+                  <input class="form-check-input" type="checkbox" name="students_ids" id="estudiante_{{ estudiante.id }}" value="{{ estudiante.id }}">
+                  <label class="form-check-label" for="estudiante_{{ estudiante.id }}">
+                    {{ estudiante.first_name }} {{ estudiante.last_name }} - {{ estudiante.email }}
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted">No hay estudiantes en este grupo.</p>
+          {% endif %}
 
+          <div class="mt-3">
+            <label for="category_id" class="form-label">Selecciona la categoría</label>
+              <select class="form-select" name="category_id" required>
+                {% if categorias %}
+                  {% for categoria in categorias %}
+                    <option value="{{ categoria.category_id }}">{{ categoria.category_name }}</option>
+                  {% endfor %}
+                {% else %}
+                  <option disabled selected>No hay categorías disponibles</option>
+                {% endif %}
+              </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Inscribir</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}
