@@ -3,7 +3,6 @@ from app import app
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
-
 from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
@@ -38,7 +37,7 @@ def test_find_inscrip_payment_status_delegation(tutor_id: int, delegation_id: in
 
 if __name__ == "__main__":
     with app.app_context():
-        tutor_id = 3
+        tutor_id = 6
         delegation_id = 2
 
         print(f"\n🔍 Generando orden de pago para el tutor ID {tutor_id} con delegación ID {delegation_id}...\n")
