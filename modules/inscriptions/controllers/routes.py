@@ -1,3 +1,5 @@
+import re
+
 from flask import Blueprint, render_template, session, redirect, url_for, flash, request,send_file
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.events.application.EventQueryService import EventQueryService
@@ -34,6 +36,23 @@ from modules.OCR.application.PreprocesamientoOCRService import ImageProcessorSer
 from modules.OCR.application.ProcesamientoOCRService import ProcesadorOCR
 from modules.OCR.application.ManejoArchivosService import GestorArchivosOriginales
 from modules.OCR.application.OrquestadorOCRService import OrquestadorOCRService
+from flask import Blueprint, render_template, flash, redirect, url_for
+from modules.inscriptions.application.GetInscriptionsByEvent import GetInscriptionsByEvent
+from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
+from modules.students.application.GetStudentById import GetStudentById
+from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
+from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
+from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
+from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
+from modules.inscriptions.application.GetStudentInscriptionsByCategory import GetStudentInscriptionsByCategory
+from modules.inscriptions.application.ExportStudentInscriptionsService import ExportStudentInscriptionsService
+from modules.students.application.GetStudentById import GetStudentById
+from modules.schools.application.FindSchoolById import FindSchoolById
+from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
+from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
+from modules.schools.infrastructure.PostgresSchoolRepository import PostgresSchoolRepository
+from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
+from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 
 inscripciones_bp = Blueprint("inscripciones_bp", __name__)
 
@@ -255,3 +274,102 @@ def comprobar_recibo_ocr(event_id):
     return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
 
 
+@inscripciones_bp.route("/evento/<int:event_id>/inscripciones")
+def ver_inscripciones_evento(event_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    # Verificar roles (admin o moderator)
+    roles_usuario = []
+    for role in user.roles:
+        dto = RoleQueryService(PostgresRolesRepository()).execute(role.id)
+        if dto and dto.name:
+            roles_usuario.append(dto.name.lower())
+
+    if "moderator" not in roles_usuario and "admin" not in roles_usuario:
+        flash("Acceso restringido", "danger")
+        return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
+
+    usecase = GetInscriptionsByEvent(
+        PostgresInscriptionRepository(),
+        GetStudentById(PostgresStudentRepository()),
+        PostgresAreaRepository(),
+        PostgresCategoryRepository()
+    )
+
+    try:
+        datos = usecase.execute(event_id)
+    except Exception as e:
+        flash(f"Error al obtener inscripciones: {e}", "danger")
+        return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
+
+
+    evento = EventQueryService(PostgresEventsRepository()).execute(event_id)
+
+    return render_template(
+        "inscripciones/ver_inscripciones_por_evento.html",
+        datos=datos,
+        nombre_evento=evento.nombre_evento,
+        user=user,
+        event_id=event_id
+    )
+
+
+@inscripciones_bp.route("/evento/<int:event_id>/descargar-excel")
+def descargar_reporte_excel(event_id):
+    student_repo = PostgresStudentRepository()
+    school_repo = PostgresSchoolRepository()
+    category_repo = PostgresCategoryRepository()
+    inscription_repo = PostgresInscriptionRepository()
+    event_repo = PostgresEventsRepository()
+
+    use_case = GetStudentInscriptionsByCategory(
+        inscription_repo=inscription_repo,
+        student_service=GetStudentById(student_repo),
+        school_service=FindSchoolById(school_repo),
+        category_service=category_repo
+    )
+
+    export_service = ExportStudentInscriptionsService(use_case, event_repo)
+
+    try:
+        excel_buffer = export_service.generate_excel(event_id)
+        return send_file(
+            excel_buffer,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=f"reporte_inscripciones.xlsx"
+        )
+    except Exception as e:
+        flash(f"Error al generar el Excel: {str(e)}", "danger")
+        return redirect(url_for("inscripciones_bp.ver_inscripciones_evento", event_id=event_id))
+
+
+@inscripciones_bp.route("/evento/<int:event_id>/descargar-pdf")
+def descargar_reporte_pdf(event_id):
+
+    student_repo = PostgresStudentRepository()
+    school_repo = PostgresSchoolRepository()
+    category_repo = PostgresCategoryRepository()
+    inscription_repo = PostgresInscriptionRepository()
+    event_repo = PostgresEventsRepository()
+
+    use_case = GetStudentInscriptionsByCategory(
+        inscription_repo=inscription_repo,
+        student_service=GetStudentById(student_repo),
+        school_service=FindSchoolById(school_repo),
+        category_service=category_repo
+    )
+
+    export_service = ExportStudentInscriptionsService(use_case, event_repo)
+
+    pdf_buffer = export_service.generate_pdf(event_id)
+    return send_file(
+        pdf_buffer,
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f"reporte_inscripciones_evento_{event_id}.pdf"
+    )
