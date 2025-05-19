@@ -1,12 +1,10 @@
 import io
 import os
-
+from typing import Dict, Any
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import LETTER
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
-from typing import Dict, Any
-from reportlab.lib import colors
 
 from modules.events.domain.Event import Event
 
@@ -37,9 +35,6 @@ class PDFReportGenerator:
         c.drawCentredString(width / 2, y, "FACULTAD DE CIENCIA Y TECNOLOGIA")
         y -= 30
 
-
-        # Encabezado convocatoria
-
         # Título del evento y eslogan
         c.setFont("Helvetica-Bold", 14)
         c.drawCentredString(width / 2, y, f"{self.event.nombre_evento}")
@@ -54,31 +49,40 @@ class PDFReportGenerator:
         y -= 20
         c.drawString(x_margin, y, f"Fecha de finalizacion:  {self.event.fin_evento}")
 
-        # Posición y tamaño para el afiche
-        afiche_path = os.path.join(os.getcwd(), self.event.afiche)
-
-        afiche_x = width - x_margin - 100
-        afiche_y = height - 140
-        afiche_width = 100
-        afiche_height = 100
+        # Posición y tamaño del afiche
+        afiche_width = 200
+        afiche_height = 150
+        afiche_x = width - afiche_width - x_margin
+        afiche_y = y - afiche_height - 20
         padding = 5
 
-        # Verificar existencia del archivo e insertarlo
-        if os.path.exists(afiche_path):
-            c.drawImage(
-                afiche_path,
-                afiche_x + padding,
-                afiche_y + padding,
-                width=afiche_width - 2 * padding,
-                height=afiche_height - 2 * padding,
-                preserveAspectRatio=True,
-                mask='auto'
-            )
-        else:
-            c.setFont("Helvetica", 10)
-            c.drawString(afiche_x, afiche_y, "Afiche no encontrado")
+        if self.event.afiche:
+            print(self.event.afiche)
+            PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+            # Si self.event.afiche ya comienza con 'static/', no agregues 'static' otra vez.
+            afiche_rel_path = self.event.afiche
+            if afiche_rel_path.startswith("static/"):
+                afiche_path = os.path.join(PROJECT_ROOT, afiche_rel_path)
+            else:
+                afiche_path = os.path.join(PROJECT_ROOT, "static", afiche_rel_path)
+
+            print(f"[DEBUG] Ruta del afiche: {afiche_path}")
+            if os.path.exists(afiche_path):
+                print(f"[✔] Afiche encontrado: {afiche_path}")
+                c.drawImage(
+                    afiche_path,
+                    afiche_x + padding,
+                    afiche_y + padding,
+                    width=afiche_width - 2 * padding,
+                    height=afiche_height - 2 * padding,
+                    preserveAspectRatio=True,
+                    mask='auto'
+                )
+            else:
+                print(f"[✘] Archivo NO encontrado en: {afiche_path}")
+        y = afiche_y - 40
+
         # Reporte por categorías
-        y -= 40
         c.setFont("Helvetica-Bold", 10)
         c.drawCentredString(width / 2, y, "Reporte por categorías")
         y -= 20
