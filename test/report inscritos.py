@@ -52,6 +52,6 @@ def test_export_student_inscriptions_service(event_id: int):
 
 if __name__ == "__main__":
     with app.app_context():
-        event_id = 1
+        event_id = 3
         print(f"\n📋 Generando reportes para evento ID {event_id}...\n")
         test_export_student_inscriptions_service(event_id)
