@@ -6,27 +6,20 @@
 <div class="container mt-4">
   <h2 class="text-center mb-4">Inscripciones por Área y Categoría</h2>
 
-  {% for area, datos_area in agrupado.items() %}
-    <div class="card mb-4">
-      <div class="card-header bg-primary text-white">
-        <strong>Área:</strong> {{ area }}
-      </div>
-      <div class="card-body">
-        {% for categoria, datos_cat in datos_area.categories.items() %}
-          <h5>Categoría: {{ categoria }}</h5>
-          <ul class="list-group mb-3">
-            {% for inscripcion in datos_cat.inscriptions %}
-              <li class="list-group-item">
-                <strong>Estudiante:</strong> {{ inscripcion.student_name }}<br>
-                <strong>Curso:</strong> {{ inscripcion.course }}<br>
-                <strong>Estado:</strong> {{ inscripcion.status }}<br>
-                <strong>Fecha:</strong> {{ inscripcion.inscription_date }}
-              </li>
-            {% endfor %}
-          </ul>
-        {% endfor %}
-      </div>
-    </div>
-  {% endfor %}
+  {% for area, datos_area in datos.items() %}
+  <h4>Área: {{ area }}</h4>
+  <ul>
+    {% for categoria, cat_data in datos_area.categories.items() %}
+      <li>
+        <strong>Categoría:</strong> {{ categoria }}<br>
+        <ul>
+          {% for ins in cat_data.inscriptions %}
+            <li>{{ ins.student_name }} - {{ ins.course }} - {{ ins.status }} - {{ ins.inscription_date }}</li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+{% endfor %}
 </div>
 {% endblock %}

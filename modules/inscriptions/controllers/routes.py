@@ -35,14 +35,13 @@ from modules.OCR.application.ProcesamientoOCRService import ProcesadorOCR
 from modules.OCR.application.ManejoArchivosService import GestorArchivosOriginales
 from modules.OCR.application.OrquestadorOCRService import OrquestadorOCRService
 from flask import Blueprint, render_template, flash, redirect, url_for
-from modules.inscriptions.GetInscriptionsByEvent import GetInscriptionsByEvent
+from modules.inscriptions.application.GetInscriptionsByEvent import GetInscriptionsByEvent
 from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
 from modules.students.application.GetStudentById import GetStudentById
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
-from modules.inscriptions.GetInscriptionsByEvent import GetInscriptionsByEvent
 
 
 inscripciones_bp = Blueprint("inscripciones_bp", __name__)
@@ -273,13 +272,23 @@ def ver_inscripciones_evento(event_id):
 
     user = UserMapping.query.get(user_id)
 
+    # Verificar roles (admin o moderator)
+    roles_usuario = []
+    for role in user.roles:
+        dto = RoleQueryService(PostgresRolesRepository()).execute(role.id)
+        if dto and dto.name:
+            roles_usuario.append(dto.name.lower())
 
-    # Obtener inscripciones agrupadas
+    if "moderator" not in roles_usuario and "admin" not in roles_usuario:
+        flash("Acceso restringido", "danger")
+        return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
+
+    # ✅ Construir caso de uso con argumentos posicionales
     usecase = GetInscriptionsByEvent(
-        inscription_repo=PostgresInscriptionRepository(),
-        student_service=GetStudentById(PostgresStudentRepository()),
-        area_repository=PostgresAreaRepository(),
-        category_repository=PostgresCategoryRepository()
+        PostgresInscriptionRepository(),
+        GetStudentById(PostgresStudentRepository()),
+        PostgresAreaRepository(),
+        PostgresCategoryRepository()
     )
 
     try:
@@ -288,8 +297,12 @@ def ver_inscripciones_evento(event_id):
         flash(f"Error al obtener inscripciones: {e}", "danger")
         return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
 
-    # Obtener el nombre del evento
+    # Obtener datos del evento
     evento = EventQueryService(PostgresEventsRepository()).execute(event_id)
 
-    return render_template("inscripciones/ver_inscripciones_por_evento.html", datos=datos,
-                           nombre_evento=evento.nombre_evento, user=user)
+    return render_template(
+        "inscripciones/ver_inscripciones_por_evento.html",
+        datos=datos,
+        nombre_evento=evento.nombre_evento,
+        user=user
+    )
