@@ -55,7 +55,8 @@ class PDFReportGenerator:
         c.drawString(x_margin, y, f"Fecha de finalizacion:  {self.event.fin_evento}")
 
         # Posición y tamaño para el afiche
-        afiche_path = os.path.join(os.getcwd(), self.event.afiche)
+        PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))
+        afiche_path = os.path.join(PROJECT_ROOT, self.event.afiche)
 
         afiche_x = width - x_margin - 100
         afiche_y = height - 140
