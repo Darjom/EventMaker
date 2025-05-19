@@ -24,6 +24,7 @@ geckodriver.log
 automated_testing/PruebaCreacionDeEstudianteFirefox.py
 automated_testing/PruebaInicioSesionFirefox.py
 /static/uploads
+static/img/uploads
 
 .env
 test/user create.py

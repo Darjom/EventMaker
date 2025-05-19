@@ -24,6 +24,12 @@
     <div class="bg-light p-3 rounded text-end fw-bold">
       Código de Delegación: <span class="text-primary">{{ delegacion.codigo }}</span>
     </div>
+    <div class="text-center mt-3">
+      <a href="{{ url_for('delegaciones_bp.generar_orden_pago_delegacion', delegacion_id=delegacion.id_delegacion) }}"
+         class="btn btn-outline-success">
+        🧾 Generar recibo de pago
+      </a>
+    </div>
 
     <!-- Estudiantes -->
     <div class="d-flex justify-content-between align-items-center mt-4">

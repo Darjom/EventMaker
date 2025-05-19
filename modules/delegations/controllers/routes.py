@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, abort, send_file
 
 from modules.areas.application.AreaFinder import AreaFinder
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
@@ -423,6 +423,7 @@ def crear_grupo(delegacion_id):
         permisos=permisos
     )
 
+
 @delegaciones_bp.route("/delegaciones/<int:delegacion_id>/cargar_excel", methods=["POST"])
 def cargar_estudiantes_excel(delegacion_id):
     if "admin_user" not in session:
@@ -455,3 +456,40 @@ def cargar_estudiantes_excel(delegacion_id):
         flash(f"Error al cargar estudiantes desde Excel: {e}", "danger")
 
     return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
+@delegaciones_bp.route("/delegacion/<int:delegacion_id>/orden-pago", methods=["GET"])
+def generar_orden_pago_delegacion(delegacion_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    try:
+        from modules.inscriptions.application.FindInscripPaymentStatusDelegation import FindInscripPaymentStatusDelegation
+        from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
+        from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
+        from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
+        from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
+        from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
+        from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
+        from modules.vouchers.infrastructure.PostgresVoucherRepository import PostgresVoucherRepository
+
+        usecase = FindInscripPaymentStatusDelegation(
+            repository=PostgresInscriptionRepository(),
+            event_repository=PostgresEventsRepository(),
+            area_repository=PostgresAreaRepository(),
+            student_repository=PostgresStudentRepository(),
+            tutor_repository=PostgresTutorRepository(),
+            voucher_repository=PostgresVoucherRepository(),
+            category_repository=PostgresCategoryRepository()
+        )
+
+        pdf_buffer = usecase.execute(user_id, delegacion_id)
+        return send_file(
+            pdf_buffer,
+            as_attachment=True,
+            download_name="orden_pago_delegacion.pdf",
+            mimetype="application/pdf"
+        )
+
+    except Exception as e:
+        flash(f"Error al generar la orden de pago: {str(e)}", "danger")
+        return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
