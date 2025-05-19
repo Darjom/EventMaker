@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Inscripciones del Evento{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Inscripciones por Área y Categoría</h2>
+
+  {% for area, datos_area in agrupado.items() %}
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <strong>Área:</strong> {{ area }}
+      </div>
+      <div class="card-body">
+        {% for categoria, datos_cat in datos_area.categories.items() %}
+          <h5>Categoría: {{ categoria }}</h5>
+          <ul class="list-group mb-3">
+            {% for inscripcion in datos_cat.inscriptions %}
+              <li class="list-group-item">
+                <strong>Estudiante:</strong> {{ inscripcion.student_name }}<br>
+                <strong>Curso:</strong> {{ inscripcion.course }}<br>
+                <strong>Estado:</strong> {{ inscripcion.status }}<br>
+                <strong>Fecha:</strong> {{ inscripcion.inscription_date }}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

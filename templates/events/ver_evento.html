@@ -106,7 +106,14 @@
     {% if 'area:create' in permisos %}
     <div class="text-end me-5">
       <a href="{{ url_for('areas_bp.crear_area', evento_id=evento.id_evento) }}" id="btn_Crear_Area" class="btn btn-outline-primary crear-area-boton">
-        ➕ Crear Área
+        Crear Área
+      </a>
+    </div>
+    {% endif %}
+    {% if 'moderator' in roles_usuario or 'admin' in roles_usuario %}
+    <div class="text-center mt-4">
+      <a href="{{ url_for('inscripciones_bp.ver_inscripciones_evento', event_id=evento.id_evento) }}" class="btn btn-outline-success">
+        👁 Ver cantidad de inscritos
       </a>
     </div>
     {% endif %}
