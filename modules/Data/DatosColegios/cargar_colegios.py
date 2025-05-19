@@ -1,4 +1,4 @@
-
+import logging
 
 from modules.Data.DatosColegios.colegios_beni import colegios_beni
 from modules.Data.DatosColegios.colegios_chuquisaca import colegios_chuquisaca
@@ -41,9 +41,12 @@ class CargarColegios:
                     creator.execute(dto)
 
                 except ValueError as ve:
-                    print()
+
+                    logging.warning(f"Error de valor en {nombre}: {ve}")
+
                 except Exception as e:
-                    print()
+
+                    logging.error(f"Error inesperado en {nombre}: {e}")
 
 
 
