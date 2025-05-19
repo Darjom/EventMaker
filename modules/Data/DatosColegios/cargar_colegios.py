@@ -36,11 +36,14 @@ class CargarColegios:
         for departamento, colegios in self.schools_por_departamento.items():
 
             for nombre in colegios.values():
+                try:
+                    dto = SchoolDTO(name=nombre)
+                    creator.execute(dto)
 
-                dto = SchoolDTO(name=nombre)
-                creator.execute(dto)
-
-
+                except ValueError as ve:
+                    print()
+                except Exception as e:
+                    print()
 
 
 
