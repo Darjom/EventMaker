@@ -1,3 +1,5 @@
+import re
+
 from flask import Blueprint, render_template, session, redirect, url_for, flash, request,send_file
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 from modules.events.application.EventQueryService import EventQueryService
@@ -42,7 +44,15 @@ from modules.students.infrastructure.PostgresEstudentRepository import PostgresS
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
 from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
-
+from modules.inscriptions.application.GetStudentInscriptionsByCategory import GetStudentInscriptionsByCategory
+from modules.inscriptions.application.ExportStudentInscriptionsService import ExportStudentInscriptionsService
+from modules.students.application.GetStudentById import GetStudentById
+from modules.schools.application.FindSchoolById import FindSchoolById
+from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
+from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
+from modules.schools.infrastructure.PostgresSchoolRepository import PostgresSchoolRepository
+from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
+from modules.events.infrastructure.PostgresEventRepository import PostgresEventsRepository
 
 inscripciones_bp = Blueprint("inscripciones_bp", __name__)
 
@@ -176,26 +186,19 @@ def generar_orden_pago_estudiante(event_id):
 
 @inscripciones_bp.route("/comprobar-recibo/<int:event_id>", methods=["POST"])
 def comprobar_recibo_ocr(event_id):
-    print(f"\n--- Entrando en comprobar_recibo_ocr para event_id: {event_id} ---") 
     try:
         # 1. Validar y obtener datos básicos
-        student_id = session.get("admin_user")
-        print(f"Sesión obtenida - student_id: {student_id}")  # Debug 2
-        if not student_id:
-            print("Redirigiendo a login")  # Debug 3
+        student_id = session.get("admin_user") # Debug 2
+        if not student_id: # Debug 3
             return redirect(url_for("admin_bp.login"))
-        
-        print("Verificando archivo...")  # Debug 4
-        if 'recibo' not in request.files:
-            print("No se encontró archivo 'recibo' en request.files")  # Debug 5
+         # Debug 4
+        if 'recibo' not in request.files:  # Debug 5
             flash("No se envió ningún archivo", "danger")
             return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
 
-        file = request.files['recibo']
-        print(f"Archivo recibido: {file.filename}")  # Debug 6
+        file = request.files['recibo'] # Debug 6
 
-        if file.filename == '':
-            print("Nombre de archivo vacío")  # Debug 7
+        if file.filename == '':  # Debug 7
             flash("Archivo no seleccionado", "danger")
             return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
 
@@ -242,13 +245,6 @@ def comprobar_recibo_ocr(event_id):
             student_id=student_id
         )
 
-         # Nueva implementación de impresión
-        print("\n" + "="*50)
-        print(f"RESULTADO DE VALIDACIÓN PARA EVENTO {event_id}")
-        print(f"Estudiante: {student_id}")
-        print(f"Mensaje: {result_message}")
-        print("="*50 + "\n")
-
         # 6. Manejar resultado
         if "no es el mismo" in result_message:
             flash(result_message, "warning")
@@ -256,9 +252,6 @@ def comprobar_recibo_ocr(event_id):
             flash(result_message, "success")
 
     except Exception as e:
-        import traceback  # Añade esto al inicio de tu archivo
-        print(f"\n!!! ERROR: {str(e)}\n")
-        traceback.print_exc()  # Esto imprimirá el traceback completo
         flash(f"Error en validación: {str(e)}", "danger")
 
     return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
@@ -283,7 +276,6 @@ def ver_inscripciones_evento(event_id):
         flash("Acceso restringido", "danger")
         return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
 
-    # ✅ Construir caso de uso con argumentos posicionales
     usecase = GetInscriptionsByEvent(
         PostgresInscriptionRepository(),
         GetStudentById(PostgresStudentRepository()),
@@ -297,12 +289,70 @@ def ver_inscripciones_evento(event_id):
         flash(f"Error al obtener inscripciones: {e}", "danger")
         return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
 
-    # Obtener datos del evento
+
     evento = EventQueryService(PostgresEventsRepository()).execute(event_id)
 
     return render_template(
         "inscripciones/ver_inscripciones_por_evento.html",
         datos=datos,
         nombre_evento=evento.nombre_evento,
-        user=user
+        user=user,
+        event_id=event_id
+    )
+
+
+@inscripciones_bp.route("/evento/<int:event_id>/descargar-excel")
+def descargar_reporte_excel(event_id):
+    student_repo = PostgresStudentRepository()
+    school_repo = PostgresSchoolRepository()
+    category_repo = PostgresCategoryRepository()
+    inscription_repo = PostgresInscriptionRepository()
+    event_repo = PostgresEventsRepository()
+
+    use_case = GetStudentInscriptionsByCategory(
+        inscription_repo=inscription_repo,
+        student_service=GetStudentById(student_repo),
+        school_service=FindSchoolById(school_repo),
+        category_service=category_repo
+    )
+
+    export_service = ExportStudentInscriptionsService(use_case, event_repo)
+
+    try:
+        excel_buffer = export_service.generate_excel(event_id)
+        return send_file(
+            excel_buffer,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=f"reporte_inscripciones.xlsx"
+        )
+    except Exception as e:
+        flash(f"Error al generar el Excel: {str(e)}", "danger")
+        return redirect(url_for("inscripciones_bp.ver_inscripciones_evento", event_id=event_id))
+
+
+@inscripciones_bp.route("/evento/<int:event_id>/descargar-pdf")
+def descargar_reporte_pdf(event_id):
+
+    student_repo = PostgresStudentRepository()
+    school_repo = PostgresSchoolRepository()
+    category_repo = PostgresCategoryRepository()
+    inscription_repo = PostgresInscriptionRepository()
+    event_repo = PostgresEventsRepository()
+ 
+    use_case = GetStudentInscriptionsByCategory(
+        inscription_repo=inscription_repo,
+        student_service=GetStudentById(student_repo),
+        school_service=FindSchoolById(school_repo),
+        category_service=category_repo
+    )
+
+    export_service = ExportStudentInscriptionsService(use_case, event_repo)
+
+    pdf_buffer = export_service.generate_pdf(event_id)
+    return send_file(
+        pdf_buffer,
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f"reporte_inscripciones_evento_{event_id}.pdf"
     )

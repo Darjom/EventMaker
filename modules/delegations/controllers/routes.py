@@ -244,8 +244,7 @@ def ver_delegacion(delegacion_id):
     except Exception as e:
         flash(str(e), "danger")
         return redirect(url_for("delegaciones_bp.ver_delegaciones"))
-    print(estudiantes)
-    print(tutores)
+
     return render_template(
         "delegaciones/ver_delegacion.html",
         delegacion=delegacion,

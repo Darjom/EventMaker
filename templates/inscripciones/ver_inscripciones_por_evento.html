@@ -4,22 +4,78 @@
 {% block content %}
 {% include 'shared/admin_header.html' %}
 <div class="container mt-4">
+
+  <!-- MENSAJES FLASH -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Botones de descarga -->
+  <div class="text-center mb-4">
+    <a href="{{ url_for('inscripciones_bp.descargar_reporte_excel', event_id=event_id) }}" class="btn btn-outline-success me-2">
+      Descargar Excel
+    </a>
+    <a href="{{ url_for('inscripciones_bp.descargar_reporte_pdf', event_id=event_id) }}" class="btn btn-outline-danger">
+      Descargar PDF
+    </a>
+  </div>
+
   <h2 class="text-center mb-4">Inscripciones por Área y Categoría</h2>
 
-  {% for area, datos_area in datos.items() %}
-  <h4>Área: {{ area }}</h4>
-  <ul>
-    {% for categoria, cat_data in datos_area.categories.items() %}
-      <li>
-        <strong>Categoría:</strong> {{ categoria }}<br>
-        <ul>
-          {% for ins in cat_data.inscriptions %}
-            <li>{{ ins.student_name }} - {{ ins.course }} - {{ ins.status }} - {{ ins.inscription_date }}</li>
-          {% endfor %}
-        </ul>
+  <!-- Tabs de áreas -->
+  <ul class="nav nav-tabs mb-3" id="areaTabs" role="tablist">
+    {% for area_name, area_data in datos.items() %}
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ loop.index }}" data-bs-toggle="tab"
+                data-bs-target="#area-{{ loop.index }}" type="button" role="tab" aria-controls="area-{{ loop.index }}"
+                aria-selected="{{ 'true' if loop.first else 'false' }}">
+          {{ area_name }}
+        </button>
       </li>
     {% endfor %}
   </ul>
-{% endfor %}
+
+  <!-- Contenido de las pestañas -->
+  <div class="tab-content" id="areaTabsContent">
+    {% for area_name, area_data in datos.items() %}
+      <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="area-{{ loop.index }}" role="tabpanel"
+           aria-labelledby="tab-{{ loop.index }}">
+        {% for categoria, cat_data in area_data.categories.items() %}
+          <div class="mb-4">
+            <h5><strong>Categoría:</strong> {{ categoria }}</h5>
+            <ul class="list-group">
+              {% for ins in cat_data.inscriptions %}
+                <li class="list-group-item">
+                  {{ ins.student_name }} - {{ ins.course }} - {{ ins.status }} - {{ ins.inscription_date }}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Por si necesitas iniciar manualmente las tabs con JavaScript (Bootstrap 5)
+  const triggerTabList = [].slice.call(document.querySelectorAll('#areaTabs button'))
+  triggerTabList.forEach(function (triggerEl) {
+    const tabTrigger = new bootstrap.Tab(triggerEl)
+
+    triggerEl.addEventListener('click', function (event) {
+      event.preventDefault()
+      tabTrigger.show()
+    })
+  })
+</script>
 {% endblock %}

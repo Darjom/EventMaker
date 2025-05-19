@@ -9,7 +9,7 @@ from modules.Data.DatosColegios.colegios_pando import colegios_pando
 from modules.Data.DatosColegios.colegios_potosi import colegios_potosi
 from modules.Data.DatosColegios.colegios_santaCruz import colegios_santa_cruz
 from modules.Data.DatosColegios.colegios_tarija import colegios_tarija
-
+import logging
 from modules.schools.application.SchoolCreator import SchoolCreator
 from modules.schools.infrastructure.PostgresSchoolRepository import PostgresSchoolRepository
 from modules.schools.application.dtos.SchoolDTO import SchoolDTO
@@ -41,9 +41,11 @@ class CargarColegios:
                     creator.execute(dto)
 
                 except ValueError as ve:
-                    print()
-                except Exception as e:
-                    print()
 
+                    logging.warning(f"Error de valor en {nombre}: {ve}")
+
+                except Exception as e:
+
+                    logging.error(f"Error inesperado en {nombre}: {e}")
 
 

@@ -18,8 +18,6 @@ eventos_bp = Blueprint("eventos_bp", __name__)
 @eventos_bp.route("/crear", methods=["GET", "POST"])
 def crear_evento():
     user_id = session.get("admin_user")
-
-    print(user_id)
     if not user_id:
         return redirect(url_for("admin_bp.login"))
     user = UserMapping.query.get(user_id)
