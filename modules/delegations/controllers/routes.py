@@ -29,7 +29,17 @@ from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorR
 from modules.groups.application.FindGroupsOfTutorInDelegation import FindGroupsOfTutorInDelegation
 from modules.groups.infrastructure.PostgresGroupRepository import PostgresGroupRepository
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
-
+from modules.delegations.application.BulkStudentDelegationAdder import BulkStudentDelegationAdder
+from modules.schools.application.FindSchoolByName import FindSchoolByName
+from modules.schools.application.SchoolCreator import SchoolCreator
+from modules.students.application.GetStudentByCI import GetStudentByCI
+from modules.students.application.StudentCreator import StudentCreator
+from modules.user.application.GetUserByEmail import GetUserByEmail
+from modules.delegations.application.AssignStudentToDelegation import AssignStudentToDelegation
+from modules.schools.infrastructure.PostgresSchoolRepository import PostgresSchoolRepository
+from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
+from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
+from modules.delegations.infrastructure.PostgresDelegationRepository import PostgresDelegationRepository
 
 
 delegaciones_bp = Blueprint("delegaciones_bp", __name__)
@@ -234,11 +244,8 @@ def ver_delegacion(delegacion_id):
     except Exception as e:
         flash(str(e), "danger")
         return redirect(url_for("delegaciones_bp.ver_delegaciones"))
-
-    # Debug
-    print("Permisos globales:", permisos)
-    print("Permisos en delegación:", permisos_delegacion)
-
+    print(estudiantes)
+    print(tutores)
     return render_template(
         "delegaciones/ver_delegacion.html",
         delegacion=delegacion,
@@ -415,3 +422,36 @@ def crear_grupo(delegacion_id):
         user=user,
         permisos=permisos
     )
+
+@delegaciones_bp.route("/delegaciones/<int:delegacion_id>/cargar_excel", methods=["POST"])
+def cargar_estudiantes_excel(delegacion_id):
+    if "admin_user" not in session:
+        return redirect(url_for("admin_bp.login"))
+
+    try:
+        file = request.files["excel_file"]
+        if not file:
+            flash("Debe seleccionar un archivo Excel.", "warning")
+            return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
+
+        service = BulkStudentDelegationAdder(
+            school_finder=FindSchoolByName(PostgresSchoolRepository()),
+            school_creator=SchoolCreator(PostgresSchoolRepository()),
+            user_email_checker=GetUserByEmail(PostgresUserRepository()),
+            student_ci_checker=GetStudentByCI(PostgresStudentRepository()),
+            student_creator=StudentCreator(PostgresStudentRepository()),
+            add_delegation=AssignStudentToDelegation(PostgresDelegationRepository())
+        )
+
+        observaciones = service.execute(file, delegacion_id)
+
+        if observaciones:
+            for obs in observaciones:
+                flash(f"{obs['observacion']}: {obs['motivo']}", "warning")
+        else:
+            flash("Todos los estudiantes fueron agregados correctamente.", "success")
+
+    except Exception as e:
+        flash(f"Error al cargar estudiantes desde Excel: {e}", "danger")
+
+    return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))

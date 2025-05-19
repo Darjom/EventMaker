@@ -38,7 +38,13 @@
       <!-- Información Académica -->
       <fieldset class="border p-3 mb-4">
         <legend>Información Académica</legend>
-        <input name="school_id" id="Colegio"  type="number" class="form-control mb-3" placeholder="ID del colegio (por ahora manual)" required>
+        <label for="Colegio" class="form-label">Nombre del colegio</label>
+        <input list="colegiosList" name="school_name" id="Colegio" class="form-control mb-3" placeholder="Escriba o seleccione un colegio" required>
+        <datalist id="colegiosList">
+          {% for colegio in colegios %}
+            <option value="{{ colegio.name }}">
+          {% endfor %}
+        </datalist>
         <input name="course" id="Curso" class="form-control mb-3" placeholder="Curso actual" required>
         <div class="row">
           <div class="col-md-6 mb-3"><input name="department" id="Departamento" class="form-control" placeholder="Departamento" required></div>

@@ -41,9 +41,9 @@ class CargarColegios:
                     creator.execute(dto)
 
                 except ValueError as ve:
-                    print(f"⚠️ Ya existe o inválido: {nombre} - {ve}")
+                    print()
                 except Exception as e:
-                    print(f"❌ Error inesperado en: {nombre} - {e}")
+                    print()
 
 
 
