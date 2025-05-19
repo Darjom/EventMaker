@@ -58,9 +58,34 @@ class GenerateDelegationPaymentOrder:
             mask='auto'
         )
 
+        # Nombre de la convocatoria
         c.setFont("Helvetica-Bold", 9)
         c.setFillColorRGB(0, 0, 0)
-        c.drawCentredString(logo_x + logo_width / 2, logo_y - 12, f" {self.convocatoria_nombre}")
+
+        max_width = 150
+        font_name = "Helvetica-Bold"
+        font_size = 9
+        line_height = 11
+        text = str(self.convocatoria_nombre)
+
+        # Word wrap manual
+        words = text.split()
+        lines = []
+        current_line = ""
+        for word in words:
+            test_line = current_line + " " + word if current_line else word
+            if c.stringWidth(test_line, font_name, font_size) <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+        if current_line:
+            lines.append(current_line)
+
+        # centradas debajo del logo
+        for idx, line in enumerate(lines):
+            y_offset = logo_y - 12 - (idx * line_height)
+            c.drawCentredString(logo_x + logo_width / 2, y_offset, line)
 
         # Información derecha encabezado
         c.setFont("Helvetica-Bold", 14)
@@ -108,7 +133,7 @@ class GenerateDelegationPaymentOrder:
 
         # Detalle inscripciones por estudiante - tabla
         c.setFont("Helvetica-Bold", 12)
-        c.drawString(x_margin, y, "Detalle de Inscripciones por Estudiante:")
+        c.drawString(x_margin, y, "Detalle de Inscripciones por Estudiantes:")
         y -= 20
 
         # Encabezado tabla

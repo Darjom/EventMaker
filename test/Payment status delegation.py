@@ -38,7 +38,7 @@ def test_find_inscrip_payment_status_delegation(tutor_id: int, delegation_id: in
 if __name__ == "__main__":
     with app.app_context():
         tutor_id = 6
-        delegation_id = 1
+        delegation_id = 2
 
         print(f"\n🔍 Generando orden de pago para el tutor ID {tutor_id} con delegación ID {delegation_id}...\n")
 
