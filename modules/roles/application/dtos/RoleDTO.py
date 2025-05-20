@@ -14,7 +14,7 @@ class RoleDTO(BaseModel):
             id=role.id,
             name=role.name,
             description=role.description,
-            permissions=role.permission()
+            permissions=role.permissions
         )
 
     def toDomain(self) -> Rol:
@@ -22,5 +22,6 @@ class RoleDTO(BaseModel):
             id=self.id,
             name=self.name,
             description=self.description,
-            permission=self.permissions
+            permissions=self.permissions
         )
+    
