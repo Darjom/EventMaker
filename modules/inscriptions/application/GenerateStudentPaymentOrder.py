@@ -18,12 +18,12 @@ class GenerateStudentPaymentOrder:
     ):
         self.nombre_estudiante = nombre_estudiante
         self.ci = ci
-        self.correo              = correo
+        self.correo = correo
         self.convocatoria_nombre = convocatoria_nombre
-        self.fecha_emision       = datetime.today().strftime('%d/%m/%Y')
-        self.areas               = areas
-        self.total               = total
-        self.orden_number        = orden_number
+        self.fecha_emision = datetime.today().strftime('%d/%m/%Y')
+        self.areas = areas
+        self.total = total
+        self.orden_number = orden_number
 
     def generar_orden_pago(self):
         buffer = BytesIO()
@@ -161,7 +161,7 @@ class GenerateStudentPaymentOrder:
             )
             c.restoreState()
         except Exception as e:
-            print("No se pudo cargar la imagen como marca de agua:", e)
+            raise RuntimeError("No se pudo cargar la imagen como marca de agua:", e)
 
         # Filas de datos
         c.setFont("Helvetica", 10)

@@ -5,7 +5,6 @@ from shared.extensions import db
 
 class StudentMapping(UserMapping):
 
-
     phone_number = db.Column(db.Integer, nullable=True)
     course = db.Column(db.String(50), nullable=True)
     department = db.Column(db.String(50), nullable=True)

@@ -61,5 +61,4 @@ class UserCreator:
 
         # Obtener usuario actualizado con roles
         user_with_roles = self.user_repo.find_by_id(saved_user.id)
-        print("estamos aquiiiii")
         return UserDTO.from_domain(user_with_roles)
