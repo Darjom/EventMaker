@@ -339,7 +339,7 @@ def descargar_reporte_pdf(event_id):
     category_repo = PostgresCategoryRepository()
     inscription_repo = PostgresInscriptionRepository()
     event_repo = PostgresEventsRepository()
- 
+
     use_case = GetStudentInscriptionsByCategory(
         inscription_repo=inscription_repo,
         student_service=GetStudentById(student_repo),
