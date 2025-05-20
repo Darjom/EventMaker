@@ -48,7 +48,7 @@ def crear_area(evento_id):
             nombre_area = request.form.get("titulo")
             descripcion = request.form.get("descripcion")
 
-            # ✅ Validar si ya existe una área con el mismo nombre en el evento
+            # Validar si ya existe una área con el mismo nombre en el evento
             area_finder = AreaFinder(PostgresAreaRepository())
             area_existente = area_finder.by_name_and_event_id(nombre_area, evento_id)
 
@@ -56,7 +56,7 @@ def crear_area(evento_id):
                 flash("❗ Ya existe un área con ese nombre para este evento.", "warning")
                 return render_template("areas/formCrearArea.html", user=user, permisos=permisos, evento_id=evento_id)
 
-            # ✅ Crear el área si no existe
+            #  Crear el área si no existe
             area_dto = AreaDTO(
                 nombre_area=nombre_area,
                 descripcion=descripcion,
