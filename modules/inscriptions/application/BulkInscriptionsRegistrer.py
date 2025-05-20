@@ -52,9 +52,7 @@ class BulkInscriptionsRegistrar:
         if not student:
             raise ValueError("Student does not exist")
 
-
         event = self.event_repo.find_by_id(inscription_dto.event_id)
-
         if not event:
             raise ValueError("Event does not exist")
 
@@ -62,10 +60,12 @@ class BulkInscriptionsRegistrar:
         if not area:
             raise ValueError("Area does not exist")
 
+        # Validando categoría
         category = self.category_repo.find_by_id(inscription_dto.category_id)
         if not category:
             raise ValueError("Category does not exist")
 
+        # Buscando inscripción existente
         existing = self.inscription_repo.find_by_ids(
             inscription_dto.student_id,
             inscription_dto.event_id,

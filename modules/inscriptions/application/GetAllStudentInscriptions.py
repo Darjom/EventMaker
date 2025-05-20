@@ -28,7 +28,6 @@ class GetAllStudentInscriptions:
         if not student:
             raise ValueError("Student does not exist")
 
-        print("🔍 Buscando inscripción existente...")
         inscriptions = self.inscription_repo.find_by_id_student(student_id)
 
         # Si no hay inscripciones (None o lista vacía), devuelvo lista vacía
