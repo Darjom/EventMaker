@@ -30,6 +30,5 @@ class Tutor:
         self.fecha_nacimiento = fecha_nacimiento
         self.roles = roles or []
 
-
     def __str__(self):
         return f"Student: {self.first_name} {self.last_name} - {self.email}"

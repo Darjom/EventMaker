@@ -5,7 +5,7 @@ from modules.categories.domain.CategoryRepository import CategoryRepository
 
 
 class GetCategoriesByListId:
-    def __init__(self,repository: CategoryRepository):
+    def __init__(self, repository: CategoryRepository):
         self.__repository = repository
 
     def execute(self, list_id: List[int]):

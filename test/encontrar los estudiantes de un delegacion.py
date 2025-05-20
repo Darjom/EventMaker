@@ -6,7 +6,7 @@ from modules.students.application.GetStudentsByListIds import GetStudentsByListI
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
 
-from modules.tutors.application.GetStudentsUnderTutorship import GetStudentsUnderTutorship
+
 
 
 def test_list_students_by_delegacion(delegacion_id: int):

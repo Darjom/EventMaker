@@ -36,6 +36,7 @@ class ExportStudentInscriptionsService:
         data = self.inscriptions_query.execute(event_id)
         generator = PDFReportGenerator(data, event)
         return generator.generate()
+
     def _getEvent(self, id_event: int):
         event = self.event_repo.find_by_id(id_event)
         return event
