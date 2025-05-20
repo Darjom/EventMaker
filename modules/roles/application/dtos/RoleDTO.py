@@ -24,4 +24,3 @@ class RoleDTO(BaseModel):
             description=self.description,
             permissions=self.permissions
         )
-    
