@@ -10,14 +10,13 @@ class TutorDTO(BaseModel):
     last_name: str = ""
     email: str = ""
     password: str = ""
-    active: bool = False
+    active: bool = True
     confirmed_at: Optional[datetime] = None
     fs_uniquifier: Optional[str] = None
     ci: str = ""
     expedito_ci: str = ""
     fecha_nacimiento: Optional[datetime] = None
     roles: Optional[List[str]] = None
-
 
     @classmethod
     def from_domain(cls, tutor: Tutor):
