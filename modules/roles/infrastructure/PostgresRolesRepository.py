@@ -22,3 +22,7 @@ class PostgresRolesRepository(RolesRepository):
     def find_all(self) -> List[Rol]:
         roles_mapping = RolMapping.query.all()
         return [role.to_domain() for role in roles_mapping]
+
+    def find_by_name(self, role_name: str) -> Optional[Rol]:
+        role_mapping = RolMapping.query.filter_by(name=role_name).first()
+        return role_mapping.to_domain() if role_mapping else None

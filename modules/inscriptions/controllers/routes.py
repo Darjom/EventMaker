@@ -15,6 +15,8 @@ from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 from modules.inscriptions.application.dtos.InscriptionDTO import InscriptionDTO
+from modules.user.application.GetUserById import GetUserById
+from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.inscriptions.application.GetAllStudentInscriptions import GetAllStudentInscriptions
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
@@ -262,13 +264,15 @@ def ver_inscripciones_evento(event_id):
     user_id = session.get("admin_user")
     if not user_id:
         return redirect(url_for("admin_bp.login"))
+    get_user = GetUserById(PostgresUserRepository())
+    user = get_user.execute(user_id)
 
-    user = UserMapping.query.get(user_id)
 
     # Verificar roles (admin o moderator)
     roles_usuario = []
     for role in user.roles:
-        dto = RoleQueryService(PostgresRolesRepository()).execute(role.id)
+        print(role)
+        dto = RoleQueryService(PostgresRolesRepository()).execute_name(role)
         if dto and dto.name:
             roles_usuario.append(dto.name.lower())
 
@@ -286,7 +290,7 @@ def ver_inscripciones_evento(event_id):
     try:
         datos = usecase.execute(event_id)
     except Exception as e:
-        flash(f"Error al obtener inscripciones, probar si este es el error: {e}", "danger")
+        flash(f"Error al obtener inscripciones pruebaaa de error: {e}", "danger")
         return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
 
 

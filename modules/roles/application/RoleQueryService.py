@@ -14,3 +14,12 @@ class RoleQueryService:
             return None  # O lanzar una excepción: raise ValueError("Rol no encontrado")
 
         return RoleDTO.fromDomain(role)
+
+    def execute_name(self, role_name:str) -> RoleDTO:
+        # Buscar el rol por ID usando el repositorio
+        role = self.repository.find_by_name(role_name)
+
+        if not role:
+            return None  # O lanzar una excepción: raise ValueError("Rol no encontrado")
+
+        return RoleDTO.fromDomain(role)
