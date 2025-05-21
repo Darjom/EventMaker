@@ -25,7 +25,7 @@ class TutorCreator:
         tutor.confirmed_at = datetime.now()
         tutor.password =generate_password_hash(tutor.password)
         if not tutor.roles:
-            tutor.roles = [4] # id de rol tutor
+            tutor.roles = [4]  # id de rol tutor
 
 
         # Guardar tutor

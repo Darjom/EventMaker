@@ -11,7 +11,7 @@ class StudentDTO(BaseModel):
     last_name: str = ""
     email: str = ""
     password: str = ""
-    active: bool = False
+    active: bool = True
     confirmed_at: Optional[datetime] = None
     fs_uniquifier: Optional[str] = None
     ci: str = "",

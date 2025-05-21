@@ -28,10 +28,10 @@ def test_create_user():
         role_ids=[2],  # Asegúrate que exista este rol en tu DB
         first_name="dan",
         last_name="Reque",
-        email="moderator@admin.com",
+        email="admin@admin.com",
         password="12345678",
-        ci= "12345678 B",
-        expedito_ci= "CBBA",
+        ci="",
+        expedito_ci="",
         fecha_nacimiento=datetime(2025, 5, 20, 9, 0, 0),
     )
 

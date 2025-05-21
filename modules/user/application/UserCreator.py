@@ -46,8 +46,8 @@ class UserCreator:
             password=generate_password_hash(password),  # Deberías hashear la contraseña aquí
             roles=[],  # Los roles se asignan después de crear el usuario
             ci=ci,
-            expedito_ci= expedito_ci,
-            fecha_nacimiento= fecha_nacimiento
+            expedito_ci=expedito_ci,
+            fecha_nacimiento=fecha_nacimiento
         )
 
         # Persistir usuario

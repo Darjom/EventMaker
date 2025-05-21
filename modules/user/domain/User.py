@@ -11,13 +11,13 @@ class User:
         last_name: str = "",
         email: str = "",
         password: str = "",
-        active: bool = False,
+        active: bool = True,
         confirmed_at: Optional[datetime] = None,
         fs_uniquifier: Optional[str] = None,
         roles: Optional[List[str]] = None,
         ci=None,
-        expedito_ci = None,
-        fecha_nacimiento = None
+        expedito_ci=None,
+        fecha_nacimiento=None
 
     # Lista de nombres de roles
     ):
