@@ -13,7 +13,6 @@ class AreaRepository(ABC):
     def find_by_id(self, area_id: int) -> Optional[Area]:
         pass
 
-
     @abstractmethod
     def find_by_name_idEvent(self, name: str, event_id: int) -> Optional[Area]:
         pass

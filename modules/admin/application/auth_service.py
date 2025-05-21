@@ -8,12 +8,9 @@ user_repo = PostgresUserRepository()
 def authenticate_admin(email, password):
     user = user_repo.find_by_email(email)
     if not user:
-        print("❌ Usuario no encontrado")
         return None
     if not check_password_hash(user.password, password):
-        print("❌ Contraseña incorrecta")
         return None
-    print("✅ Autenticación exitosa")
     return user
 
 def login_required_admin(f):

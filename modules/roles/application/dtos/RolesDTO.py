@@ -5,7 +5,6 @@ from .RoleDTO import RoleDTO
 class RolesDTO(BaseModel):
     roles: List[RoleDTO]
 
-
     @classmethod
     def from_domain_list(cls, roles: list):
         return cls(

@@ -12,7 +12,6 @@ class Rol:
         self._description = description
         self._permissions = permissions or []
 
-
     @property
     def name(self):
         return self._name
@@ -21,9 +20,6 @@ class Rol:
     def description(self):
         return self._description
 
-    def permission(self):
+    @property
+    def permissions(self):
         return self._permissions
-
-    def can_edit(self):
-        # Ejemplo de lógica de dominio
-        return self._name == "superuser"

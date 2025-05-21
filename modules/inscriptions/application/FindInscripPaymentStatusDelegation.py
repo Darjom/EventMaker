@@ -45,7 +45,12 @@ class FindInscripPaymentStatusDelegation:
         self.__update_inscription_status = update_inscription_status or UpdateInscriptionStatus(self.__repository)
 
     def execute(self, tutor_id: int, delegation_id: int):
-        inscriptions_dic, name_event, inscriptions_dto = self.__get_student_inscriptions.execute(delegation_id)
+        result = self.__get_student_inscriptions.execute(delegation_id)
+
+        if result is None:
+            return None  # O lanza una excepción si corresponde
+
+        inscriptions_dic, name_event, inscriptions_dto = result
 
         tutor = self.__get_tutor_by_id.execute(tutor_id)
 
