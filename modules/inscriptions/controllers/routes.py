@@ -286,7 +286,7 @@ def ver_inscripciones_evento(event_id):
     try:
         datos = usecase.execute(event_id)
     except Exception as e:
-        flash(f"Error al obtener inscripciones: {e}", "danger")
+        flash(f"Error al obtener inscripciones, probar si este es el error: {e}", "danger")
         return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
 
 
