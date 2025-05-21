@@ -83,10 +83,10 @@ class GetInscriptionsByEvent:
         return category.category_id, category.category_name, category.price
 
     def _build_entry(
-        self,
-        insc,
-        area_id: int,
-        category_id: int
+            self,
+            insc,
+            area_id: int,
+            category_id: int
     ) -> Dict[str, Any]:
         """
         Construye el dict de una inscripción, con IDs y nombres.
@@ -94,15 +94,22 @@ class GetInscriptionsByEvent:
         student_dto = self.student_service.execute(insc.student_id)
         if student_dto is None:
             student_name = "Desconocido"
-            course = None
+            course = ""
+            department = ""
+            province = ""
         else:
-            student_name = student_dto.first_name + " " + student_dto.last_name
-            course = getattr(student_dto, 'course', None)
+            student_name = f"{student_dto.first_name} {student_dto.last_name}"
+            course = getattr(student_dto, 'course', "") or ""
+            department = getattr(student_dto, 'department', "") or ""
+            province = getattr(student_dto, 'province', "") or ""
 
         return {
             "student_id": insc.student_id,
             "student_name": student_name,
             "course": course,
+            "department": department,
+            "province": province,
             "status": insc.status,
             "inscription_date": insc.inscription_date.isoformat()
         }
+
