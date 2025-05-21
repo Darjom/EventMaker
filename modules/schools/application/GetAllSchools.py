@@ -14,14 +14,3 @@ class GetAllSchools:
         school_dtos = [SchoolDTO.from_domain(school) for school in schools]
         return SchoolsDTO(schools=school_dtos)
 
-
-
-# Para testear
-if __name__ == '__main__':
-    from app import app
-    from modules.schools.infrastructure.PostgresSchoolRepository import PostgresSchoolRepository
-    with app.app_context():
-        school_repository = PostgresSchoolRepository()
-        get_all_schools = GetAllSchools(school_repository)
-        schools_dto = get_all_schools.execute()
-        print(schools_dto)

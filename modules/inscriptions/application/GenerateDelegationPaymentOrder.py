@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from reportlab.lib.pagesizes import LETTER
+from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.pdfgen import canvas
 from io import BytesIO
 from reportlab.lib import colors
@@ -58,9 +59,34 @@ class GenerateDelegationPaymentOrder:
             mask='auto'
         )
 
+        # Nombre de la convocatoria
         c.setFont("Helvetica-Bold", 9)
         c.setFillColorRGB(0, 0, 0)
-        c.drawCentredString(logo_x + logo_width / 2, logo_y - 12, f" {self.convocatoria_nombre}")
+
+        max_width = 150
+        font_name = "Helvetica-Bold"
+        font_size = 9
+        line_height = 11
+        text = str(self.convocatoria_nombre)
+
+        # Word wrap manual
+        words = text.split()
+        lines = []
+        current_line = ""
+        for word in words:
+            test_line = current_line + " " + word if current_line else word
+            if c.stringWidth(test_line, font_name, font_size) <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+        if current_line:
+            lines.append(current_line)
+
+        # centradas debajo del logo
+        for idx, line in enumerate(lines):
+            y_offset = logo_y - 12 - (idx * line_height)
+            c.drawCentredString(logo_x + logo_width / 2, y_offset, line)
 
         # Información derecha encabezado
         c.setFont("Helvetica-Bold", 14)
@@ -108,7 +134,7 @@ class GenerateDelegationPaymentOrder:
 
         # Detalle inscripciones por estudiante - tabla
         c.setFont("Helvetica-Bold", 12)
-        c.drawString(x_margin, y, "Detalle de Inscripciones por Estudiante:")
+        c.drawString(x_margin, y, "Detalle de Inscripciones por Estudiantes:")
         y -= 20
 
         # Encabezado tabla
@@ -127,13 +153,17 @@ class GenerateDelegationPaymentOrder:
         c.setFillColor(colors.black)
         c.drawString(x_margin, text_y, "Estudiante")
         c.drawString(x_margin + 150, text_y, "Curso")
-        c.drawString(x_margin + 230, text_y, "Área")
+        c.drawString(x_margin + 250, text_y, "Área")
         c.drawString(x_margin + 350, text_y, "Categoría")
-        c.drawString(x_margin + 470, text_y, "Monto (Bs.)")
+        c.drawString(x_margin + 450, text_y, "Monto (Bs.)")
 
-        # Posición inicial filas datos
+        # Posición inicial
         y = table_top - header_height - 8
-        c.setFont("Helvetica", 10)
+        c.setFont("Helvetica", 9)
+
+        # Anchos de columnas (ajusta según tu layout)
+        col_widths = [150, 100, 110, 100, 40]  # Nombre, Curso, Área, Categoría, Monto
+        line_height = 10  # altura de línea
 
         for estudiante_nombre, datos in self.estudiantes_info.items():
             curso = datos.get("curso") or "N/D"
@@ -143,32 +173,87 @@ class GenerateDelegationPaymentOrder:
                 monto = insc.get("category_monto") or 0.0
                 monto_str = f"{monto:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
-                c.drawString(x_margin, y, estudiante_nombre)
-                c.drawString(x_margin + 150, y, curso)
-                c.drawString(x_margin + 230, y, area)
-                c.drawString(x_margin + 350, y, categoria)
-                c.drawRightString(x_margin + 540, y, monto_str)
-                y -= row_height
+                values = [estudiante_nombre, curso, area, categoria, monto_str]
+                wrapped_values = []
+                max_lines = 1
 
-                # Salto de página si queda poco espacio
+                # Envolver texto por columna si se excede
+                for i, value in enumerate(values):
+                    col_width = col_widths[i]
+                    text = str(value)
+                    if stringWidth(text, "Helvetica", 9) > col_width:
+                        approx_chars = int(col_width / stringWidth("A", "Helvetica", 9))
+                        lines = [text[j:j + approx_chars] for j in range(0, len(text), approx_chars)]
+                    else:
+                        lines = [text]
+                    wrapped_values.append(lines)
+                    max_lines = max(max_lines, len(lines))
+
+                # Dibujar línea por línea
+                x = x_margin
+                for line_idx in range(max_lines):
+                    x = x_margin
+                    for col_idx, lines in enumerate(wrapped_values):
+                        if line_idx < len(lines):
+                            if col_idx == 4:
+                                c.drawRightString(x + col_widths[col_idx], y - line_idx * line_height, lines[line_idx])
+                            else:
+                                c.drawString(x, y - line_idx * line_height, lines[line_idx])
+                        x += col_widths[col_idx]
+
+                y -= max_lines * 9
+
+                # Salto de página si se acaba el espacio
                 if y < 80:
                     c.showPage()
                     y = height - 50
-                    c.setFont("Helvetica", 10)
+                    c.setFont("Helvetica", 9)
 
-        # Línea y total
-        y -= 20
+        #Espacio antes del total
+        y -= 80
+
+        #Logo marca de agua
+        try:
+            PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))
+            image_path = os.path.join(PROJECT_ROOT, 'static', 'img', 'FondoBoleta', 'logo_umss.png')
+
+            print("Ruta imagen:", image_path)
+            print("¿Existe?", os.path.exists(image_path))  # Verificación útil
+
+            logo_width = 200
+            logo_height = 200
+            logo_x = (width - logo_width) / 2
+            logo_y = (height - logo_height) / 2 - 50
+
+            c.saveState()
+            c.setFillAlpha(0.1)
+            c.drawImage(
+                image_path,
+                logo_x,
+                logo_y,
+                width=logo_width,
+                height=logo_height,
+                preserveAspectRatio=True,
+                mask='auto'
+            )
+            c.restoreState()
+
+        except Exception as e:
+            print("No se pudo cargar la imagen como marca de agua:", e)
+
+        # Línea horizontal
         c.setStrokeColor(colors.lightgrey)
         c.setLineWidth(1)
         c.line(x_margin - 5, y, width - x_margin + 5, y)
 
+        # Texto de total
         y -= 20
         c.setFont("Helvetica-Bold", 10)
         c.drawString(x_margin, y, "Total a pagar:")
-        c.drawRightString(x_margin + 540, y, f"Bs {self.total:,.2f}")
+        c.drawRightString(x_margin + 500, y, f"Bs {self.total:,.2f}")
 
         # Pie de página
-        y -= 90
+        y -= 70
         c.setFont("Helvetica", 9)
         c.drawRightString(width - x_margin, y, "EventMaker")
         c.drawRightString(width - x_margin, y - 12, "Universidad Mayor de San Simón")

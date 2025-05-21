@@ -38,15 +38,18 @@ def test_find_inscrip_payment_status_delegation(tutor_id: int, delegation_id: in
 if __name__ == "__main__":
     with app.app_context():
         tutor_id = 6
-        delegation_id = 1
+        delegation_id = 2
 
         print(f"\n🔍 Generando orden de pago para el tutor ID {tutor_id} con delegación ID {delegation_id}...\n")
 
         order_payment = test_find_inscrip_payment_status_delegation(tutor_id, delegation_id)
 
-        output_path = f"ordendelegacion.pdf"
-        with open(output_path, "wb") as f:
-            f.write(order_payment.getvalue())
+        if order_payment is None:
+            print("⚠️ No se pudo generar la orden de pago. Posiblemente no existen inscripciones para esta delegación.")
+        else:
+            output_path = "ordendelegacion.pdf"
+            with open(output_path, "wb") as f:
+                f.write(order_payment.getvalue())
 
-        print("✅ PDF generado y guardado exitosamente.")
-        print(f"📄 Ruta del archivo: {output_path}")
+            print("✅ PDF generado y guardado exitosamente.")
+            print(f"📄 Ruta del archivo: {output_path}")

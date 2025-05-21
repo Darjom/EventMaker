@@ -18,12 +18,12 @@ class GenerateStudentPaymentOrder:
     ):
         self.nombre_estudiante = nombre_estudiante
         self.ci = ci
-        self.correo              = correo
+        self.correo = correo
         self.convocatoria_nombre = convocatoria_nombre
-        self.fecha_emision       = datetime.today().strftime('%d/%m/%Y')
-        self.areas               = areas
-        self.total               = total
-        self.orden_number        = orden_number
+        self.fecha_emision = datetime.today().strftime('%d/%m/%Y')
+        self.areas = areas
+        self.total = total
+        self.orden_number = orden_number
 
     def generar_orden_pago(self):
         buffer = BytesIO()
@@ -59,9 +59,34 @@ class GenerateStudentPaymentOrder:
         )
 
         # Texto bajo el recuadro
+        # Nombre de la convocatoria
         c.setFont("Helvetica-Bold", 9)
         c.setFillColorRGB(0, 0, 0)
-        c.drawCentredString(logo_x + logo_width / 2, logo_y - 12, f" {self.convocatoria_nombre}")
+
+        max_width = 150
+        font_name = "Helvetica-Bold"
+        font_size = 9
+        line_height = 11
+        text = str(self.convocatoria_nombre)
+
+        # Word wrap manual
+        words = text.split()
+        lines = []
+        current_line = ""
+        for word in words:
+            test_line = current_line + " " + word if current_line else word
+            if c.stringWidth(test_line, font_name, font_size) <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+        if current_line:
+            lines.append(current_line)
+
+        # centradas debajo del logo
+        for idx, line in enumerate(lines):
+            y_offset = logo_y - 12 - (idx * line_height)
+            c.drawCentredString(logo_x + logo_width / 2, y_offset, line)
 
         # INFORMACIÓN DEL ENCABEZADO derecha
         c.setFont("Helvetica-Bold", 14)
@@ -161,7 +186,7 @@ class GenerateStudentPaymentOrder:
             )
             c.restoreState()
         except Exception as e:
-            print("No se pudo cargar la imagen como marca de agua:", e)
+            raise RuntimeError("No se pudo cargar la imagen como marca de agua:", e)
 
         # Filas de datos
         c.setFont("Helvetica", 10)
@@ -178,8 +203,8 @@ class GenerateStudentPaymentOrder:
             c.drawRightString(header_x + 455, y, monto_str)
             y -= row_height
 
-        # Línea y total — ya fue bajado arriba
-        y -= 120  # espacio antes del total
+        # Espacio antes del total
+        y -= 80
         c.setStrokeColor(colors.lightgrey)
         c.setLineWidth(1)
         c.line(x_margin - 5, y, width - x_margin + 5, y)
@@ -190,7 +215,7 @@ class GenerateStudentPaymentOrder:
         c.drawRightString(x_margin + 450, y, f"Bs  {self.total:,.2f}")
 
         # Pie de página — se baja aún más
-        y -= 90  # bjar posicion
+        y -= 70  # bjar posicion
         c.setFont("Helvetica", 9)
         c.drawRightString(width - x_margin, y, "EventMaker")
         c.drawRightString(width - x_margin, y - 12, "Universidad Mayor de San Simón")

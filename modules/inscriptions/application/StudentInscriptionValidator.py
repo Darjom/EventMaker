@@ -41,13 +41,6 @@ class StudentInscriptionValidator:
         # Convertir monto esperado (puede venir int, float o str)
         expected = Decimal(str(voucher.total_voucher)).quantize(Decimal('0.00'), rounding=ROUND_DOWN)
 
-        # Prints de depuración
-        print(f"DEBUG: Monto OCR       = {detected!r}")
-        print(f"DEBUG: Monto Esperado  = {expected!r}")
-        print(f"DEBUG: Tipos          = {type(detected)}, {type(expected)}")
-        # —————————————————————————————
-
-
         if not self._amounts_match(detected, expected):
             return "El monto no es el mismo (detectado {detected} vs esperado {expected})"
 

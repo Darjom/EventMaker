@@ -49,12 +49,12 @@ def create_app():
     with app.app_context():
         db.create_all()
         # Inserta datos de roles y permisos
-        seed_roles_and_permissions()
+        # seed_roles_and_permissions()
 
         # cargar colegios
-        from modules.Data.DatosColegios.cargar_colegios import CargarColegios
-        cargador = CargarColegios()
-        cargador.main()
+        # from modules.Data.DatosColegios.cargar_colegios import CargarColegios
+        # cargador = CargarColegios()
+        # cargador.main()
 
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix="/admin")

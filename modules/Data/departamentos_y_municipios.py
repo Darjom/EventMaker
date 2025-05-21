@@ -142,14 +142,3 @@ departamentos_bolivia = {
 
 
 
-if __name__ == "__main__":
-    print("📌 Departamentos de Bolivia:")
-    departamentos = obtenerDepartamentos(departamentos_bolivia)
-    for d in departamentos:
-        print(f"- {d}")
-
-    dep = "tarija"
-    provincias = obtenerProvinciasPorDepartamento(departamentos_bolivia, dep)
-    print("\n📌 Provincias del departamento :",dep)
-    for p in provincias:
-        print(f"  • {p}")
