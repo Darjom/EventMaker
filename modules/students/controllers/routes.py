@@ -1,6 +1,8 @@
+import smtplib
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from datetime import datetime
-
+from flask_mail import Message
+from shared.extensions import mail
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.students.application.dtos.StudentDTO import StudentDTO
@@ -11,8 +13,8 @@ from modules.schools.application.GetAllSchools import GetAllSchools
 from modules.schools.infrastructure.PostgresSchoolRepository import PostgresSchoolRepository
 from modules.schools.application.SchoolCreator import SchoolCreator
 from modules.schools.application.dtos.SchoolDTO import SchoolDTO
-
-estudiantes_bp = Blueprint("estudiantes_bp", __name__)
+from shared.extensions import db
+estudiantes_bp = Blueprint("estudiantes_bp", __name__, template_folder="templates")
 
 
 @estudiantes_bp.route("/registro", methods=["GET", "POST"])
@@ -20,50 +22,81 @@ def registro():
     school_repo = PostgresSchoolRepository()
 
     if request.method == "POST":
+        # Botón de prueba de correo
+        if request.form.get("accion") == "enviar_correo":
+            prueba_email = request.form.get("test_email") or request.form.get("email")
+            try:
+                msg = Message(
+                    subject="Correo de prueba",
+                    recipients=[prueba_email],
+                    html="<p>Este es un correo de prueba.</p>"
+                )
+                mail.send(msg)
+                flash(f"Correo de prueba enviado a {prueba_email}", "success")
+            except Exception as e:
+                flash(f"Error al enviar correo de prueba: {e}", "danger")
+            return redirect(url_for("estudiantes_bp.registro"))
+
+        # Registro real
+        form = request.form
+        email = form.get("email")
         try:
-            school_name = request.form.get("school_name").strip()
-            school_service = GetAllSchools(school_repo)
-            all_schools = school_service.execute().schools
-
-            # Verificar si existe
-            matched_school = next((s for s in all_schools if s.name.lower() == school_name.lower()), None)
-
-            # Si no existe, crearla
-            if not matched_school:
-                nuevo_school_dto = SchoolDTO(name=school_name)
-                school_creator = SchoolCreator(school_repo)
-                matched_school = school_creator.execute(nuevo_school_dto)
-
-            school_id = matched_school.id  # ahora sí tenemos el ID del colegio
-
-            student_dto = StudentDTO(
-                first_name=request.form.get("first_name"),
-                last_name=request.form.get("last_name"),
-                email=request.form.get("email"),
-                password=request.form.get("password"),
-                phone_number=request.form.get("phone_number"),
-                ci=request.form.get("ci"),
-                expedito_ci=request.form.get("expedito_ci"),
-                fecha_nacimiento=datetime.strptime(request.form.get("fecha_nacimiento"), "%Y-%m-%d"),
-                school_id=school_id,
-                course=request.form.get("course"),
-                department=request.form.get("department"),
-                province=request.form.get("province"),
+            # 1) Envia el correo antes de crear nada
+            msg = Message(
+                subject="¡Bienvenido como Estuudiante a EventMaker UMSS!",
+                recipients=[email],
+                html=render_template(
+                    "emails/confirmacion_registro.html",
+                    nombre=form.get("first_name"),
+                    email=email
+                ),
+                charset="utf-8"
             )
+            mail.send(msg)
 
-            # Crear estudiante
-            service = StudentCreator(PostgresStudentRepository())
-            creado = service.create_student(student_dto)
+            # 2) Crea el colegio si hace falta
+            school_name = (form.get("school_name") or "").strip()
+            all_schools = GetAllSchools(school_repo).execute().schools
+            matched = next((s for s in all_schools if s.name.lower() == school_name.lower()), None)
+            if not matched:
+                matched = SchoolCreator(school_repo).execute(SchoolDTO(name=school_name))
 
-            flash("Cuenta creada exitosamente. Por favor inicia sesión.", "success")
+            # 3) Crea el estudiante (internamente commitea)
+            student_dto = StudentDTO(
+                first_name=form.get("first_name"),
+                last_name=form.get("last_name"),
+                email=email,
+                password=form.get("password"),
+                phone_number=form.get("phone_number"),
+                ci=form.get("ci"),
+                expedito_ci=form.get("expedito_ci"),
+                fecha_nacimiento=datetime.strptime(form.get("fecha_nacimiento"), "%Y-%m-%d"),
+                school_id=matched.id,
+                course=form.get("course"),
+                department=form.get("department"),
+                province=form.get("province"),
+            )
+            creado = StudentCreator(PostgresStudentRepository()).create_student(student_dto)
+
+            flash("✓ Cuenta de estudiante creada exitosamente. Por favor revisa tu correo para confirmación.", "success")
             return redirect(url_for("admin_bp.login"))
 
+        except smtplib.SMTPException as e:
+            flash(f"Error al enviar correo: {e}", "danger")
         except Exception as e:
-            flash(str(e), "danger")
+            # Si falló al crear el estudiante, asegurar que no quede en DB
+            flash(f"Error inesperado: {e}", "danger")
+            user = UserMapping.query.filter_by(email=email).first()
+            if user:
+                db.session.delete(user)
+                db.session.commit()
 
-    # GET → pasar colegios
+        return redirect(url_for("estudiantes_bp.registro"))
+
+    # GET → Mostrar formulario
     colegios = GetAllSchools(school_repo).execute().schools
     return render_template("students/registro.html", colegios=colegios)
+
 
 @estudiantes_bp.route("/perfil", methods=["GET", "POST"])
 def editar_perfil():
