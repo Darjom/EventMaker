@@ -16,6 +16,7 @@ class InscriptionDTO(BaseModel):
     inscription_id: Optional[int] = None
     delegation_id: Optional[int] = None
     voucher_id: Optional[int] = None
+    timezone: Optional[str] = "UTC"
 
     @field_validator('status')
     def validate_status(cls, v):

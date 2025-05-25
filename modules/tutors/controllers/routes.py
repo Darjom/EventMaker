@@ -32,7 +32,8 @@ def registro():
                 html=render_template(
                     "emails/confirmacion_registro.html",
                     nombre=form.get("first_name"),
-                    email=email
+                    email=email,
+                    rol="Tutor"
                 )
             )
             mail.send(msg)

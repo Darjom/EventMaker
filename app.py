@@ -4,11 +4,10 @@ from modules.Data.RolesAndPermissions.Seeder import seed_roles_and_permissions
 from modules.admin.controllers.routes import admin_bp
 from modules.areas.controllers.routes import areas_bp
 #from.modules.roles.controllers.routes import rol_bp
-from shared.extensions import db, migrate, jwt
+from shared.extensions import db, migrate, jwt, mail
 from modules.home.controllers.routes import home_bp
 from modules.roles.infrastructure.persistence.RolMapping import RolMapping
 from werkzeug.security import generate_password_hash
-from shared.extensions import db
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from modules.permissions.infrastructure.persistence.PermissionMapping import PermissionMapping
 from modules.events.infrastructure.persistence.EventMapping import EventMapping
@@ -35,8 +34,8 @@ from modules.inscriptions.controllers.routes import inscripciones_bp
 from modules.OCR.controllers.routes import ocr_bp
 from modules.delegations.controllers.routes import delegaciones_bp
 from modules.groups.controllers.routes import grupos_bp
-from shared.extensions import mail
-
+from apscheduler.schedulers.background import BackgroundScheduler
+from modules.notifications.application.jobs import enviar_notificaciones_inicio,enviar_notificaciones_inscripcion
 
 def create_app():
     app = Flask(__name__,template_folder='templates')
@@ -48,6 +47,10 @@ def create_app():
     mail.init_app(app)
     with app.app_context():
         db.create_all()
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(lambda: enviar_notificaciones_inscripcion(app), 'cron', hour=0,minute=0)
+        scheduler.add_job(lambda: enviar_notificaciones_inicio(app), 'cron', hour=0, minute=0)
+        scheduler.start()
         # Inserta datos de roles y permisos
         # seed_roles_and_permissions()
 

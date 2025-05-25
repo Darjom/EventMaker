@@ -11,7 +11,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = (
         f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
-
+    APP_TIMEZONE = 'America/La_Paz'  # Ejemplo
     SECRET_KEY = config("SECRET_KEY", default="dev-secret")
     JWT_SECRET_KEY = config("JWT_SECRET_KEY", default="dev-jwt-secret")
     SQLALCHEMY_TRACK_MODIFICATIONS = False

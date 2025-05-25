@@ -27,13 +27,13 @@
           <div class="col-md-6 mb-3"><input name="first_name" id="Nombres" class="form-control" placeholder="Nombres" required></div>
         </div>
         <div class="row">
-          <div class="col-md-4 mb-3"><input name="ci" id="CI" class="form-control" placeholder="Carnet de Identidad" required></div>
+          <div class="col-md-4 mb-3"><input name="ci" id="CI" class="form-control" placeholder="Carnet de Identidad" required required maxlength="12"></div>
           <div class="col-md-4 mb-3"><input name="complemento" id="Complemento" class="form-control" placeholder="Complemento (opcional)"></div>
           <div class="col-md-4 mb-3"><input name="expedito_ci" id="Expedido" class="form-control" placeholder="Expedido en" required></div>
         </div>
         <label for="Fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
         <input type="date" name="fecha_nacimiento" id="Fecha_nacimiento" class="form-control mb-3" required>
-        <input type="number" name="phone_number" id="Número" class="form-control mb-3" placeholder="Número de teléfono">
+        <input type="number" name="phone_number" id="Número" class="form-control mb-3" placeholder="Número de teléfono" required maxlength="10">
       </fieldset>
 
       <!-- Información Académica -->
@@ -93,6 +93,8 @@
   const matchMsg = document.getElementById("password-match-msg");
   const DominiosPermitidos = ['gmail.com', 'live.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
   const CorreoInput = document.getElementById("Correo");
+  const ciInput = document.getElementById("CI");
+  const phoneInput = document.getElementById("Número");
   const MensajeError = document.getElementById("Mensaje-de-error");
 
   const validarPassword = (password) => {
@@ -167,22 +169,31 @@
   confirmInput.addEventListener("input", checkMatch);
 
   form.addEventListener("submit", function (e) {
-    const emailValido = validarEmail(CorreoInput.value);
-    const fuerte = updateStrength();
-    const coincide = checkMatch();
+    let errores = [];
 
-    if (!emailValido || !fuerte || !coincide) { // ✅ Orden correcto
-      if (!fuerte || !coincide) {
-        e.preventDefault();
-        alert("❌ La contraseña no es segura o no coincide.");
-      }else{
-        e.preventDefault();
-          MensajeError.textContent = "Solo se permiten correos de: Gmail, Hotmail, Outlook y Yahoo";
-          MensajeError.style.display = "block"; // Forzar visibilidad al enviar
-          alert("❌ Verifica los datos del correo");
-      }
+    // 1) Email
+    if (!validarEmail(CorreoInput.value)) {
+      errores.push("❌ Solo se permiten correos de: Gmail, Hotmail, Outlook y Yahoo");
     }
 
+    // 2) Contraseña fuerte y coincide
+    if (!updateStrength() || !checkMatch()) {
+      errores.push("❌ Contraseña no segura o no coincide");
+    }
+
+    // 3) CI y Teléfono: longitud máxima
+    if (ciInput.value.length > ciInput.maxLength) {
+      errores.push(`❌ El CI no puede tener más de ${ciInput.maxLength} dígitos.`);
+    }
+    if (phoneInput.value.length > phoneInput.maxLength) {
+      errores.push(`❌ El teléfono no puede tener más de ${phoneInput.maxLength} dígitos.`);
+    }
+
+    // 4) Si hay errores, prevenimos el envío y alertamos
+    if (errores.length) {
+      e.preventDefault();
+      alert(errores.join("\n"));
+    }
   });
 </script>
 {% endblock %}

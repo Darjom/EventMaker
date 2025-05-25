@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Inicio de inscripciones en 48h</title>
+</head>
+<body>
+    <p>Hola {{ nombre }},</p>
+
+    <p>¡Buenas noticias! El evento <strong>{{ evento.nombre_evento }}</strong> abrirá sus inscripciones en <strong>48 horas</strong>.</p>
+
+    <p><strong>Fecha de inicio de inscripciones:</strong> {{ fecha_inicio.strftime('%d/%m/%Y') }}</p>
+
+    <p>No pierdas la oportunidad de participar. Mantente atento y asegúrate de estar listo cuando se abran las inscripciones.</p>
+
+    <p>Saludos,<br>
+    El equipo de EventMaker</p>
+</body>
+</html>

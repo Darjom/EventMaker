@@ -43,12 +43,13 @@ def registro():
         try:
             # 1) Envia el correo antes de crear nada
             msg = Message(
-                subject="¡Bienvenido como Estuudiante a EventMaker UMSS!",
+                subject="¡Bienvenido como Estudiante a EventMaker UMSS!",
                 recipients=[email],
                 html=render_template(
                     "emails/confirmacion_registro.html",
                     nombre=form.get("first_name"),
-                    email=email
+                    email=email,
+                    rol="Estudiante"
                 ),
                 charset="utf-8"
             )

@@ -8,8 +8,8 @@ class InscriptionMapping(db.Model):
 
     inscription_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # Composite primary keys and foreign keys:
-    student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    event_id = db.Column(db.Integer, db.ForeignKey('evento.id_evento'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('evento.id_evento'), nullable=False, index=True)
     area_id = db.Column(db.Integer, db.ForeignKey('area.id_area'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.category_id'), nullable=False)
     delegation_id = db.Column(db.Integer, db.ForeignKey('delegacion.id_delegacion'), nullable=True)
@@ -17,9 +17,10 @@ class InscriptionMapping(db.Model):
 
     # Additional fields:
     inscription_date = db.Column(db.Date, nullable=False)
-    status = db.Column(db.String(50), nullable=False)
-
-
+    status = db.Column(db.String(50), nullable=False, index=True)
+    notificacion_enviada = db.Column(db.Boolean, nullable=False, default=False)
+    user  = db.relationship('UserMapping',   backref='inscripciones', lazy='joined', foreign_keys=[student_id])
+    event = db.relationship('EventMapping',  backref='inscripciones', lazy='joined', foreign_keys=[event_id])
     def to_domain(self):
 
         return Inscription(
@@ -31,7 +32,8 @@ class InscriptionMapping(db.Model):
             delegation_id=self.delegation_id,
             voucher_id=self.voucher_id,
             inscription_date=self.inscription_date,
-            status=self.status
+            status=self.status,
+            notificacion_enviada=self.notificacion_enviada
         )
 
     @classmethod
@@ -49,5 +51,6 @@ class InscriptionMapping(db.Model):
             delegation_id=inscription.delegation_id,
             voucher_id=inscription.voucher_id,
             inscription_date=inscription.inscription_date,
-            status=inscription.status
+            status=inscription.status,
+            notificacion_enviada=inscription.notificacion_enviada
         )

@@ -21,6 +21,7 @@ class Inscription:
                  category_id: int,
                  inscription_date: date,
                  status: str,
+                 notificacion_enviada: bool = False,
                  delegation_id: Optional[int] = None,
                  inscription_id: Optional[int] = None,
                  voucher_id: Optional[int] = None):
@@ -34,6 +35,7 @@ class Inscription:
         self.voucher_id = voucher_id
         self.inscription_date = inscription_date
         self.status = status
+        self.notificacion_enviada = notificacion_enviada
 
     def is_confirmed(self) -> bool:
         if self.status == "Confirmado":
