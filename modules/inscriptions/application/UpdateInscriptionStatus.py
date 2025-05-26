@@ -41,7 +41,12 @@ class UpdateInscriptionStatus:
                     )
                     .first()
                 )
-                if not mapping or not mapping.user or not mapping.user.email:
+                if (
+                    not mapping or
+                    not mapping.user or
+                    not mapping.user.email or
+                    not getattr(mapping.user, 'active', False)
+                ):
                     continue
 
                 usuario = mapping.user
