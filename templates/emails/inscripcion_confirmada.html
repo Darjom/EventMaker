@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Inscripción Confirmada</title></head>
+<body>
+  <p>Hola {{ usuario.first_name }},</p>
+
+  <p>¡Tu inscripción al evento <strong>{{ evento.nombre_evento }}</strong> ha sido <strong>confirmada</strong>!</p>
+
+  <h4>Detalles de tu inscripción</h4>
+  <ul>
+    <li><strong>Fecha de inscripción:</strong> {{ evento.fin_inscripcion.strftime('%d/%m/%Y') }}</li>
+    <li><strong>Área:</strong> {{ area.nombre_area }}</li>
+    <li><strong>Categoría:</strong> {{ categoria.category_name }}
+      {% if categoria.price %}
+        (Precio: {{ "{:,.2f}".format(categoria.price) }} Bs)
+      {% else %}
+        (Sin costo)
+      {% endif %}
+    </li>
+  </ul>
+
+  <p>¡Gracias por confiar en nosotros! Nos vemos en el evento.</p>
+
+  <p>Saludos,<br>Equipo EventMaker</p>
+</body>
+</html>
