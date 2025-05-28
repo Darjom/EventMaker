@@ -34,8 +34,6 @@ from modules.inscriptions.controllers.routes import inscripciones_bp
 from modules.OCR.controllers.routes import ocr_bp
 from modules.delegations.controllers.routes import delegaciones_bp
 from modules.groups.controllers.routes import grupos_bp
-from apscheduler.schedulers.background import BackgroundScheduler
-
 
 def create_app():
     app = Flask(__name__,template_folder='templates')
@@ -45,22 +43,13 @@ def create_app():
     migrate.init_app(app, db)
     jwt.init_app(app)
     mail.init_app(app)
-    with app.app_context():
-        db.create_all()
-    #mail.init_app(app)
-    #with app.app_context():
-    #    db.create_all()
-    #    scheduler = BackgroundScheduler()
-    #    scheduler.add_job(lambda: enviar_notificaciones_inscripcion(app), 'cron', hour=0,minute=0)
-    #    scheduler.add_job(lambda: enviar_notificaciones_inicio(app), 'cron', hour=0, minute=0)
-    #    scheduler.start()
-        # Inserta datos de roles y permisos
-        #seed_roles_and_permissions()
+    # Inserta datos de roles y permisos
+    #seed_roles_and_permissions()
 
-        # cargar colegios
-        #from modules.Data.DatosColegios.cargar_colegios import CargarColegios
-        #cargador = CargarColegios()
-        #cargador.main()
+    # cargar colegios
+    #from modules.Data.DatosColegios.cargar_colegios import CargarColegios
+    #cargador = CargarColegios()
+    #cargador.main()
 
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix="/admin")
