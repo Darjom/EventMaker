@@ -42,12 +42,13 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
+    mail.init_app(app)
     # Inserta datos de roles y permisos
     #seed_roles_and_permissions()
 
     # cargar colegios
-    from modules.Data.DatosColegios.cargar_colegios import CargarColegios
-    cargador = CargarColegios()
+    #from modules.Data.DatosColegios.cargar_colegios import CargarColegios
+    #cargador = CargarColegios()
     #cargador.main()
 
     app.register_blueprint(home_bp)
