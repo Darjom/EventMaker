@@ -49,4 +49,13 @@ class Inscription:
     def update_status(self):
         self.status = "Pendiente"
 
+    ALLOWED_TRANSITIONS = {
+    "Pendiente": ["En Proceso"],
+    "En Proceso": ["Confirmado"],
+    "Confirmado": []  # Estado final
+    }
 
+    def change_status(self, nuevo_estado: str):
+        if nuevo_estado not in self.ALLOWED_TRANSITIONS.get(self.status, []):
+            raise ValueError(f"Transición no permitida: {self.status} → {nuevo_estado}")
+        self.status = nuevo_estado

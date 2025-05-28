@@ -36,6 +36,7 @@ from modules.delegations.controllers.routes import delegaciones_bp
 from modules.groups.controllers.routes import grupos_bp
 from apscheduler.schedulers.background import BackgroundScheduler
 from modules.notifications.application.jobs import enviar_notificaciones_inicio,enviar_notificaciones_inscripcion
+import os
 
 def create_app():
     app = Flask(__name__,template_folder='templates')
@@ -47,10 +48,11 @@ def create_app():
     mail.init_app(app)
     with app.app_context():
         db.create_all()
-        scheduler = BackgroundScheduler()
-        scheduler.add_job(lambda: enviar_notificaciones_inscripcion(app), 'cron', hour=0,minute=0)
-        scheduler.add_job(lambda: enviar_notificaciones_inicio(app), 'cron', hour=0, minute=0)
-        scheduler.start()
+        if os.getenv("FLASK_ENV") == "development":
+            scheduler = BackgroundScheduler()
+            scheduler.add_job(lambda: enviar_notificaciones_inscripcion(app), 'cron', hour=0,minute=0)
+            scheduler.add_job(lambda: enviar_notificaciones_inicio(app), 'cron', hour=0, minute=0)
+            scheduler.start()
         # Inserta datos de roles y permisos
         # seed_roles_and_permissions()
 
