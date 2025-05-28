@@ -53,13 +53,20 @@ def create_app():
             scheduler.add_job(lambda: enviar_notificaciones_inscripcion(app), 'cron', hour=0,minute=0)
             scheduler.add_job(lambda: enviar_notificaciones_inicio(app), 'cron', hour=0, minute=0)
             scheduler.start()
+    #mail.init_app(app)
+    #with app.app_context():
+    #    db.create_all()
+    #    scheduler = BackgroundScheduler()
+    #    scheduler.add_job(lambda: enviar_notificaciones_inscripcion(app), 'cron', hour=0,minute=0)
+    #    scheduler.add_job(lambda: enviar_notificaciones_inicio(app), 'cron', hour=0, minute=0)
+    #    scheduler.start()
         # Inserta datos de roles y permisos
-        # seed_roles_and_permissions()
+        #seed_roles_and_permissions()
 
         # cargar colegios
-        # from modules.Data.DatosColegios.cargar_colegios import CargarColegios
-        # cargador = CargarColegios()
-        # cargador.main()
+        #from modules.Data.DatosColegios.cargar_colegios import CargarColegios
+        #cargador = CargarColegios()
+        #cargador.main()
 
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix="/admin")
@@ -74,8 +81,6 @@ def create_app():
     app.register_blueprint(delegaciones_bp, url_prefix="/delegaciones")
     app.register_blueprint(info_bp)
     app.register_blueprint(grupos_bp, url_prefix="/grupos")
-    print("MAIL_USERNAME:", app.config["MAIL_USERNAME"])
-    print("MAIL_PASSWORD:", app.config["MAIL_PASSWORD"])
     return app
 
 

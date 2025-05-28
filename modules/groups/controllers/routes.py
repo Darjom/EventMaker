@@ -78,8 +78,7 @@ def ver_grupo(grupo_id):
         )
 
     except Exception as e:
-        flash(str(e), "danger")
-        return redirect(url_for("home_bp.index"))
+        flash(f"Error al asignar tutor: {e}", "danger")
 @grupos_bp.route("/asignar-tutor", methods=["POST"])
 def asignar_tutor_a_grupo():
     group_id = int(request.form.get("group_id"))
