@@ -13,7 +13,7 @@ class RolesQueryService:
         # Filtrar y eliminar los roles con nombre "master" o "colaborador"
         role_dtos = [
             role_dto for role_dto in role_dtos
-            if role_dto.name not in ("master", "colaborador")
+            if role_dto.name not in ("master", "colaborador","tutor", "student")
         ]
 
         return RolesDTO(roles=role_dtos)
