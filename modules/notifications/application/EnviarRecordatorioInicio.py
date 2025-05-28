@@ -11,7 +11,7 @@ import pytz
 
 
 class EnviarRecordatorioInicio:
-    @classmethod
+    @staticmethod
     def enviar_notificaciones_inicio(cls):
         """Envía notificaciones 48h antes de que abran las inscripciones"""
         tz = pytz.timezone(current_app.config['APP_TIMEZONE'])
@@ -20,17 +20,17 @@ class EnviarRecordatorioInicio:
         
         try:
             # 1. Obtener eventos
-            eventos = cls._obtener_eventos_proximos(fecha_objetivo)
+            eventos = EnviarRecordatorioInicio._obtener_eventos_proximos(fecha_objetivo)
             current_app.logger.info(f"Eventos a notificar: {len(eventos)}")
             
             # 2. Obtener usuarios activos
-            usuarios = cls._obtener_usuarios_activos()
+            usuarios = EnviarRecordatorioInicio._obtener_usuarios_activos()
             
             # 3. Enviar notificaciones
             for evento in eventos:
                 for usuario in usuarios:
                     if usuario.email:
-                        cls._enviar_email(usuario, evento)
+                        EnviarRecordatorioInicio._enviar_email(usuario, evento)
             
             db.session.commit()
             

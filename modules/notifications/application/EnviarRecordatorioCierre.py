@@ -9,7 +9,7 @@ from modules.user.infrastructure.persistence.UserMapping import UserMapping
 import pytz
 
 class EnviarRecordatorioCierre:
-    @classmethod
+    @staticmethod
     def enviar_notificaciones_inscripcion(cls):
         """Envía notificaciones 48h antes del cierre de inscripciones"""
         tz = pytz.timezone(current_app.config['APP_TIMEZONE'])
@@ -18,19 +18,19 @@ class EnviarRecordatorioCierre:
         
         try:
             # 1. Obtener inscripciones
-            inscripciones = cls._obtener_inscripciones_pendientes(fecha_objetivo)
+            inscripciones = EnviarRecordatorioCierre._obtener_inscripciones_pendientes(fecha_objetivo)
             current_app.logger.info(f"Inscripciones a notificar: {len(inscripciones)}")
             
             # 2. Procesar envíos
             notificados = []
             for insc in inscripciones:
-                if cls._es_usuario_valido(insc.user):
-                    cls._enviar_email(insc.user, insc.event)
+                if EnviarRecordatorioCierre._es_usuario_valido(insc.user):
+                    EnviarRecordatorioCierre._enviar_email(insc.user, insc.event)
                     notificados.append(insc.inscription_id)
             
             # 3. Actualizar estado
             if notificados:
-                cls._marcar_como_notificados(notificados)
+                EnviarRecordatorioCierre._marcar_como_notificados(notificados)
                 db.session.commit()
             
         except Exception as e:

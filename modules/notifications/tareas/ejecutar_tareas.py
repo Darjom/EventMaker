@@ -10,8 +10,9 @@ def main():
     
     with app.app_context():  # <-- Contexto global para todas las tareas
         try:
-            EnviarRecordatorioInicio.enviar_notificaciones_inicio()
-            EnviarRecordatorioCierre.enviar_notificaciones_inscripcion()
+            with app.test_request_context():
+                EnviarRecordatorioInicio.enviar_notificaciones_inicio(app)
+                EnviarRecordatorioCierre.enviar_notificaciones_inscripcion(app)
             
         except Exception as e:
             app.logger.critical(f"Error global: {str(e)}")
