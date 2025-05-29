@@ -16,3 +16,6 @@ pytesseract==0.3.13
 numpy==2.2.5
 openpyxl==3.1.5
 reportlab==4.4.0
+Flask-Mail==0.10.0
+APScheduler==3.10.4
+pytz==2024.1

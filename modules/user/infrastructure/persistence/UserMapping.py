@@ -1,6 +1,6 @@
 import uuid
 from shared.extensions import db
-
+from sqlalchemy import text
 # Tabla intermedia
 roles_users = db.Table(
     'roles_users',
@@ -18,7 +18,10 @@ class UserMapping(db.Model):
     ci = db.Column(db.String(50))
     expedito_ci = db.Column(db.String(50))
     fecha_nacimiento = db.Column(db.DateTime)
-    active = db.Column(db.Boolean())
+    active = db.Column(db.Boolean(),
+        nullable=False,
+        default=True,
+        server_default=text('true'))
     tipo = db.Column(db.String(150))
     confirmed_at = db.Column(db.DateTime())
     roles = db.relationship(

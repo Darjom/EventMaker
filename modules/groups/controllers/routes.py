@@ -31,19 +31,17 @@ grupos_bp = Blueprint("grupos_bp", __name__)
 
 @grupos_bp.route("/grupos/<int:grupo_id>")
 def ver_grupo(grupo_id):
+    print("estamos en la funcion de ver grupos")
     try:
         # Obtener datos del grupo
         finder = GroupFinder(PostgresGroupRepository())
         grupo_dto = finder.execute(grupo_id)
-        # Obtener categorías según el área del grupo
 
-        # ✅ Obtener delegación para acceder al evento_id
+        #  Obtener delegación para acceder al evento_id
         delegacion_dto = FindDelegationById(PostgresDelegationRepository()).execute(grupo_dto.id_delegacion)
 
-
         # Obtener nombre del área
-        delegacion_evento_id = EventQueryService(PostgresEventsRepository()).execute(grupo_dto.id_delegacion).id_evento
-        areas_dto = AreaFinder(PostgresAreaRepository()).execute(delegacion_evento_id)
+        areas_dto = AreaFinder(PostgresAreaRepository()).execute(delegacion_dto.evento_id)
         area_dict = {area.id_area: area.nombre_area for area in areas_dto.areas}
         nombre_area = area_dict.get(grupo_dto.id_area, "Sin área asignada")
 
@@ -78,8 +76,7 @@ def ver_grupo(grupo_id):
         )
 
     except Exception as e:
-        flash(str(e), "danger")
-        return redirect(url_for("home_bp.index"))
+        flash(f"Error al ver grupo: {e}", "danger")
 @grupos_bp.route("/asignar-tutor", methods=["POST"])
 def asignar_tutor_a_grupo():
     group_id = int(request.form.get("group_id"))

@@ -30,21 +30,27 @@
         <div class="d-flex justify-content-between align-items-center">
           <h5 class="text-secondary fw-bold">{{ evento.event_name }}</h5>
 
-          <div class="d-flex gap-2">
+        <div class="d-flex gap-2">
+
+          {# Mostrar “Descargar orden de pago” solo si NO está Confirmado #}
+          {% if evento.inscriptions[0].status != "Confirmado" %}
             <a href="{{ url_for('inscripciones_bp.generar_orden_pago_estudiante', event_id=evento.event_id) }}"
               class="btn btn-sm btn-outline-danger">
               <i class="bi bi-file-earmark-pdf"></i> Descargar orden de pago
             </a>
+          {% endif %}
 
-            {% if evento.inscriptions[0].status == "En Proceso" %}
+          {# Botón de comprobación de recibo solo si está En Proceso #}
+          {% if evento.inscriptions[0].status == "En Proceso" %}
             <button type="button"
                     class="btn btn-sm btn-outline-primary"
                     data-bs-toggle="modal"
                     data-bs-target="#modalRecibo_{{ evento.event_id }}">
               Comprobar recibo de inscripción
             </button>
-            {% endif %}
-          </div>
+          {% endif %}
+
+        </div>
         </div>
 
         <div class="table-responsive">

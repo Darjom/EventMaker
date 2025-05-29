@@ -22,3 +22,8 @@ class EventRepository(ABC):
     @abstractmethod
     def find_active_events(self) -> List[Event]:
         pass
+
+    @abstractmethod
+    def update(self, event: Event) -> Event:
+        pass
+

@@ -1,8 +1,101 @@
 <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm">
   <div class="container-fluid px-4">
-    <!-- Logo UMSS -->
+    <!-- Logo UMSS centrado -->
     <a class="navbar-brand mx-auto" href="{{ url_for('admin_bp.dashboard') }}">
       <img src="{{ url_for('static', filename='img/shared/logo_umss.webp') }}" alt="UMSS Logo" width="120">
     </a>
+
+    <!-- Botón Configuración (sin acción directa) -->
+    <a href="#" id="config-btn" class="position-absolute top-0 end-0 mt-2 me-4" title="Configuración">
+      <img src="{{ url_for('static', filename='img/shared/logo_configuracion.webp') }}"
+           alt="Configuración"
+           width="45"
+           style="border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer;">
+    </a>
+
+    <!-- Contenido colapsable si lo tienes -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <div class="row w-100">
+        <!-- ... tu contenido actual ... -->
+      </div>
+    </div>
   </div>
 </nav>
+
+<!-- Panel de Notificaciones (oculto inicialmente y fuera del nav) -->
+<div id="notif-panel" class="position-fixed end-0 me-4 scrollable-notif" style="top: 80px; display: none;">
+  <div class="p-2">
+    <!-- Toggle switch de Bootstrap con texto a la izquierda y switch a la derecha -->
+    <div class="form-check form-switch d-flex align-items-center justify-content-between">
+      <label class="form-check-label mb-0" for="switch-notifs">Notificaciones activadas</label>
+      <input class="form-check-input ms-2" type="checkbox" id="switch-notifs"
+       {% if notifications_active %}checked{% endif %}>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('config-btn');
+    const panel = document.getElementById('notif-panel');
+    const notifSwitch = document.getElementById('switch-notifs');
+
+    if (btn && panel) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const isOpen = panel.style.display === 'block';
+        panel.style.display = isOpen ? 'none' : 'block';
+        btn.classList.toggle('config-open', !isOpen);
+      });
+    }
+
+    if (notifSwitch) {
+      notifSwitch.addEventListener('change', function () {
+        const nuevoEstado = notifSwitch.checked;
+
+        fetch("/admin/actualizar_notificaciones", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ activo: nuevoEstado })
+        })
+        .then(res => {
+          if (!res.ok) throw new Error("Error al actualizar estado");
+          return res.json();
+        })
+        .then(data => {
+          console.log("Estado actualizado:", data);
+        })
+        .catch(err => {
+          console.error("Error al guardar estado de notificaciones", err);
+        });
+      });
+    }
+  });
+</script>
+
+
+
+<style>
+/* Transición y rotación para el icono de configuración */
+#config-btn img {
+  transition: transform 0.3s ease;
+  transform: rotate(0deg);
+}
+#config-btn.config-open img {
+  transform: rotate(90deg);
+}
+
+/* Estilo para el panel de notificaciones */
+.scrollable-notif {
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 240px;
+  z-index: 10000;
+}
+</style>

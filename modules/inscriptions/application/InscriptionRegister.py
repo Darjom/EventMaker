@@ -26,7 +26,11 @@ class InscriptionRegistrar:
 
     def execute(self, inscription_dto: InscriptionDTO) -> InscriptionDTO:
 
-        inscription_dto.inscription_date = date.today()
+            # Fecha en base al timezone del DTO
+        if inscription_dto.timezone:
+            inscription_dto.inscription_date = datetime.now(ZoneInfo(inscription_dto.timezone)).date()
+        else:
+            inscription_dto.inscription_date = datetime.now().date()
         inscription_dto.status = "Pendiente"
 
         student = self.student_repo.find_by_id(inscription_dto.student_id)
