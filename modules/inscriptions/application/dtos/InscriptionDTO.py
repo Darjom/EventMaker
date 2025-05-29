@@ -13,6 +13,7 @@ class InscriptionDTO(BaseModel):
     inscription_date: date = None
     status: str = None
     id: Optional[str] = None  # ID compuesto generado
+    notificacion_enviada: bool = False
     inscription_id: Optional[int] = None
     delegation_id: Optional[int] = None
     voucher_id: Optional[int] = None
@@ -37,7 +38,8 @@ class InscriptionDTO(BaseModel):
             status=inscription.status,
             id=f"{inscription.student_id}-{inscription.event_id}-{inscription.area_id}-{inscription.category_id}",
             delegation_id=inscription.delegation_id,
-            voucher_id=inscription.voucher_id
+            voucher_id=inscription.voucher_id,
+            notificacion_enviada=inscription.notificacion_enviada
         )
 
     def to_domain(self):
@@ -51,5 +53,6 @@ class InscriptionDTO(BaseModel):
             delegation_id=self.delegation_id,
             voucher_id=self.voucher_id,
             inscription_date=self.inscription_date,
-            status=self.status
+            status=self.status,
+            notificacion_enviada=self.notificacion_enviada
         )
