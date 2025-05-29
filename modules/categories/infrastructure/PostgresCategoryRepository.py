@@ -42,3 +42,19 @@ class PostgresCategoryRepository(CategoryRepository):
 
         # Mantener el orden original y agregar None donde no se encontró
         return [found_map.get(cat_id, None) for cat_id in ids]
+
+    def update(self, category: Category) -> Category:
+        """Actualiza una categoría existente en la base de datos."""
+        # Buscar la categoría existente
+        category_mapping = CategoryMapping.query.get(category.category_id)
+        if not category_mapping:
+            raise ValueError(f"Categoría con id {category.category_id} no encontrada")
+
+        # Actualizar campos
+        category_mapping.category_name = category.category_name
+        category_mapping.description = category.description
+        category_mapping.price = category.price
+
+        # El area_id no se actualiza porque es parte de la relación
+        db.session.commit()
+        return category_mapping.to_domain()
