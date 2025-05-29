@@ -24,3 +24,8 @@ class CategoryRepository(ABC):
     @abstractmethod
     def find_by_ids(self, ids: List[int]) -> List[Optional[Category]]:
         pass
+
+    @abstractmethod
+    def update(self, category: Category) -> Category:
+        pass
+    

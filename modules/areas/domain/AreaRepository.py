@@ -20,3 +20,8 @@ class AreaRepository(ABC):
     @abstractmethod
     def find_by_event_id(self, event_id: int) -> List[Area]:
         pass
+
+    @abstractmethod
+    def update(self, area: Area) -> Area:
+        pass
+    
