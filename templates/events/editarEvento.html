@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Convocatoria{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="crear-evento-main container-fluid mt-4">
+    <div class="text-center mb-4">
+      <h1>
+        <span class="crear-evento-rojo">Editar</span>
+        <span class="crear-evento-azul">Convocatoria</span>
+      </h1>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mt-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+      <div class="row px-4 crear-evento-form">
+
+        <!-- Lado izquierdo -->
+        <div class="col-md-5">
+          <div class="mb-4">
+            <h2>Título</h2>
+            <input type="text" name="titulo" id="titulo" class="crear-evento-input"
+                   value="{{ evento.nombre_evento }}" required>
+          </div>
+
+          <div class="mb-4">
+            <h2>Descripción</h2>
+            <textarea name="descripcion" id="descripcion" class="crear-evento-textarea" rows="4" required>{{ evento.descripcion_evento }}</textarea>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col">
+              <h3>Fecha de inicio</h3>
+              <input type="date" name="fecha_inicio" id="fecha_inicio" class="crear-evento-input"
+                     value="{{ evento.inicio_evento.strftime('%Y-%m-%d') }}" required>
+            </div>
+            <div class="col">
+              <h3>Fecha de fin</h3>
+              <input type="date" name="fecha_fin" id="fecha_fin" class="crear-evento-input"
+                     value="{{ evento.fin_evento.strftime('%Y-%m-%d') }}" required>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <h3>Inicio inscripción</h3>
+              <input type="date" name="fecha_inicio-inscripcion" id="fecha_inicio_inscripcion" class="crear-evento-input"
+                     value="{{ evento.inicio_inscripcion.strftime('%Y-%m-%d') }}" required>
+            </div>
+            <div class="col">
+              <h3>Fin inscripción</h3>
+              <input type="date" name="fecha_fin-inscripcion" id="fecha_fin_inscripcion" class="crear-evento-input"
+                     value="{{ evento.fin_inscripcion.strftime('%Y-%m-%d') }}" required>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <h2>Tipo de convocatoria</h2>
+            <select name="tipo_evento" id="tipo_evento" class="crear-evento-select" required>
+              <option disabled value="">Selecciona una opción</option>
+              <option value="Virtual" {{ 'selected' if evento.tipo_evento == 'Virtual' else '' }}>Virtual</option>
+              <option value="Presencial" {{ 'selected' if evento.tipo_evento == 'Presencial' else '' }}>Presencial</option>
+              <option value="hibrido" {{ 'selected' if evento.tipo_evento == 'hibrido' else '' }}>Híbrido</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Lado derecho -->
+        <div class="col-md-5 offset-md-1">
+          <div class="mb-4">
+            <h2>Capacidad máxima</h2>
+            <input type="number" name="capacidad" id="capacidad" class="crear-evento-input"
+                   value="{{ evento.capacidad_evento }}" min="0">
+          </div>
+
+          <div class="mb-4">
+            <h2>Requisitos</h2>
+            <input type="text" name="requisitos" id="requisitos" class="crear-evento-input"
+                   value="{{ evento.requisitos }}" required>
+          </div>
+
+          <div class="mb-4">
+            <h2>Lugar de la convocatoria</h2>
+            <input type="text" name="lugar" id="lugar" class="crear-evento-input"
+                   value="{{ evento.ubicacion }}" required>
+          </div>
+
+          <div class="mb-4">
+            <h2>Slogan de la convocatoria</h2>
+            <input type="text" name="slogan" id="slogan" class="crear-evento-input"
+                   value="{{ evento.slogan }}" required>
+          </div>
+
+          <div class="crear-evento-upload-box" onclick="document.getElementById('file-input').click()">
+            <div class="crear-evento-upload-icon">📷</div>
+            <div class="crear-evento-upload-text">Haz clic para subir una imagen</div>
+            <input type="file" id="file-input" name="afiche_path" accept="image/*" hidden onchange="mostrarPreview(this)">
+            {% if evento.afiche %}
+              <img id="preview" class="crear-evento-preview" src="{{ url_for('static', filename=evento.afiche) }}" alt="Vista previa del afiche">
+            {% else %}
+              <img id="preview" class="crear-evento-preview" style="display: none;" alt="Vista previa del afiche">
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <input type="checkbox" name="terminos" id="checkbox" checked required>
+        <label for="terminos">Acepto los términos, condiciones y políticas del sistema</label>
+      </div>
+
+      <div class="text-center mt-4 mb-5">
+        <button type="submit" class="crear-evento-boton">
+          <span class="crear-evento-icono">💾</span>Guardar cambios
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function mostrarPreview(input) {
+    const preview = document.getElementById('preview');
+    if (input.files && input.files[0]) {
+      preview.src = URL.createObjectURL(input.files[0]);
+      preview.style.display = 'block';
+    }
+  }
+
+  document.getElementById("capacidad").addEventListener("input", function (e) {
+    const valor = e.target.value;
+    if (valor && isNaN(valor)) {
+      alert("Por favor, ingresa un número válido en el campo de capacidad.");
+      e.target.value = "";
+    }
+  });
+
+  document.querySelector("form").addEventListener("submit", function (e) {
+    const capacidad = document.getElementById("capacidad").value;
+    if (capacidad && isNaN(capacidad)) {
+      alert("Capacidad debe ser un número.");
+      e.preventDefault();
+    }
+  });
+</script>
+{% endblock %}

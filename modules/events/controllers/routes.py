@@ -129,3 +129,66 @@ def ver_evento(event_id):
 
 
     return render_template("events/ver_evento.html", evento=evento, user=user, permisos=permisos, areas=areas_dto.areas,roles_usuario=roles_usuario)
+
+@eventos_bp.route("/evento/<int:event_id>/editar", methods=["GET", "POST"])
+def editar_evento(event_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    permisos = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        dto = service.execute(role.id)
+        if dto and dto.permissions:
+            permisos.extend(dto.permissions)
+
+    repository = PostgresEventsRepository()
+    service = EventQueryService(repository)
+    evento = service.execute(event_id)
+
+    if not evento:
+        flash("Evento no encontrado.", "error")
+        return redirect(url_for("eventos_bp.mis_eventos"))
+
+    if request.method == "POST":
+        form = request.form
+        file = request.files.get('afiche_path')
+        file_path = evento.afiche  # mantener el afiche actual por defecto
+
+        if file and file.filename != '':
+            if not ImageRotator.is_allowed_file(file.filename):
+                flash('Formato de imagen no permitido. Use JPG, PNG o WEBP', 'error')
+                return render_template("events/editarEvento.html", evento=evento, user=user, permisos=permisos)
+
+            file_path = ImageRotator.save_rotated_image(file)
+
+        from modules.events.application.EventUpdater import EventUpdater
+        from modules.events.application.dtos.EventDTO import EventDTO
+
+        dto = EventDTO(
+            id_evento=event_id,
+            nombre_evento=form.get("titulo"),
+            tipo_evento=form.get("tipo_evento"),
+            descripcion_evento=form.get("descripcion"),
+            inicio_evento=datetime.strptime(form.get("fecha_inicio"), "%Y-%m-%d"),
+            fin_evento=datetime.strptime(form.get("fecha_fin"), "%Y-%m-%d"),
+            inicio_inscripcion=datetime.strptime(form.get("fecha_inicio-inscripcion"), "%Y-%m-%d"),
+            fin_inscripcion=datetime.strptime(form.get("fecha_fin-inscripcion"), "%Y-%m-%d"),
+            capacidad_evento=int(form.get("capacidad")),
+            inscripcion=form.get("tipo_evento"),
+            requisitos=form.get("requisitos"),
+            ubicacion=form.get("lugar"),
+            slogan=form.get("slogan"),
+            afiche=file_path,
+            creador_id=[user_id]
+        )
+
+        updater = EventUpdater(repository)
+        updater.execute(dto)
+        flash("Evento actualizado con éxito", "success")
+        return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
+
+    return render_template("events/editarEvento.html", evento=evento, user=user, permisos=permisos)
