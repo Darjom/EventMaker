@@ -110,7 +110,11 @@
               <p class="card-text text-muted">
                 {{ area.descripcion[:30] }}{% if area.descripcion|length > 30 %}...{% endif %}
               </p>
-              <span class="btn btn-sm btn-outline-success mt-auto disabled">Ver más</span>
+                  {% if 'moderator' in roles_usuario or 'admin' in roles_usuario %}
+                    <a href="{{ url_for('areas_bp.editar_area', area_id=area.id_area) }}" class="btn btn-sm btn-outline-secondary">
+                      Editar Area
+                    </a>
+                  {% endif %}
             </div>
           </div>
         </div>
