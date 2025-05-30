@@ -81,17 +81,21 @@ def Prueba():
                     gestor_archivos.eliminar_original(nombre_archivo)
 
     # Obtener permisos
+    roles_usuario = []
     permisos = []
     for role in user.roles:
         dto = role_service.execute(role.id)
-        if dto and dto.permissions:
-            permisos.extend(dto.permissions)
+        if dto:
+            if dto.name:  # Asegurarse de que el nombre del rol existe
+                roles_usuario.append(dto.name.lower())  # Guardar en minúsculas
+            if dto.permissions:
+                permisos.extend(dto.permissions)
 
     return render_template(
         "OCR/Prueba.html",
         user=user,
         permisos=permisos,
-        role=user.roles[0] if user.roles else None,
+        roles_usuario=roles_usuario,
         error=error,
         texto_numero=resultados.get('numero', ''),
         texto_nombre=resultados.get('nombre', ''),
