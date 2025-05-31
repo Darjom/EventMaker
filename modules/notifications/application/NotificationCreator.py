@@ -39,4 +39,3 @@ class NotificationCreator:
 
         # Persistir usando el repositorio
         return self.notification_repository.save(user_id, notification, status)
-    
