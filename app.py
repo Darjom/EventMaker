@@ -45,8 +45,8 @@ def create_app():
     mail.init_app(app)
 
     # Crear las tablas si no existen
-    with app.app_context():
-        db.create_all()
+    #with app.app_context():
+       # db.create_all()
     # Inserta datos de roles y permisos
     #seed_roles_and_permissions()
 

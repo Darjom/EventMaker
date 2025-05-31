@@ -3,6 +3,7 @@ import sys
 import os
 
 from modules.Data.RolesAndPermissions.Seeder import seed_roles_and_permissions
+from shared.extensions import db
 
 # Añade el directorio raíz al path de Python
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -52,9 +53,14 @@ def create_schools():
 
 if __name__ == "__main__":
     with app.app_context():
+        # crea la base de datos
+        db.create_all()
+
+        create_roles_and_permissions()
 
         # Crear el usuario
         created_user = create_user()
-        create_roles_and_permissions()
+
         create_schools()
+
 
