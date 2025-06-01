@@ -12,7 +12,7 @@ from modules.events.application.EventQueryService import EventQueryService
 from modules.areas.application.AreaFinder import AreaFinder
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from shared.ImageRotator import ImageRotator
-
+from modules.events.application.EventDeleter import EventDeleter
 eventos_bp = Blueprint("eventos_bp", __name__)
 
 @eventos_bp.route("/crear", methods=["GET", "POST"])
@@ -192,3 +192,35 @@ def editar_evento(event_id):
         return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
 
     return render_template("events/editarEvento.html", evento=evento, user=user, permisos=permisos)
+
+
+@eventos_bp.route("/evento/<int:event_id>/eliminar", methods=["POST"])
+def eliminar_evento(event_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    # Verificar permisos
+    permisos = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        dto = service.execute(role.id)
+        if dto and dto.permissions:
+            permisos.extend(dto.permissions)
+
+    if "event:delete" not in permisos:
+        flash("No tienes permiso para eliminar este evento.", "error")
+        return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
+
+    # Eliminar el evento
+    repository = PostgresEventsRepository()
+    deleter = EventDeleter(repository)
+    try:
+        deleter.execute(event_id)
+        flash("Evento eliminado correctamente.", "success")
+    except Exception as e:
+        flash(f"No se pudo eliminar el evento: {str(e)}", "error")
+
+    return redirect(url_for("eventos_bp.mis_eventos"))

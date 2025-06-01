@@ -20,11 +20,21 @@
               {% endwith %}
 
     {% if 'moderator' in roles_usuario or 'admin' in roles_usuario %}
-      <div class="d-flex justify-content-end mt-4">
-        <a href="{{ url_for('eventos_bp.editar_evento', event_id=evento.id_evento) }}" class="btn btn-secondary">
-        Editar Evento
-        </a>
+      <div class="d-flex justify-content-between mt-4">
+        <div>
+          {% if 'event:delete' in permisos %}
+            <form method="POST" action="{{ url_for('eventos_bp.eliminar_evento', event_id=evento.id_evento) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.')">
+              <button type="submit" class="btn btn-danger me-2">Eliminar Convocatoria</button>
+            </form>
+          {% endif %}
+        </div>
+        <div>
+          <a href="{{ url_for('eventos_bp.editar_evento', event_id=evento.id_evento) }}" class="btn btn-secondary">
+            Editar Convocatoria
+          </a>
+        </div>
       </div>
+
     {% endif %}
     <br>
     <br>
