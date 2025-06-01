@@ -1,4 +1,8 @@
-from flask import Flask
+
+
+from flask import Flask, session
+from sqlalchemy import text
+
 from config import Config
 from modules.Data.RolesAndPermissions.Seeder import seed_roles_and_permissions
 from modules.admin.controllers.routes import admin_bp
@@ -72,6 +76,15 @@ def create_app():
     app.register_blueprint(delegaciones_bp, url_prefix="/delegaciones")
     app.register_blueprint(info_bp)
     app.register_blueprint(grupos_bp, url_prefix="/grupos")
+
+# Obtenemos el id_user para las bitacoras
+    @app.before_request
+    def set_user_id():
+        # Suponiendo que has autenticado al usuario y tienes su ID
+        user_id = session.get("admin_user")  # puedes usar 'request.user.id' o como lo manejes
+        if user_id:
+            db.session.execute(text(f"SET app.user_id = '{user_id}'"))
+
     return app
 
 
