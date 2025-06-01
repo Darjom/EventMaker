@@ -18,6 +18,27 @@
                   {% endfor %}
                 {% endif %}
               {% endwith %}
+
+    {% if 'moderator' in roles_usuario or 'admin' in roles_usuario %}
+      <div class="d-flex justify-content-between mt-4">
+        <div>
+          {% if 'event:delete' in permisos %}
+            <form method="POST" action="{{ url_for('eventos_bp.eliminar_evento', event_id=evento.id_evento) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.')">
+              <button type="submit" class="btn btn-danger me-2">Eliminar Convocatoria</button>
+            </form>
+          {% endif %}
+        </div>
+        <div>
+          <a href="{{ url_for('eventos_bp.editar_evento', event_id=evento.id_evento) }}" class="btn btn-secondary">
+            Editar Convocatoria
+          </a>
+        </div>
+      </div>
+
+    {% endif %}
+    <br>
+    <br>
+
     <div class="text-center">
       {% if evento.afiche %}
         <img src="{{ url_for('static', filename=evento.afiche) }}" class="ver-evento-afiche" alt="Afiche del evento">
@@ -99,7 +120,11 @@
               <p class="card-text text-muted">
                 {{ area.descripcion[:30] }}{% if area.descripcion|length > 30 %}...{% endif %}
               </p>
-              <span class="btn btn-sm btn-outline-success mt-auto disabled">Ver más</span>
+                  {% if 'moderator' in roles_usuario or 'admin' in roles_usuario %}
+                    <a href="{{ url_for('areas_bp.editar_area', area_id=area.id_area) }}" class="btn btn-sm btn-outline-secondary">
+                      Editar Area
+                    </a>
+                  {% endif %}
             </div>
           </div>
         </div>
@@ -123,7 +148,7 @@
     {% if 'moderator' in roles_usuario or 'admin' in roles_usuario %}
     <div class="text-center mt-4">
       <a href="{{ url_for('inscripciones_bp.ver_inscripciones_evento', event_id=evento.id_evento) }}" class="btn btn-outline-success">
-        👁 Ver cantidad de inscritos
+        Ver cantidad de inscritos
       </a>
     </div>
     {% endif %}
@@ -154,6 +179,7 @@
           </div>
         </div>
       </div>
+
       {% if 'category:create' in permisos %}
       <div class="modal-footer justify-content-between">
         <span class="text-muted">¿Deseas crear una categoría?</span>
@@ -173,6 +199,9 @@
 
 {% block scripts %}
 <script>
+  // Variable que permite saber si el usuario puede editar categorías
+  const puedeEditarCategorias = {{ 'true' if 'admin' in roles_usuario or 'moderator' in roles_usuario else 'false' }};
+
   const areaModal = document.getElementById('areaModal');
 
   areaModal.addEventListener('show.bs.modal', function (event) {
@@ -193,7 +222,6 @@
       crearCategoriaBtn.href = `/categorias/crear/${areaId}`;
     }
 
-    // Cargar categorías vía API
     const categoriasContainer = document.getElementById('categoriasContainer');
     categoriasContainer.innerHTML = `<p class="text-muted">Cargando categorías...</p>`;
 
@@ -211,10 +239,28 @@
 
           data.forEach(categoria => {
             const item = document.createElement('li');
-            item.className = 'list-group-item';
-            item.innerHTML = `<strong>${categoria.category_name}</strong><br>
-                              <small>${categoria.description || 'Sin descripción'}</small><br>
-                              <span class="text-muted">Precio: ${categoria.price !== null ? 'Bs ' + categoria.price : 'Gratis'}</span>`;
+            item.className = 'list-group-item d-flex justify-content-between align-items-start flex-column flex-sm-row';
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'me-3';
+            infoDiv.innerHTML = `
+              <strong>${categoria.category_name}</strong><br>
+              <small>${categoria.description || 'Sin descripción'}</small><br>
+              <span class="text-muted">Precio: ${categoria.price !== null ? 'Bs ' + categoria.price : 'Gratis'}</span>
+            `;
+
+            const btnDiv = document.createElement('div');
+
+            if (puedeEditarCategorias) {
+              btnDiv.innerHTML = `
+                <a href="/categorias/editar/${categoria.category_id}" class="btn btn-sm btn-outline-secondary mt-2 mt-sm-0">
+                  Editar Categoría
+                </a>
+              `;
+            }
+
+            item.appendChild(infoDiv);
+            item.appendChild(btnDiv);
             lista.appendChild(item);
           });
 
@@ -228,4 +274,5 @@
       });
   });
 </script>
+
 {% endblock %}

@@ -1,5 +1,5 @@
 # modules/areas/application/AreaFinder.py
-from typing import List
+from typing import List, Optional
 
 from .dtos.AreasDTO import AreasDTO
 from .dtos.AreaDTO import AreaDTO
@@ -25,4 +25,8 @@ class AreaFinder:
             return None
         return AreaDTO.from_domain(area)
 
-
+    def find_by_id(self, area_id: int) -> Optional[AreaDTO]:
+        area = self.repository.find_by_id(area_id)
+        if area is None:
+            return None
+        return AreaDTO.from_domain(area)

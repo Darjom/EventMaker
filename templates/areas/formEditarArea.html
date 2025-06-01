@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Editar Área{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+  <div class="form-area-container container mt-4">
+    <h1 class="text-center azul-umss mb-5">Editar Área</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+      <div class="row">
+        <div class="col-md-5">
+          <div class="mb-4">
+            <h2>Título</h2>
+            <input type="text" name="titulo" id="titulo" class="form-area-input" placeholder="Título del área"
+                   value="{{ area.nombre_area }}" required>
+          </div>
+
+          <div class="mb-4">
+            <h2>Descripción</h2>
+            <input type="text" name="descripcion" id="descripcion" class="form-area-input" placeholder="Descripción"
+                   value="{{ area.descripcion }}" required>
+          </div>
+
+          <div class="mb-4">
+            <h2>Actualizar Imagen</h2>
+            <input type="file" name="imagen" accept="image/jpeg, image/png, image/webp" class="form-area-input">
+            {% if area.afiche %}
+            <div class="mt-2">
+              <img src="{{ url_for('static', filename=area.afiche) }}" alt="Vista previa" class="img-fluid rounded shadow-sm" style="max-height: 250px;">
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-md-6 offset-md-1">
+          <h2>Procesos de Trámite</h2>
+          <div class="mb-3"><h5><b>Asesoría inicial</b></h5><p>Evaluación del caso y requisitos</p></div>
+          <div class="mb-3"><h5><b>Recopilación de documentos</b></h5><p>Expediente completo</p></div>
+          <div class="mb-3"><h5><b>Ingreso formal</b></h5><p>Ingreso ante autoridad competente</p></div>
+        </div>
+      </div>
+
+      <div class="text-center mt-3 mb-5">
+        <button type="submit" class="form-area-button">
+          <span class="icono">💾</span> Guardar Cambios
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

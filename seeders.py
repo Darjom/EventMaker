@@ -64,7 +64,7 @@ if __name__ == "__main__":
         create_roles_and_permissions()
 
         # Crear el usuario
-        created_user = create_user()
+        #created_user = create_user()
 
         create_schools()
 
