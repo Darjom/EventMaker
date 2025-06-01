@@ -106,7 +106,7 @@ def registro():
             log = NotificationMapping.from_domain(
                 domain_notification=domain_notif,
                 user_id=creado.id,
-                notification_type='confirmacion_registro',
+                notification_type='confirmacion_registro_estudiante',
                 status='sent'
             )
             log.sent_at = datetime.utcnow()

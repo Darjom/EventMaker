@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app, make_response
 from datetime import datetime
 
 from flask_mail import Message
@@ -12,37 +12,27 @@ from modules.tutors.application.TutorStudentAssigner import TutorStudentAssigner
 from modules.tutors.infrastructure.PostgresTutorRepository import PostgresTutorRepository
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
 
+from modules.notifications.infrastructure.persistence.NotificationMapping import NotificationMapping
+from modules.notifications.domain.Notification import Notification as DomainNotification
+from modules.notifications.domain.EmailAddress import EmailAddress
+
 tutores_bp = Blueprint("tutores_bp", __name__)
 
 @tutores_bp.route("/registro", methods=["GET", "POST"])
 def registro():
     if request.method == "POST":
         form = request.form
-        # Validación de contraseñas
+
+        # 1) Validación de contraseñas
         if form.get("password") != form.get("confirm_password"):
             flash("Las contraseñas no coinciden.", "danger")
             return render_template("tutors/registro.html")
 
         email = form.get("email")
-        # 1) Enviar correo de confirmación antes de tocar la DB
-        try:
-            msg = Message(
-                subject="¡Bienvenido como Tutor a EventMaker UMSS!",
-                recipients=[email],
-                html=render_template(
-                    "emails/confirmacion_registro.html",
-                    nombre=form.get("first_name"),
-                    email=email,
-                    rol="Tutor"
-                )
-            )
-            mail.send(msg)
-        except Exception as e:
-            flash(f"Error al enviar correo de confirmación: {e}", "danger")
-            return render_template("tutors/registro.html")
 
-        # 2) Si el correo se envió, crear el tutor
         try:
+            # 2) Crear el tutor en la base de datos (commit interno). 
+            #    Si falla aquí, cae en el except siguiente.
             tutor_dto = TutorDTO(
                 first_name=form.get("first_name"),
                 last_name=form.get("last_name"),
@@ -52,17 +42,65 @@ def registro():
                 expedito_ci=form.get("expedito_ci"),
                 fecha_nacimiento=datetime.strptime(form.get("fecha_nacimiento"), "%Y-%m-%d")
             )
-            creator = TutorCreator(PostgresTutorRepository())
-            creator.create_tutor(tutor_dto)
+            creado = TutorCreator(PostgresTutorRepository()).create_tutor(tutor_dto)
+            # → 'creado' es el objeto dominio/postgresql con el id ya asignado.
+
+            # 3) Enviar el correo de bienvenida SOLO SI la creación fue exitosa
+            msg = Message(
+                subject="¡Bienvenido como Tutor a EventMaker UMSS!",
+                recipients=[email],
+                html=render_template(
+                    "emails/confirmacion_registro.html",
+                    nombre=form.get("first_name"),
+                    email=email,
+                    rol="Tutor"
+                ),
+                charset="utf-8"
+            )
+            mail.send(msg)
+
+            # 4) Registrar la notificación en la tabla `notification`
+            domain_notif = DomainNotification(
+                sender=EmailAddress(
+                    address=current_app.config['MAIL_USERNAME'],
+                    name=current_app.config.get('MAIL_SENDER_NAME')
+                ),
+                recipient=EmailAddress(
+                    address=creado.email,
+                    name=creado.first_name
+                ),
+                subject=msg.subject,
+                body=msg.html,
+                cc=[],
+                bcc=[],
+                attachments=[],
+                read_receipt=False,
+                created_at=datetime.utcnow()
+            )
+            log = NotificationMapping.from_domain(
+                domain_notification=domain_notif,
+                user_id=creado.id,
+                notification_type='confirmacion_registro_tutor',
+                status='sent'
+            )
+            log.sent_at = datetime.utcnow()
+            db.session.add(log)
+            db.session.commit()
+
             flash("✓ Cuenta de tutor creada exitosamente. Por favor revisa tu correo para confirmación.", "success")
             return redirect(url_for("admin_bp.login"))
+
         except Exception as e:
-            # Si hay un error al crear el tutor, intenta quitar cualquier dato huérfano
-            flash(f"Error al crear cuenta de tutor: {e}", "danger")
-            user = PostgresTutorRepository().find_by_email(email)
-            if user:
-                db.session.delete(user)
+            # Si falla la creación o el envío del correo, revertimos todo
+            db.session.rollback()
+            flash(f"Error al crear cuenta de tutor o enviar correo: {e}", "danger")
+
+            # Intentamos eliminar cualquier usuario huérfano (si es que se creó)
+            posible_user = PostgresTutorRepository().find_by_email(email)
+            if posible_user:
+                db.session.delete(posible_user)
                 db.session.commit()
+
             return render_template("tutors/registro.html")
 
     # GET → Mostrar formulario sin cache
