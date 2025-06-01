@@ -30,6 +30,7 @@ class StudentInscriptionValidator:
 
         _, _, inscriptions = self.get_inscriptions_service.execute(event_id, student_id)
         valid_inscriptions = self._filter_valid_inscriptions(inscriptions)
+        valid_inscriptions = self.__filter_confirmed_dtos(valid_inscriptions)
 
         voucher = self.get_voucher_service.execute(valid_inscriptions)
         
@@ -66,3 +67,6 @@ class StudentInscriptionValidator:
             i for i in inscriptions
             if not (i.voucher_id is None and i.status == "Pendiente")
         ]
+    
+    def __filter_confirmed_dtos(self, dtos: List[InscriptionDTO]) -> List[InscriptionDTO]:
+        return [dto for dto in dtos if dto.status != "Confirmado"]

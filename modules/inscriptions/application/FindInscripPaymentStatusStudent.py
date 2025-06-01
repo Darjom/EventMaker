@@ -46,6 +46,13 @@ class FindInscripPaymentStatusStudent:
 
             inscriptions_dic, name_event, inscriptions_dto = self.__get_student_inscriptions.execute(event_id, student_id)
 
+            # Filtrar inscripciones con status != "Confirmado"
+            inscriptions_dic = [
+                ins for ins in inscriptions_dic
+                if ins.get("status") != "Confirmado"
+            ]
+            inscriptions_dto = self.__filter_confirmed_dtos(inscriptions_dto)
+
             student = self.__get_student_by_id.execute(student_id)
             student_name = f"{student.first_name} {student.last_name}"
 
