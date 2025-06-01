@@ -29,11 +29,11 @@ from modules.user.controllers.routes import users_bp
 from modules.info.controllers.routes import info_bp
 from modules.students.controllers.routes import estudiantes_bp
 from modules.tutors.controllers.routes import tutores_bp
-from modules.categories.controllers.routes import categorias_bp
 from modules.inscriptions.controllers.routes import inscripciones_bp
 from modules.OCR.controllers.routes import ocr_bp
 from modules.delegations.controllers.routes import delegaciones_bp
 from modules.groups.controllers.routes import grupos_bp
+from modules.categories.controllers.routes import categorias_bp
 
 def create_app():
     app = Flask(__name__,template_folder='templates')
@@ -71,4 +71,4 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
