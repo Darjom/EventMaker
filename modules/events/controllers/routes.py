@@ -13,6 +13,10 @@ from modules.areas.application.AreaFinder import AreaFinder
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from shared.ImageRotator import ImageRotator
 from modules.events.application.EventDeleter import EventDeleter
+from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
+from modules.inscriptions.application.StatisticsService import StatisticsService
+from modules.inscriptions.application.ChartDataConverter import ChartDataConverter
+from modules.user.infrastructure.persistence.UserMapping import UserMapping
 eventos_bp = Blueprint("eventos_bp", __name__)
 
 @eventos_bp.route("/crear", methods=["GET", "POST"])
@@ -224,3 +228,35 @@ def eliminar_evento(event_id):
         flash(f"No se pudo eliminar el evento: {str(e)}", "error")
 
     return redirect(url_for("eventos_bp.mis_eventos"))
+
+@eventos_bp.route("/evento/<int:event_id>/estadisticas")
+def ver_estadisticas(event_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+
+    user = UserMapping.query.get(user_id)
+
+    permisos = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        dto = service.execute(role.id)
+        if dto and dto.permissions:
+            permisos.extend(dto.permissions)
+
+    # Obtener datos estadísticos
+    repo = PostgresInscriptionRepository()
+    stats_service = StatisticsService(repo)
+    stats = stats_service.get_event_statistics(event_id)
+
+    charts = {
+        "bar_cat": ChartDataConverter.convert_bar_chart(stats["students_by_category"], "Estudiantes por Categoría"),
+        "bar_area": ChartDataConverter.convert_bar_chart(stats["students_by_area"], "Estudiantes por Área"),
+        "line": ChartDataConverter.convert_line_chart(stats["inscriptions_timeline"]),
+        "pie": ChartDataConverter.convert_pie_chart(stats["completion_ratio"]["completed"], stats["completion_ratio"]["incomplete"]),
+        "funnel": ChartDataConverter.convert_funnel_chart(stats["inscription_funnel"]),
+        "stacked": ChartDataConverter.convert_stacked_bar(stats["stacked_bar_data"])
+    }
+
+    return render_template("events/estadisticasEvento.html", charts=charts, user=user, permisos=permisos)

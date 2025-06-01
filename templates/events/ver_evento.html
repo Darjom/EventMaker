@@ -33,6 +33,11 @@
             Editar Convocatoria
           </a>
         </div>
+        <div>
+          <a href="{{ url_for('eventos_bp.ver_estadisticas', event_id=evento.id_evento) }}" class="btn btn-info mt-3">
+            Ver Estadísticas
+          </a>
+        </div>
       </div>
 
     {% endif %}

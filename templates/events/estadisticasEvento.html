@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Estadísticas del Evento{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="container mt-4">
+          <!-- MENSAJES FLASH-->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                  {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                      {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
+    <h2 class="mb-4">Estadísticas del Evento</h2>
+
+    <div class="row">
+      <div class="col-md-6 mt-4">
+        <h5>Estudiantes por Categoría</h5>
+        <canvas id="barChartCat"></canvas>
+      </div>
+
+      <div class="col-md-6 mt-4">
+        <h5>Estudiantes por Área</h5>
+        <canvas id="barChartArea"></canvas>
+      </div>
+
+      <div class="col-md-12 mt-4">
+        <h5>Evolución de Inscripciones</h5>
+        <canvas id="lineChart"></canvas>
+      </div>
+
+      <div class="col-md-6 mt-4">
+        <h5>Proporción de Completados</h5>
+        <canvas id="pieChart"></canvas>
+      </div>
+
+      <div class="col-md-6 mt-4">
+        <h5>Embudo de Inscripciones</h5>
+        <canvas id="funnelChart"></canvas>
+      </div>
+
+      <div class="col-md-12 mt-4 mb-5">
+        <h5>Estudiantes por Área y Estado</h5>
+        <canvas id="stackedBarChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ver_evento.css') }}">
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const charts = {{ charts|tojson }};
+
+    new Chart(document.getElementById("barChartCat"), charts.bar_cat);
+    new Chart(document.getElementById("barChartArea"), charts.bar_area);
+    new Chart(document.getElementById("lineChart"), charts.line);
+    new Chart(document.getElementById("pieChart"), charts.pie);
+    new Chart(document.getElementById("funnelChart"), charts.funnel);
+    new Chart(document.getElementById("stackedBarChart"), charts.stacked);
+  </script>
+{% endblock %}
