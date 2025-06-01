@@ -67,6 +67,6 @@ class StudentInscriptionValidator:
             i for i in inscriptions
             if not (i.voucher_id is None and i.status == "Pendiente")
         ]
-    
+
     def __filter_confirmed_dtos(self, dtos: List[InscriptionDTO]) -> List[InscriptionDTO]:
         return [dto for dto in dtos if dto.status != "Confirmado"]
