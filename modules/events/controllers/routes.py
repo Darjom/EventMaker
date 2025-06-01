@@ -258,5 +258,7 @@ def ver_estadisticas(event_id):
         "funnel": ChartDataConverter.convert_funnel_chart(stats["inscription_funnel"]),
         "stacked": ChartDataConverter.convert_stacked_bar(stats["stacked_bar_data"])
     }
+    import json
+    print(json.dumps(charts, indent=2))
 
     return render_template("events/estadisticasEvento.html", charts=charts, user=user, permisos=permisos)
