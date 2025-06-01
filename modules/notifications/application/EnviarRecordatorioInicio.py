@@ -7,6 +7,9 @@ from shared.extensions import db, mail
 from modules.events.infrastructure.persistence.EventMapping import EventMapping
 from modules.inscriptions.infrastructure.persistence.InscriptionMapping import InscriptionMapping
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
+from modules.notifications.infrastructure.persistence.NotificationMapping import NotificationMapping
+from modules.notifications.domain.Notification import Notification as DomainNotification
+from modules.notifications.domain.EmailAddress import EmailAddress
 import pytz
 
 
@@ -30,10 +33,39 @@ class EnviarRecordatorioInicio:
             for evento in eventos:
                 for usuario in usuarios:
                     if usuario.email:
-                        EnviarRecordatorioInicio._enviar_email(usuario, evento)
-            
+                        # 3.1 Construir el Message
+                        msg = EnviarRecordatorioInicio._crear_message_inicio(usuario, evento)
+                        
+                        try:
+                            # 3.2 Enviar correo
+                            mail.send(msg)
+
+                            # 3.3 Registrar en la tabla notification
+                            domain_notif = DomainNotification(
+                                sender=EmailAddress(address=current_app.config['MAIL_USERNAME'],
+                                                    name=current_app.config.get('MAIL_SENDER_NAME')),
+                                recipient=EmailAddress(address=usuario.email, name=usuario.first_name),
+                                subject=msg.subject,
+                                body=msg.html,
+                                cc=[], bcc=[], attachments=[],
+                                read_receipt=False,
+                                created_at=datetime.utcnow()
+                            )
+                            log = NotificationMapping.from_domain(
+                                domain_notification=domain_notif,
+                                user_id=usuario.id,
+                                notification_type='inicio_inscripcion',
+                                status='sent'
+                            )
+                            log.sent_at = datetime.utcnow()
+                            db.session.add(log)
+
+                        except Exception as e:
+                            current_app.logger.error(f"Error enviando recordatorio inicio a {usuario.id}: {str(e)}")
+
+            # 4. Hacemos commit de todos los logs juntos
             db.session.commit()
-            
+
         except Exception as e:
             db.session.rollback()
             current_app.logger.critical(f"Error en RecordatorioInicio: {str(e)}")
@@ -50,19 +82,18 @@ class EnviarRecordatorioInicio:
         return UserMapping.query.filter_by(active=True).all()
 
     @staticmethod
-    def _enviar_email(usuario, evento):
-        try:
-            msg = Message(
-                subject=f"📢 ¡Inscripciones en 48h para: {evento.nombre_evento}!",
-                recipients=[usuario.email],
-                html=render_template(
-                    "emails/notificacion_inicio_48h.html",
-                    usuario=usuario,
-                    evento=evento,
-                    nombre=usuario.first_name,
-                    fecha_inicio=evento.inicio_inscripcion
-                )
+    def _crear_message_inicio(usuario, evento):
+        """
+        Construye y devuelve el objeto Message para notificar el inicio de inscripciones.
+        """
+        return Message(
+            subject=f"📢 ¡Inscripciones en 48h para: {evento.nombre_evento}!",
+            recipients=[usuario.email],
+            html=render_template(
+                "emails/notificacion_inicio_48h.html",
+                usuario=usuario,
+                evento=evento,
+                nombre=usuario.first_name,
+                fecha_inicio=evento.inicio_inscripcion
             )
-            mail.send(msg)
-        except Exception as e:
-            current_app.logger.error(f"Error enviando a {usuario.id}: {str(e)}")
+        )

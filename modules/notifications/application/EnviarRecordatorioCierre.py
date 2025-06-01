@@ -6,6 +6,9 @@ from shared.extensions import db, mail
 from modules.events.infrastructure.persistence.EventMapping import EventMapping
 from modules.inscriptions.infrastructure.persistence.InscriptionMapping import InscriptionMapping
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
+from modules.notifications.infrastructure.persistence.NotificationMapping import NotificationMapping
+from modules.notifications.domain.Notification import Notification as DomainNotification
+from modules.notifications.domain.EmailAddress import EmailAddress
 import pytz
 
 class EnviarRecordatorioCierre:
@@ -24,9 +27,34 @@ class EnviarRecordatorioCierre:
             # 2. Procesar envíos
             notificados = []
             for insc in inscripciones:
-                if EnviarRecordatorioCierre._es_usuario_valido(insc.user):
-                    EnviarRecordatorioCierre._enviar_email(insc.user, insc.event)
-                    notificados.append(insc.inscription_id)
+                usuario = insc.user
+                evento = insc.event
+                if EnviarRecordatorioCierre._es_usuario_valido(usuario):
+                    msg = EnviarRecordatorioCierre._crear_message_cierre(usuario, evento)
+                    try:
+                        mail.send(msg)
+                        notificados.append(insc.inscription_id)
+                        # 3. Registrar en log de notificaciones
+                        domain_notif = DomainNotification(
+                            sender=EmailAddress(address=current_app.config['MAIL_USERNAME'],
+                                                name=current_app.config.get('MAIL_SENDER_NAME')),
+                            recipient=EmailAddress(address=usuario.email, name=usuario.first_name),
+                            subject=msg.subject,
+                            body=msg.html,
+                            cc=[], bcc=[], attachments=[],
+                            read_receipt=False,
+                            created_at=datetime.utcnow()
+                        )
+                        log = NotificationMapping.from_domain(
+                            domain_notification=domain_notif,
+                            user_id=usuario.id,
+                            notification_type='cierre_inscripcion',
+                            status='sent'
+                        )
+                        log.sent_at = datetime.utcnow()
+                        db.session.add(log)
+                    except Exception as e:
+                        current_app.logger.error(f"Error enviando a {usuario.id}: {e}")
             
             # 3. Actualizar estado
             if notificados:
@@ -60,22 +88,18 @@ class EnviarRecordatorioCierre:
         return usuario and usuario.email and getattr(usuario, 'active', False)
 
     @staticmethod
-    def _enviar_email(usuario, evento):
-        try:
-            msg = Message(
-                subject=f"⏳ 48h restantes: {evento.nombre_evento}",
-                recipients=[usuario.email],
-                html=render_template(
-                    "emails/notificacion_cierre_48h.html",
-                    usuario=usuario,
-                    evento=evento,
-                    nombre=usuario.first_name,
-                    fecha_limite=evento.fin_inscripcion
-                )
+    def _crear_message_cierre(usuario, evento):
+        return Message(
+            subject=f"⏳ 48h restantes: {evento.nombre_evento}",
+            recipients=[usuario.email],
+            html=render_template(
+                'emails/notificacion_cierre_48h.html',
+                usuario=usuario,
+                evento=evento,
+                nombre=usuario.first_name,
+                fecha_limite=evento.fin_inscripcion
             )
-            mail.send(msg)
-        except Exception as e:
-            current_app.logger.error(f"Error enviando a {usuario.id}: {str(e)}")
+        )
 
     @staticmethod
     def _marcar_como_notificados(ids):

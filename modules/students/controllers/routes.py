@@ -1,8 +1,7 @@
-import smtplib
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from datetime import datetime
 from flask_mail import Message
-from shared.extensions import mail
+from shared.extensions import mail, db
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.students.application.dtos.StudentDTO import StudentDTO
@@ -13,16 +12,19 @@ from modules.schools.application.GetAllSchools import GetAllSchools
 from modules.schools.infrastructure.PostgresSchoolRepository import PostgresSchoolRepository
 from modules.schools.application.SchoolCreator import SchoolCreator
 from modules.schools.application.dtos.SchoolDTO import SchoolDTO
-from shared.extensions import db
-estudiantes_bp = Blueprint("estudiantes_bp", __name__, template_folder="templates")
+from modules.notifications.infrastructure.persistence.NotificationMapping import NotificationMapping
+from modules.notifications.domain.Notification import Notification as DomainNotification
+from modules.notifications.domain.EmailAddress import EmailAddress
+import smtplib
 
+estudiantes_bp = Blueprint("estudiantes_bp", __name__, template_folder="templates")
 
 @estudiantes_bp.route("/registro", methods=["GET", "POST"])
 def registro():
     school_repo = PostgresSchoolRepository()
 
     if request.method == "POST":
-        # Botón de prueba de correo
+        # —– Botón de prueba de correo —–
         if request.form.get("accion") == "enviar_correo":
             prueba_email = request.form.get("test_email") or request.form.get("email")
             try:
@@ -37,32 +39,21 @@ def registro():
                 flash(f"Error al enviar correo de prueba: {e}", "danger")
             return redirect(url_for("estudiantes_bp.registro"))
 
-        # Registro real
         form = request.form
         email = form.get("email")
-        try:
-            # 1) Envia el correo antes de crear nada
-            msg = Message(
-                subject="¡Bienvenido como Estudiante a EventMaker UMSS!",
-                recipients=[email],
-                html=render_template(
-                    "emails/confirmacion_registro.html",
-                    nombre=form.get("first_name"),
-                    email=email,
-                    rol="Estudiante"
-                ),
-                charset="utf-8"
-            )
-            mail.send(msg)
 
-            # 2) Crea el colegio si hace falta
+        try:
+            # 1) Crea el colegio si es necesario
             school_name = (form.get("school_name") or "").strip()
             all_schools = GetAllSchools(school_repo).execute().schools
-            matched = next((s for s in all_schools if s.name.lower() == school_name.lower()), None)
+            matched = next(
+                (s for s in all_schools if s.name.lower() == school_name.lower()),
+                None
+            )
             if not matched:
                 matched = SchoolCreator(school_repo).execute(SchoolDTO(name=school_name))
 
-            # 3) Crea el estudiante (internamente commitea)
+            # 2) Crea al estudiante en BD (commit interno)
             student_dto = StudentDTO(
                 first_name=form.get("first_name"),
                 last_name=form.get("last_name"),
@@ -78,26 +69,75 @@ def registro():
                 province=form.get("province"),
             )
             creado = StudentCreator(PostgresStudentRepository()).create_student(student_dto)
+            # Aquí ya está creado el estudiante (si falla, irá directo al except)
+
+            # 3) Enviar el correo de bienvenida **solo si la creación fue exitosa**
+            msg = Message(
+                subject="¡Bienvenido como Estudiante a EventMaker UMSS!",
+                recipients=[email],
+                html=render_template(
+                    "emails/confirmacion_registro.html",
+                    nombre=form.get("first_name"),
+                    email=email,
+                    rol="Estudiante"
+                ),
+                charset="utf-8"
+            )
+            mail.send(msg)
+
+            # 4) Registrar la notificación en `notification`
+            domain_notif = DomainNotification(
+                sender=EmailAddress(
+                    address=current_app.config['MAIL_USERNAME'],
+                    name=current_app.config.get('MAIL_SENDER_NAME')
+                ),
+                recipient=EmailAddress(
+                    address=creado.email,
+                    name=creado.first_name
+                ),
+                subject=msg.subject,
+                body=msg.html,
+                cc=[],
+                bcc=[],
+                attachments=[],
+                read_receipt=False,
+                created_at=datetime.utcnow()
+            )
+            log = NotificationMapping.from_domain(
+                domain_notification=domain_notif,
+                user_id=creado.id,
+                notification_type='confirmacion_registro',
+                status='sent'
+            )
+            log.sent_at = datetime.utcnow()
+            db.session.add(log)
+            db.session.commit()    # <- guarda el log en notificaciones
 
             flash("✓ Cuenta de estudiante creada exitosamente. Por favor revisa tu correo para confirmación.", "success")
             return redirect(url_for("admin_bp.login"))
 
         except smtplib.SMTPException as e:
+            # Si falla el envío del correo, el estudiante YA ESTÁ CREADO en BD,
+            # pero puedes mostrar el error y quizás ofrecer reintentar el correo
             flash(f"Error al enviar correo: {e}", "danger")
+            return redirect(url_for("estudiantes_bp.registro"))
+
         except Exception as e:
-            # Si falló al crear el estudiante, asegurar que no quede en DB
+            # Cualquier otro error (por ejemplo: validación fallida, error interno en StudentCreator)
+            db.session.rollback()    # Se asegura de eliminar cualquier rastro parcial
             flash(f"Error inesperado: {e}", "danger")
-            user = UserMapping.query.filter_by(email=email).first()
-            if user:
-                db.session.delete(user)
+
+            # Si existe un UserMapping intentando crearse (o Student), elimínalo para no dejar registro colgado
+            posible_user = UserMapping.query.filter_by(email=email).first()
+            if posible_user:
+                db.session.delete(posible_user)
                 db.session.commit()
 
-        return redirect(url_for("estudiantes_bp.registro"))
+            return redirect(url_for("estudiantes_bp.registro"))
 
     # GET → Mostrar formulario
     colegios = GetAllSchools(school_repo).execute().schools
     return render_template("students/registro.html", colegios=colegios)
-
 
 @estudiantes_bp.route("/perfil", methods=["GET", "POST"])
 def editar_perfil():

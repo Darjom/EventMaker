@@ -22,3 +22,4 @@ class Config:
     MAIL_USERNAME = config("MAIL_USERNAME", default=None)
     MAIL_PASSWORD = config("MAIL_PASSWORD", default=None)
     MAIL_DEFAULT_SENDER = config("MAIL_DEFAULT_SENDER", default="noreply@tusitio.com")
+    MAIL_SENDER_NAME=config("MAIL_SENDER_NAME",default=None)
