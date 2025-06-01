@@ -27,6 +27,8 @@ class NotificationMapping(db.Model):
     created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     sent_at = db.Column(db.DateTime(timezone=True))
     read_at = db.Column(db.DateTime(timezone=True))
+    notification_type = db.Column(db.String(50), nullable=False)
+
 
     user = db.relationship("UserMapping", backref="notification")
 
@@ -46,7 +48,7 @@ class NotificationMapping(db.Model):
         )
 
     @classmethod
-    def from_domain(cls, domain_notification: Notification, user_id: int, status="pending"):
+    def from_domain(cls, domain_notification: Notification, user_id: int,notification_type: str, status="pending"):
         return cls(
             user_id=user_id,
             sender_address=domain_notification.sender.address,
@@ -60,5 +62,6 @@ class NotificationMapping(db.Model):
             attachments=[att.__dict__ for att in domain_notification.attachments],
             read_receipt=domain_notification.read_receipt,
             status=status,
+            notification_type=notification_type,
             created_at=domain_notification.created_at
         )

@@ -9,6 +9,10 @@ from modules.areas.infrastructure.persistence.AreaMapping import AreaMapping
 from modules.categories.infrastructure.persistence.CategoryMapping import CategoryMapping
 from modules.events.infrastructure.persistence.EventMapping import EventMapping
 from modules.user.infrastructure.persistence.UserMapping import UserMapping
+from modules.notifications.infrastructure.persistence.NotificationMapping import NotificationMapping
+from modules.notifications.domain.Notification import Notification as DomainNotification
+from modules.notifications.domain.EmailAddress import EmailAddress
+from datetime import datetime
 
 class UpdateInscriptionStatus:
 
@@ -24,6 +28,7 @@ class UpdateInscriptionStatus:
 
         self.__repository.update_all(inscriptions)
         # Si se confirma, enviar correos
+
         if status_new == "Confirmado":
             for dto in inscriptions_dto:
                 # Buscar mapping para obtener relaciones
@@ -53,6 +58,7 @@ class UpdateInscriptionStatus:
                 evento = mapping.event
                 area = db.session.query(AreaMapping).get(mapping.area_id)
                 categoria = db.session.query(CategoryMapping).get(mapping.category_id)
+            
 
                 try:
                     # Contexto de petición para renderizar template
@@ -71,5 +77,28 @@ class UpdateInscriptionStatus:
                     )
                     mail.send(msg)
                     current_app.logger.info(f"Correo de confirmación enviado a {usuario.email}")
+                    # Registrar en tabla notification
+                    domain_notif = DomainNotification(
+                        sender=EmailAddress(address=current_app.config['MAIL_USERNAME']),
+                        recipient=EmailAddress(address=usuario.email, name=usuario.first_name),
+                        subject=msg.subject,
+                        body=msg.html,
+                        cc=[], bcc=[], attachments=[],
+                        read_receipt=False,
+                        created_at=datetime.utcnow()
+                    )
+                    log = NotificationMapping.from_domain(
+                        domain_notification=domain_notif,
+                        user_id=usuario.id,
+                        notification_type='confirmacion_inscripcion',
+                        status='sent'
+                    )
+                    log.sent_at = datetime.utcnow()
+                    db.session.add(log)
+                    db.session.commit()
                 except Exception as e:
+                    import traceback
+                    print(f"[ERROR] Ocurrió un error: {e}")
+                    print("[ERROR] Traza completa del error:")
+                    print(traceback.format_exc())
                     current_app.logger.error(f"Error enviando confirmación a {usuario.id}: {e}")
