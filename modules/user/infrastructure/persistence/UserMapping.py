@@ -4,8 +4,8 @@ from sqlalchemy import text
 # Tabla intermedia
 roles_users = db.Table(
     'roles_users',
-    db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+    db.Column('user_id', db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('role.id', ondelete='CASCADE'))
 )
 
 class UserMapping(db.Model):
@@ -24,10 +24,13 @@ class UserMapping(db.Model):
         server_default=text('true'))
     tipo = db.Column(db.String(150))
     confirmed_at = db.Column(db.DateTime())
+
     roles = db.relationship(
         'RolMapping',
         secondary=roles_users,
-        backref='user',
+        backref=db.backref('user', lazy='dynamic'),
+        cascade='all, delete',
+        passive_deletes=True
     )
     fs_uniquifier = db.Column(
         db.String(255),
