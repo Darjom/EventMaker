@@ -1,8 +1,9 @@
-# En test/user_create.py
 import sys
 import os
 
 from modules.Data.RolesAndPermissions.Seeder import seed_roles_and_permissions
+from modules.bitacoras.infrastructure.function import create_audit_function
+from modules.bitacoras.infrastructure.triggers import create_audit_triggers
 from shared.extensions import db
 
 # Añade el directorio raíz al path de Python
@@ -55,6 +56,10 @@ if __name__ == "__main__":
     with app.app_context():
         # crea la base de datos
         db.create_all()
+
+        # Procedimento almacenado y triggers
+        create_audit_function()
+        create_audit_triggers()
 
         create_roles_and_permissions()
 

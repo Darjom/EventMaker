@@ -66,7 +66,6 @@ class GetStudentInscriptionsByEvent:
                 area_id, area_name = self.__nameAndIdArea(ins.area_id)
                 category_id, category_name, monto = self.__nameAndIdCategory(ins.category_id)
 
-
                 inscription_items.append({
                     "area_id": area_id,
                     "area_name": area_name,

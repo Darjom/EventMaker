@@ -1,9 +1,13 @@
+from typing import List
+
 from modules.areas.domain.AreaRepository import AreaRepository
 from modules.categories.domain.CategoryRepository import CategoryRepository
 from modules.events.domain.EventRepository import EventRepository
 from modules.inscriptions.application.GenerateStudentPaymentOrder import GenerateStudentPaymentOrder
 from modules.inscriptions.application.GetStudentInscriptionsByEvent import GetStudentInscriptionsByEvent
 from modules.inscriptions.application.UpdateInscriptionStatus import UpdateInscriptionStatus
+from modules.inscriptions.application.dtos.InscriptionDTO import InscriptionDTO
+from modules.inscriptions.domain.Inscription import Inscription
 from modules.inscriptions.domain.InscriptionsRepository import InscriptionRepository
 from modules.students.application.GetStudentById import GetStudentById
 from modules.students.domain.StudentRepository import StudentRepository
@@ -41,6 +45,7 @@ class FindInscripPaymentStatusStudent:
     def execute(self, student_id: int, event_id: int):
 
             inscriptions_dic, name_event, inscriptions_dto = self.__get_student_inscriptions.execute(event_id, student_id)
+
             student = self.__get_student_by_id.execute(student_id)
             student_name = f"{student.first_name} {student.last_name}"
 
@@ -55,6 +60,12 @@ class FindInscripPaymentStatusStudent:
             self.__update_inscription_status.execute(status_new="En Proceso", voucher_id=voucher.voucher_id, inscriptions_dto=inscriptions_dto)
             return order_payment
 
-
     def __calcular_total(self, areas: dict):
         return sum((area.get('monto') or 0.0) for area in areas)
+
+    def __filter_confirmed_inscriptions(self, inscriptions: List[Inscription]) -> List[Inscription]:
+        return [ins for ins in inscriptions if ins.status != "Confirmado"]
+
+    def __filter_confirmed_dtos(self, dtos: List[InscriptionDTO]) -> List[InscriptionDTO]:
+        return [dto for dto in dtos if dto.status != "Confirmado"]
+
