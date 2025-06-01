@@ -14,8 +14,23 @@ class AreaMapping(db.Model):
     precio = db.Column(db.Integer)
 
     # Relación muchos-a-uno con Evento
-    id_evento = db.Column(db.Integer, db.ForeignKey('evento.id_evento'), nullable=False)
-    evento = db.relationship('EventMapping', backref=db.backref('areas', lazy=True))
+    id_evento = db.Column(
+        db.Integer,
+        db.ForeignKey('evento.id_evento', ondelete='CASCADE'),
+        nullable=False
+    )
+    evento = db.relationship(
+        'EventMapping',
+        backref=db.backref('areas', lazy=True, cascade='all, delete-orphan'),
+        passive_deletes=True
+    )
+    categories = db.relationship(
+        "CategoryMapping",
+        backref="area",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
 
     def to_domain(self) -> Area:
         from modules.areas.domain.Area import Area  # Import diferido

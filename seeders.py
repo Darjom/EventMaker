@@ -51,7 +51,6 @@ def create_schools():
     cargador.main()
 
 
-
 if __name__ == "__main__":
     with app.app_context():
         # crea la base de datos
@@ -64,7 +63,7 @@ if __name__ == "__main__":
         create_roles_and_permissions()
 
         # Crear el usuario
-        #created_user = create_user()
+        created_user = create_user()
 
         create_schools()
 

@@ -5,8 +5,8 @@ from modules.events.domain.Event import Event  # Importar la clase Event del dom
 
 users_events = db.Table(
     'user_events',
-    db.Column('id_evento', db.Integer, db.ForeignKey('evento.id_evento'), primary_key=True),
-    db.Column('id_user', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    db.Column('id_evento', db.Integer, db.ForeignKey('evento.id_evento', ondelete='CASCADE'), primary_key=True),
+    db.Column('id_user', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), primary_key=True)
 )
 
 class EventMapping(db.Model):
@@ -31,7 +31,9 @@ class EventMapping(db.Model):
     users = db.relationship(
         'UserMapping',
         secondary=users_events,
-        backref=db.backref('created_events', lazy='dynamic')  # 🔹 Lazy loading para eficiencia
+        backref=db.backref('created_events', lazy='dynamic'),
+        cascade='all, delete',
+        passive_deletes=True
     )
 
     def to_domain(self) -> Event:
