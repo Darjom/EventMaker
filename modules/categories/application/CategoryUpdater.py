@@ -19,4 +19,3 @@ class CategoryUpdater:
 
         # Convertir de vuelta a DTO
         return CategoryDTO.from_domain(updated_category)
-    

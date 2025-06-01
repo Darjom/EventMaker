@@ -32,7 +32,7 @@ def test_get_student_inscriptions(student_id: int = 6):
 
 if __name__ == "__main__":
     with app.app_context():
-        student_id = 12
+        student_id = 2
         print(f"\nBuscando inscripciones del estudiante {student_id}:")
         grouped = test_get_student_inscriptions(student_id)
 

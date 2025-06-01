@@ -32,7 +32,7 @@ def test_find_inscrip_payment_status_student(student_id: int, event_id: int):
 
 if __name__ == "__main__":
     with app.app_context():
-        student_id = 3
+        student_id = 2
         event_id = 1
 
         print(f"\n🔍 Buscando orden de pago para estudiante ID {student_id} en evento ID {event_id}...\n")

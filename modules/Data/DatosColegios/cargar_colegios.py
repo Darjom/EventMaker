@@ -42,7 +42,7 @@ class CargarColegios:
 
                 except ValueError as ve:
 
-                    logging.warning(f"Error de valor en {nombre}: {ve}")
+                    pass
 
                 except Exception as e:
 

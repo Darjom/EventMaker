@@ -1,8 +1,16 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 from ..domain.Inscription import Inscription
-from .persistence.InscriptionMapping import InscriptionMapping
+from datetime import datetime
+from typing import Dict, Tuple
+from sqlalchemy import func, and_
+
+from modules.inscriptions.domain.InscriptionsRepository import InscriptionRepository
+from modules.user.infrastructure.persistence.UserMapping import UserMapping
 from shared.extensions import db
-from ..domain.InscriptionsRepository import InscriptionRepository
+from modules.inscriptions.infrastructure.persistence.InscriptionMapping import InscriptionMapping
+from modules.events.infrastructure.persistence.EventMapping import EventMapping
+from modules.categories.infrastructure.persistence.CategoryMapping import CategoryMapping
+from modules.areas.infrastructure.persistence.AreaMapping import AreaMapping
 
 
 class PostgresInscriptionRepository(InscriptionRepository):
@@ -93,3 +101,139 @@ class PostgresInscriptionRepository(InscriptionRepository):
         mappings = InscriptionMapping.query.filter_by(event_id=event_id).all()
         # Convertir cada mapping al objeto de dominio Inscription
         return [m.to_domain() for m in mappings]
+
+    # FUNCIONES PARA ESTADISTICAS (todas modificadas para filtrar por event_id)
+    def get_students_by_category(self, event_id: int) -> Dict[str, int]:
+        """Cantidad de estudiantes por categoría de evento (para un evento específico)"""
+        result = (
+            db.session.query(
+                CategoryMapping.category_name,
+                func.count(InscriptionMapping.inscription_id)
+            )
+            .join(InscriptionMapping, InscriptionMapping.category_id == CategoryMapping.category_id)
+            .filter(InscriptionMapping.event_id == event_id)  # Filtro por evento
+            .group_by(CategoryMapping.category_name)
+            .all()
+        )
+        return {name: count for name, count in result}
+
+    def get_students_by_area(self, event_id: int) -> Dict[str, int]:
+        """Cantidad de estudiantes por área (para un evento específico)"""
+        result = (
+            db.session.query(
+                AreaMapping.nombre_area,
+                func.count(InscriptionMapping.inscription_id)
+            )
+            .join(InscriptionMapping, InscriptionMapping.area_id == AreaMapping.id_area)
+            .filter(InscriptionMapping.event_id == event_id)  # Filtro por evento
+            .group_by(AreaMapping.nombre_area)
+            .all()
+        )
+        return {name: count for name, count in result}
+
+    def get_inscriptions_timeline(self, event_id: int) -> Dict[datetime, int]:
+        """Evolución de inscripciones a lo largo del tiempo para un evento específico"""
+        event = EventMapping.query.get(event_id)
+        if not event:
+            return {}
+
+        result = (
+            db.session.query(
+                InscriptionMapping.inscription_date,
+                func.count(InscriptionMapping.inscription_id)
+            )
+            .filter(
+                and_(
+                    InscriptionMapping.inscription_date >= event.inicio_inscripcion,
+                    InscriptionMapping.inscription_date <= event.fin_inscripcion,
+                    InscriptionMapping.event_id == event_id  # Ya está filtrado
+                )
+            )
+            .group_by(InscriptionMapping.inscription_date)
+            .order_by(InscriptionMapping.inscription_date)
+            .all()
+        )
+
+        return {date: count for date, count in result}
+
+    def get_completion_ratio(self, event_id: int) -> Tuple[int, int]:
+        """Proporción de estudiantes que completaron el proceso (para un evento específico)"""
+        completed = (
+            db.session.query(func.count())
+            .filter(
+                and_(
+                    InscriptionMapping.event_id == event_id,
+                    InscriptionMapping.status == 'Confirmado'
+                )
+            )
+            .scalar()
+        )
+
+        total = (
+            db.session.query(func.count())
+            .filter(InscriptionMapping.event_id == event_id)
+            .scalar()
+        )
+
+        return completed, total - completed
+
+    def get_payment_status_distribution(self, event_id: int) -> Dict[str, int]:
+        """Distribución de estudiantes por estado de pago (para un evento específico)"""
+        result = (
+            db.session.query(
+                InscriptionMapping.status,
+                func.count(InscriptionMapping.inscription_id)
+            )
+            .filter(InscriptionMapping.event_id == event_id)
+            .group_by(InscriptionMapping.status)
+            .all()
+        )
+        return {status: count for status, count in result}
+
+    def get_inscription_funnel(self, event_id: int) -> Dict[str, int]:
+        """Datos para gráfico de embudo de inscripción (para un evento específico)"""
+        stages = {
+            "registered": db.session.query(func.count()).filter(
+                InscriptionMapping.event_id == event_id
+            ).scalar(),
+            "payment_started": db.session.query(func.count()).filter(
+                and_(
+                    InscriptionMapping.event_id == event_id,
+                    InscriptionMapping.status.in_(['En Proceso', 'Confirmado'])
+                )
+            ).scalar(),
+            "payment_completed": db.session.query(func.count()).filter(
+                and_(
+                    InscriptionMapping.event_id == event_id,
+                    InscriptionMapping.status == 'Confirmado'
+                )
+            ).scalar()
+        }
+        return stages
+
+    def get_stacked_bar_data(self, event_id: int) -> Dict[str, Dict[str, int]]:
+        """Cantidad de estudiantes por área y estado (para un evento específico)"""
+        # Cambiamos de eventos a áreas dentro del evento
+        areas = AreaMapping.query.filter_by(id_evento=event_id).all()
+        result = {}
+
+        for area in areas:
+            status_counts = {}
+            for status in ['Pendiente', 'En Proceso', 'Confirmado']:
+                count = (
+                    db.session.query(func.count())
+                    .filter(
+                        and_(
+                            InscriptionMapping.area_id == area.id_area,
+                            InscriptionMapping.status == status
+                        )
+                    )
+                    .scalar()
+                )
+                status_counts[status] = count
+            result[area.nombre_area] = status_counts
+
+        return result
+
+
+

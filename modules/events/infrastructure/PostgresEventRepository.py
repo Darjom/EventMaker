@@ -81,4 +81,15 @@ class PostgresEventsRepository(EventRepository):
 
         db.session.commit()
         return event_mapping.to_domain()
+
+    def delete(self, event_id: int):
+        """Elimina un evento y deja que la eliminación en cascada se encargue de las relaciones."""
+        event_mapping = EventMapping.query.get(event_id)
+
+        if not event_mapping:
+            raise ValueError(f"Evento con id {event_id} no encontrado")
+
+        db.session.delete(event_mapping)
+        db.session.commit()
+
     

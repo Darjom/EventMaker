@@ -27,3 +27,6 @@ class EventRepository(ABC):
     def update(self, event: Event) -> Event:
         pass
 
+    @abstractmethod
+    def delete(self, event_id: int):
+        pass

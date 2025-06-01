@@ -22,6 +22,7 @@ from modules.delegations.infrastructure.persistence.DelegationTutorMapping impor
 from modules.groups.infrastructure.persistence.GroupMapping import GroupMapping
 from modules.vouchers.infrastructure.persistence.VoucherMapping import VoucherMapping
 from modules.notifications.infrastructure.persistence.NotificationMapping import NotificationMapping
+from modules.bitacoras.infrastructure.AuditLogMapping import AuditLogMapping
 import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp
@@ -36,13 +37,17 @@ from modules.groups.controllers.routes import grupos_bp
 from modules.categories.controllers.routes import categorias_bp
 
 def create_app():
-    app = Flask(__name__,template_folder='templates')
+    app = Flask(__name__, template_folder='templates')
     app.config.from_object(Config)
 
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
     mail.init_app(app)
+
+    # Crear las tablas si no existen
+    #with app.app_context():
+       # db.create_all()
     # Inserta datos de roles y permisos
     #seed_roles_and_permissions()
 
@@ -50,6 +55,9 @@ def create_app():
     #from modules.Data.DatosColegios.cargar_colegios import CargarColegios
     #cargador = CargarColegios()
     #cargador.main()
+
+    # user_id para bitacoras
+
 
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix="/admin")

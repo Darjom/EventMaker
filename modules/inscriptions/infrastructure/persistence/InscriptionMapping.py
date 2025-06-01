@@ -19,7 +19,7 @@ class InscriptionMapping(db.Model):
     inscription_date = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(50), nullable=False, index=True)
     notificacion_enviada = db.Column(db.Boolean, nullable=False, default=False)
-    user  = db.relationship('UserMapping',   backref='inscripciones', lazy='joined', foreign_keys=[student_id])
+    user = db.relationship('UserMapping',   backref='inscripciones', lazy='joined', foreign_keys=[student_id])
     event = db.relationship('EventMapping',  backref='inscripciones', lazy='joined', foreign_keys=[event_id])
     def to_domain(self):
 
