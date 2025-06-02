@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}Editar Inscripción a {{ evento.nombre_evento }}{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="form-area-container container mt-4">
+    <h1 class="text-center azul-umss mb-5">Editar Inscripción a <span class="text-danger">{{ evento.nombre_evento }}</span></h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" id="formEditarInscripcion">
+      <div class="mb-5">
+        <h4 class="text-secondary">Selecciona un Área</h4>
+        <p class="text-muted">Puedes elegir una sola área por inscripción.</p>
+        <div class="form-switch-container">
+          {% for area in areas %}
+            <label class="form-check form-switch d-flex justify-content-between align-items-center py-2 px-3 border mb-2 rounded bg-light cursor-pointer">
+              <div>
+                <strong>{{ area.nombre_area }}</strong><br>
+                <small class="text-muted">{{ area.descripcion }}</small>
+              </div>
+              <input class="form-check-input area-switch"
+                     type="checkbox"
+                     name="area_id"
+                     value="{{ area.id_area }}"
+                     {% if area.id_area == inscripcion.area_id %}checked{% endif %}>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div id="categoriaContainer" class="mt-4" {% if not inscripcion.area_id %}style="display: none;"{% endif %}>
+        <h4 class="text-secondary">Selecciona una Categoría</h4>
+        <p class="text-muted">Solo puedes seleccionar una categoría por área.</p>
+        <div class="list-group" id="categoriaList"></div>
+      </div>
+
+      <div class="row mt-5 mb-5">
+        <div class="col-md-2"></div>
+
+        <div class="col-md-3 d-grid">
+          <button type="submit" class="btn btn-success">Guardar cambios</button>
+        </div>
+
+        <div class="col-md-2"></div>
+
+        <div class="col-md-3 d-grid">
+          <a href="{{ url_for('inscripciones_bp.ver_inscripciones_estudiante') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+        <div class="col-md-2"></div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form_area.css') }}">
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const switches = document.querySelectorAll('.area-switch');
+  const categoriaContainer = document.getElementById("categoriaContainer");
+  const categoriaList = document.getElementById("categoriaList");
+  const selectedArea = "{{ inscripcion.area_id }}";
+  const selectedCategory = "{{ inscripcion.category_id }}";
+
+  function loadCategorias(areaId, preselectId = null) {
+    categoriaContainer.style.display = "block";
+    categoriaList.innerHTML = '<p class="text-muted">Cargando categorías...</p>';
+
+    fetch(`/categorias/api/categorias/${areaId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.length === 0) {
+          categoriaList.innerHTML = '<p class="text-muted">No hay categorías disponibles.</p>';
+        } else {
+          categoriaList.innerHTML = "";
+          data.forEach(cat => {
+            const item = document.createElement("label");
+            item.className = "list-group-item d-flex justify-content-between align-items-center";
+            item.innerHTML = `
+              <div>
+                <strong>${cat.category_name}</strong><br>
+                <small class="text-muted">${cat.description || "Sin descripción"}</small>
+                <div class="text-muted">Precio: ${cat.price !== null ? 'Bs ' + cat.price : 'Gratis'}</div>
+              </div>
+              <input class="form-check-input" type="radio" name="category_id" value="${cat.category_id}" required ${cat.category_id == preselectId ? 'checked' : ''}>
+            `;
+            categoriaList.appendChild(item);
+          });
+        }
+      })
+      .catch(error => {
+        console.error("Error al cargar categorías:", error);
+        categoriaList.innerHTML = '<p class="text-danger">Error al cargar categorías.</p>';
+      });
+  }
+
+  switches.forEach(sw => {
+    sw.addEventListener('change', () => {
+      switches.forEach(other => {
+        if (other !== sw) other.checked = false;
+      });
+
+      if (sw.checked) {
+        loadCategorias(sw.value);
+      } else {
+        categoriaContainer.style.display = "none";
+        categoriaList.innerHTML = "";
+      }
+    });
+
+    // Cargar categorías preseleccionadas al renderizar
+    if (sw.checked) {
+      loadCategorias(sw.value, selectedCategory);
+    }
+  });
+</script>
+{% endblock %}
