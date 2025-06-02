@@ -8,6 +8,7 @@ from modules.areas.application.AreaFinder import AreaFinder
 from modules.categories.infrastructure.PostgresCategoryRepository import PostgresCategoryRepository
 from modules.categories.application.CategoryFinder import CategoryFinder
 from modules.inscriptions.application.GetStudentInscriptionsByEvent import GetStudentInscriptionsByEvent
+from modules.inscriptions.application.InscriptionUpdater import InscriptionUpdater
 from modules.inscriptions.application.StudentInscriptionValidator import StudentInscriptionValidator
 from modules.inscriptions.application.InscriptionRegister import InscriptionRegistrar
 from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
@@ -359,4 +360,48 @@ def descargar_reporte_pdf(event_id):
         mimetype='application/pdf',
         as_attachment=True,
         download_name=f"reporte_inscripciones_evento_{event_id}.pdf"
+    )
+
+@inscripciones_bp.route("/editar-inscripcion/<int:inscription_id>", methods=["GET", "POST"])
+def editar_inscripcion_formulario(inscription_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+    repo_insc = PostgresInscriptionRepository()
+    repo_area = PostgresAreaRepository()
+    repo_cat = PostgresCategoryRepository()
+    repo_voucher = PostgresVoucherRepository()
+
+    inscripcion = repo_insc.find_by_id(inscription_id)
+    if not inscripcion or inscripcion.student_id != user_id:
+        flash("Inscripción no válida.", "danger")
+        return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
+
+    # ✅ Agregar esta línea para obtener el evento relacionado
+    evento = EventQueryService(PostgresEventsRepository()).execute(inscripcion.event_id)
+
+    areas = AreaFinder(repo_area).execute(inscripcion.event_id).areas
+
+    if request.method == "POST":
+        try:
+            new_area_id = int(request.form.get("area_id"))
+            new_category_id = int(request.form.get("category_id"))
+
+            updater = InscriptionUpdater(repo_insc, repo_area, repo_cat, repo_voucher)
+            mensaje = updater.execute(inscription_id, new_area_id, new_category_id)
+
+            flash(mensaje, "success" if "correctamente" in mensaje else "warning")
+            return redirect(url_for("inscripciones_bp.ver_inscripciones_estudiante"))
+        except Exception as e:
+            flash(str(e), "danger")
+
+    # ✅ Agrega evento aquí también
+    return render_template(
+        "inscripciones/form_editar_inscripcion.html",
+        inscripcion=inscripcion,
+        areas=areas,
+        evento=evento,
+        user=user
     )
