@@ -48,7 +48,7 @@ class NotificationMapping(db.Model):
         )
 
     @classmethod
-    def from_domain(cls, domain_notification: Notification, user_id: int,notification_type: str, status="pending"):
+    def from_domain(cls, domain_notification: Notification, user_id: int, notification_type: str, status="pending"):
         return cls(
             user_id=user_id,
             sender_address=domain_notification.sender.address,

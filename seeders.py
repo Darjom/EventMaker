@@ -60,11 +60,11 @@ if __name__ == "__main__":
         create_audit_function()
         create_audit_triggers()
 
-        create_roles_and_permissions()
+        #create_roles_and_permissions()
 
         # Crear el usuario
-        created_user = create_user()
+        #created_user = create_user()
 
-        create_schools()
+        #create_schools()
 
 
