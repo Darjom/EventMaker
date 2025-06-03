@@ -48,8 +48,20 @@
         </datalist>
         <input name="course" id="Curso" class="form-control mb-3" placeholder="Curso actual, Semestre actual o Profesion" required>
         <div class="row">
-          <div class="col-md-6 mb-3"><input name="department" id="Departamento" class="form-control" placeholder="Departamento" required></div>
-          <div class="col-md-6 mb-3"><input name="province" id="Provincia" class="form-control" placeholder="Provincia" required></div>
+          <div class="col-md-6 mb-3">
+            <select id="department" name="department" class="form-control mb-3">
+              <option selected disabled>Seleccione un departamento</option>
+              {% for d in departamentos %}
+                <option value="{{ d }}">{{ d }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <select id="province" name="province" class="form-control mb-3" disabled>
+              <option selected disabled>Seleccione una provincia</option>
+            </select>
+          </div>
         </div>
       </fieldset>
 
@@ -196,4 +208,39 @@
     }
   });
 </script>
+<script>
+  const departamentosProvincias = {{ departamentos_json|tojson }};
+  console.log("📦 departamentosProvincias cargado:", departamentosProvincias);
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const departamentoSelect = document.getElementById("department");
+    const provinciaSelect = document.getElementById("province");
+
+    const poblarProvincias = (departamento) => {
+      const clave = departamento.toUpperCase();  // Asegura consistencia con las claves
+      const provincias = departamentosProvincias[clave] || [];
+
+      provinciaSelect.innerHTML = '<option selected disabled>Seleccione una provincia</option>';
+      provinciaSelect.disabled = provincias.length === 0;
+
+      provincias.forEach((provincia) => {
+        const option = document.createElement("option");
+        option.value = provincia;
+        option.textContent = provincia;
+        provinciaSelect.appendChild(option);
+      });
+    };
+
+    departamentoSelect.addEventListener("change", function () {
+      poblarProvincias(this.value);
+    });
+
+    // Inicializar si ya hay un valor cargado
+    if (departamentoSelect.value) {
+      poblarProvincias(departamentoSelect.value);
+    }
+  });
+</script>
+
+
 {% endblock %}

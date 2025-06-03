@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from datetime import datetime
 from flask_mail import Message
+
+from modules.Data.departamentos_y_municipios import obtenerDepartamentos, departamentos_bolivia
 from shared.extensions import mail, db
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
@@ -137,7 +139,8 @@ def registro():
 
     # GET → Mostrar formulario
     colegios = GetAllSchools(school_repo).execute().schools
-    return render_template("students/registro.html", colegios=colegios)
+    departamentos = obtenerDepartamentos()
+    return render_template("students/registro.html", colegios=colegios, departamentos=departamentos, departamentos_json= departamentos_bolivia)
 
 @estudiantes_bp.route("/perfil", methods=["GET", "POST"])
 def editar_perfil():
