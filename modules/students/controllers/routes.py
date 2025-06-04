@@ -3,6 +3,7 @@ from datetime import datetime
 from flask_mail import Message
 
 from modules.Data.departamentos_y_municipios import obtenerDepartamentos, departamentos_bolivia
+from modules.Data.nivel_educativo import niveles_educativos
 from shared.extensions import mail, db
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
@@ -140,7 +141,9 @@ def registro():
     # GET → Mostrar formulario
     colegios = GetAllSchools(school_repo).execute().schools
     departamentos = obtenerDepartamentos()
-    return render_template("students/registro.html", colegios=colegios, departamentos=departamentos, departamentos_json= departamentos_bolivia)
+    niveles = niveles_educativos
+    hoy = datetime.now().year
+    return render_template("students/registro.html", colegios=colegios, departamentos=departamentos, departamentos_json=departamentos_bolivia, niveles=niveles, current_year=hoy)
 
 @estudiantes_bp.route("/perfil", methods=["GET", "POST"])
 def editar_perfil():

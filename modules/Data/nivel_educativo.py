@@ -1,0 +1,21 @@
+niveles_educativos = [
+    "Primero de Primaria",
+    "Segundo de Primaria",
+    "Tercero de Primaria",
+    "Cuarto de Primaria",
+    "Quinto de Primaria",
+    "Sexto de Primaria",
+    "Primero de Secundaria",
+    "Segundo de Secundaria",
+    "Tercero de Secundaria",
+    "Cuarto de Secundaria",
+    "Quinto de Secundaria",
+    "Sexto de Secundaria",
+    "Técnico Superior",
+    "Licenciatura",
+    "Diplomado",
+    "Especialidad",
+    "Maestría",
+    "Doctorado",
+    "Postdoctorado"
+]
