@@ -1,7 +1,9 @@
 from modules.delegations.application.AssignStudentToDelegation import AssignStudentToDelegation
 from modules.delegations.domain.DelegationRepository import DelegationRepository
 from modules.user.domain.UserRepository import UserRepository
-
+from flask_mail import Message
+from shared.extensions import mail
+from flask import current_app
 
 class StudentJoinDelegation:
     USER_NOT_FOUND = 0
@@ -34,6 +36,30 @@ class StudentJoinDelegation:
         was_associated = assigner.execute(delegation.id_delegacion, student_id)
 
         if was_associated:
+            try:
+                # Obtener nombre de la delegación (ajusta según tu atributo real)
+                nombre_delegacion = getattr(delegation, "nombre", "") or getattr(delegation, "name", "")
+
+                # Construir el mensaje
+                msg = Message(
+                    subject="🎉 Te has unido a una delegación",
+                    recipients=[student.email],
+                    html=f"""
+                        <p>Hola <strong>{student.first_name}</strong>,</p>
+                        <p>Te has unido exitosamente a la delegación <strong>{nombre_delegacion}</strong>.</p>
+                        <p>Puedes ver los detalles en “Mis delegaciones”. ¡Bienvenido!</p>
+                        <hr>
+                        <p>Si no reconoces esta acción, contacta con tu tutor o administrador.</p>
+                    """
+                )
+                mail.send(msg)
+            except Exception as e:
+                current_app.logger.error(
+                    f"Error al notificar que el estudiante (ID={student_id}) "
+                    f"se unió a la delegación (ID={delegation.id_delegacion}): {e}"
+                )
+
             return self.SUCCESSFULLY_ASSOCIATED
-        else:
-            return self.ALREADY_ASSOCIATED
+
+        # 6) Si ya estaba en la delegación
+        return self.ALREADY_ASSOCIATED
