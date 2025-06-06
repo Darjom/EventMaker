@@ -1,5 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, abort, send_file
 
+from modules.OCR.application.ManejoArchivosService import GestorArchivosOriginales
+from modules.OCR.application.OrquestadorOCRService import OrquestadorOCRService
+from modules.OCR.application.PreprocesamientoOCRService import ImageProcessorService
+from modules.OCR.application.ProcesamientoOCRService import ProcesadorOCR
 from modules.areas.application.AreaFinder import AreaFinder
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from modules.delegations.application.AssignTutorToDelegationByEmail import AssignTutorToDelegationByEmail
@@ -494,3 +498,37 @@ def generar_orden_pago_delegacion(delegacion_id):
     except Exception as e:
         flash(f"Error al generar la orden de pago: {str(e)}", "danger")
         return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
+
+@delegaciones_bp.route("/comprobar-recibo-delegacion/<int:delegacion_id>", methods=["POST"])
+def comprobar_recibo_ocr_delegacion(delegacion_id):
+    try:
+        user_id = session.get("admin_user")
+        if not user_id:
+            return redirect(url_for("admin_bp.login"))
+
+        if 'recibo' not in request.files:
+            flash("No se envió ningún archivo", "danger")
+            return redirect(url_for('delegaciones_bp.ver_delegacion', delegacion_id=delegacion_id))
+
+        file = request.files['recibo']
+        if file.filename == '':
+            flash("Archivo no seleccionado", "danger")
+            return redirect(url_for('delegaciones_bp.ver_delegacion', delegacion_id=delegacion_id))
+
+        # OCR y lógica similar, adaptada si tienes otras validaciones específicas para delegaciones
+        ocr_service = OrquestadorOCRService(
+            gestor=GestorArchivosOriginales(),
+            procesador_img=ImageProcessorService(),
+            ocr_proc=ProcesadorOCR()
+        )
+
+        # Si quieres guardar el resultado o validarlo contra algo, aquí va la lógica:
+        resultado = ocr_service.procesar(file)  # o método equivalente
+
+        # Ejemplo simple:
+        flash("OCR completado correctamente", "success")
+
+    except Exception as e:
+        flash(f"Error al validar recibo: {str(e)}", "danger")
+
+    return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
