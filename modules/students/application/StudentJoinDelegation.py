@@ -32,7 +32,9 @@ class StudentJoinDelegation:
             return self.DELEGATION_NOT_FOUND
 
         # Intenta asociar al estudiante a la delegación
-        assigner = AssignStudentToDelegation(self.__delegation_repository)
+        assigner = AssignStudentToDelegation(
+                    self.__delegation_repository,
+                    self.__user_repository)
         was_associated = assigner.execute(delegation.id_delegacion, student_id)
 
         if was_associated:
