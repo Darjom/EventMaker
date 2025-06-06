@@ -32,13 +32,15 @@ class GetStudentInscriptionsByEvent:
             return areas
 
         for group in inscriptions_event_group:
+
             if "inscriptions" not in group:
                 continue  # o puedes lanzar un error si esto nunca debería pasar
             for ins in group["inscriptions"]:
                 areas.append({
                     "area": ins["area_name"],
                     "categoria": ins["category_name"],
-                    "monto": ins["category_monto"]
+                    "monto": ins["category_monto"],
+                    "status": ins["status"]
                 })
         return areas
 
@@ -66,13 +68,14 @@ class GetStudentInscriptionsByEvent:
                 area_id, area_name = self.__nameAndIdArea(ins.area_id)
                 category_id, category_name, monto = self.__nameAndIdCategory(ins.category_id)
 
-
                 inscription_items.append({
                     "area_id": area_id,
                     "area_name": area_name,
                     "category_id": category_id,
                     "category_name": category_name,
                     "category_monto": monto,
+                    "status": ins.status,
+
                 })
 
             grouped_result.append({

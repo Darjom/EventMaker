@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Editar Categoría{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+  <div class="form-area-container container mt-4">
+    <h1 class="text-center azul-umss mb-5">Editar Categoría</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h2>Nombre</h2>
+            <input type="text" name="nombre" value="{{ category.category_name }}" class="form-area-input" required>
+          </div>
+
+          <div class="mb-4">
+            <h2>Descripción</h2>
+            <textarea name="descripcion" class="form-area-input" rows="4">{{ category.description }}</textarea>
+          </div>
+
+          <div class="mb-4">
+            <h2>Precio</h2>
+            <input type="number" name="precio" value="{{ category.price }}" min="0" class="form-area-input">
+          </div>
+        </div>
+
+        <div class="col-md-5 offset-md-1">
+          <h2>¿Qué es una categoría?</h2>
+          <p>Las categorías agrupan participantes dentro de un área según criterios definidos por el organizador.</p>
+        </div>
+      </div>
+
+      <div class="text-center mt-3 mb-5">
+        <button type="submit" class="form-area-button">
+          <span class="icono">✏️</span> Actualizar Categoría
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form_area.css') }}">
+{% endblock %}

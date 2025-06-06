@@ -12,8 +12,12 @@ class CategoryMapping(db.Model):
     price = db.Column(db.Integer)
 
     # Relación muchos-a-uno con Area
-    area_id = db.Column(db.Integer, db.ForeignKey('area.id_area'), nullable=False)
-    area = db.relationship('AreaMapping', backref=db.backref('categories', lazy=True))
+    area_id = db.Column(
+        db.Integer,
+        db.ForeignKey('area.id_area', ondelete='CASCADE'),
+        nullable=False
+    )
+    
 
     def to_domain(self) -> Category:
 

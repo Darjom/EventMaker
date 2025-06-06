@@ -7,6 +7,17 @@
   {% include 'admin/_sidebar.html' %}
 
   <div class="container mt-4">
+          <!-- MENSAJES FLASH-->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                  {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                      {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
     <h2 class="text-center mb-4">
       Bienvenido <span class="text-danger">{{ user.first_name }} {{ user.last_name }}</span>
     </h2>
@@ -32,23 +43,17 @@
 
         <div class="d-flex gap-2">
 
-          {# Mostrar “Descargar orden de pago” solo si NO está Confirmado #}
-          {% if evento.inscriptions[0].status != "Confirmado" %}
             <a href="{{ url_for('inscripciones_bp.generar_orden_pago_estudiante', event_id=evento.event_id) }}"
               class="btn btn-sm btn-outline-danger">
               <i class="bi bi-file-earmark-pdf"></i> Descargar orden de pago
             </a>
-          {% endif %}
 
-          {# Botón de comprobación de recibo solo si está En Proceso #}
-          {% if evento.inscriptions[0].status == "En Proceso" %}
             <button type="button"
                     class="btn btn-sm btn-outline-primary"
                     data-bs-toggle="modal"
                     data-bs-target="#modalRecibo_{{ evento.event_id }}">
               Comprobar recibo de inscripción
             </button>
-          {% endif %}
 
         </div>
         </div>

@@ -12,7 +12,11 @@ from modules.events.application.EventQueryService import EventQueryService
 from modules.areas.application.AreaFinder import AreaFinder
 from modules.areas.infrastructure.PostgresAreaRepository import PostgresAreaRepository
 from shared.ImageRotator import ImageRotator
-
+from modules.events.application.EventDeleter import EventDeleter
+from modules.inscriptions.infrastructure.PostgresInscriptionRepository import PostgresInscriptionRepository
+from modules.inscriptions.application.StatisticsService import StatisticsService
+from modules.inscriptions.application.ChartDataConverter import ChartDataConverter
+from modules.user.infrastructure.persistence.UserMapping import UserMapping
 eventos_bp = Blueprint("eventos_bp", __name__)
 
 @eventos_bp.route("/crear", methods=["GET", "POST"])
@@ -129,3 +133,132 @@ def ver_evento(event_id):
 
 
     return render_template("events/ver_evento.html", evento=evento, user=user, permisos=permisos, areas=areas_dto.areas,roles_usuario=roles_usuario)
+
+@eventos_bp.route("/evento/<int:event_id>/editar", methods=["GET", "POST"])
+def editar_evento(event_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    permisos = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        dto = service.execute(role.id)
+        if dto and dto.permissions:
+            permisos.extend(dto.permissions)
+
+    repository = PostgresEventsRepository()
+    service = EventQueryService(repository)
+    evento = service.execute(event_id)
+
+    if not evento:
+        flash("Evento no encontrado.", "error")
+        return redirect(url_for("eventos_bp.mis_eventos"))
+
+    if request.method == "POST":
+        form = request.form
+        file = request.files.get('afiche_path')
+        file_path = evento.afiche  # mantener el afiche actual por defecto
+
+        if file and file.filename != '':
+            if not ImageRotator.is_allowed_file(file.filename):
+                flash('Formato de imagen no permitido. Use JPG, PNG o WEBP', 'error')
+                return render_template("events/editarEvento.html", evento=evento, user=user, permisos=permisos)
+
+            file_path = ImageRotator.save_rotated_image(file)
+
+        from modules.events.application.EventUpdater import EventUpdater
+        from modules.events.application.dtos.EventDTO import EventDTO
+
+        dto = EventDTO(
+            id_evento=event_id,
+            nombre_evento=form.get("titulo"),
+            tipo_evento=form.get("tipo_evento"),
+            descripcion_evento=form.get("descripcion"),
+            inicio_evento=datetime.strptime(form.get("fecha_inicio"), "%Y-%m-%d"),
+            fin_evento=datetime.strptime(form.get("fecha_fin"), "%Y-%m-%d"),
+            inicio_inscripcion=datetime.strptime(form.get("fecha_inicio-inscripcion"), "%Y-%m-%d"),
+            fin_inscripcion=datetime.strptime(form.get("fecha_fin-inscripcion"), "%Y-%m-%d"),
+            capacidad_evento=int(form.get("capacidad")),
+            inscripcion=form.get("tipo_evento"),
+            requisitos=form.get("requisitos"),
+            ubicacion=form.get("lugar"),
+            slogan=form.get("slogan"),
+            afiche=file_path,
+            creador_id=[user_id]
+        )
+
+        updater = EventUpdater(repository)
+        updater.execute(dto)
+        flash("Evento actualizado con éxito", "success")
+        return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
+
+    return render_template("events/editarEvento.html", evento=evento, user=user, permisos=permisos)
+
+
+@eventos_bp.route("/evento/<int:event_id>/eliminar", methods=["POST"])
+def eliminar_evento(event_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+    user = UserMapping.query.get(user_id)
+
+    # Verificar permisos
+    permisos = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        dto = service.execute(role.id)
+        if dto and dto.permissions:
+            permisos.extend(dto.permissions)
+
+    if "event:delete" not in permisos:
+        flash("No tienes permiso para eliminar este evento.", "error")
+        return redirect(url_for("eventos_bp.ver_evento", event_id=event_id))
+
+    # Eliminar el evento
+    repository = PostgresEventsRepository()
+    deleter = EventDeleter(repository)
+    try:
+        deleter.execute(event_id)
+        flash("Evento eliminado correctamente.", "success")
+    except Exception as e:
+        flash(f"No se pudo eliminar el evento: {str(e)}", "error")
+
+    return redirect(url_for("eventos_bp.mis_eventos"))
+
+@eventos_bp.route("/evento/<int:event_id>/estadisticas")
+def ver_estadisticas(event_id):
+    user_id = session.get("admin_user")
+    if not user_id:
+        return redirect(url_for("admin_bp.login"))
+
+
+    user = UserMapping.query.get(user_id)
+
+    permisos = []
+    for role in user.roles:
+        service = RoleQueryService(PostgresRolesRepository())
+        dto = service.execute(role.id)
+        if dto and dto.permissions:
+            permisos.extend(dto.permissions)
+
+    # Obtener datos estadísticos
+    repo = PostgresInscriptionRepository()
+    stats_service = StatisticsService(repo)
+    stats = stats_service.get_event_statistics(event_id)
+
+    charts = {
+        "bar_cat": ChartDataConverter.convert_bar_chart(stats["students_by_category"], "Estudiantes por Categoría"),
+        "bar_area": ChartDataConverter.convert_bar_chart(stats["students_by_area"], "Estudiantes por Área"),
+        "line": ChartDataConverter.convert_line_chart(stats["inscriptions_timeline"]),
+        "pie": ChartDataConverter.convert_pie_chart(stats["completion_ratio"]["completed"], stats["completion_ratio"]["incomplete"]),
+        "funnel": ChartDataConverter.convert_funnel_chart(stats["inscription_funnel"]),
+        "stacked": ChartDataConverter.convert_stacked_bar(stats["stacked_bar_data"])
+    }
+    import json
+    print(json.dumps(charts, indent=2))
+
+    return render_template("events/estadisticasEvento.html", charts=charts, user=user, permisos=permisos)

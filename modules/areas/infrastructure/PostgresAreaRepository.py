@@ -28,3 +28,20 @@ class PostgresAreaRepository(AreaRepository):
         areas = AreaMapping.query.filter_by(id_evento=event_id).all()
         return [a.to_domain() for a in areas]
 
+    def update(self, area: Area) -> Area:
+        """Actualiza un área existente en la base de datos."""
+        # Buscar el área existente
+        area_mapping = AreaMapping.query.get(area.id_area)
+        if not area_mapping:
+            raise ValueError(f"Área con id {area.id_area} no encontrada")
+
+        # Actualizar campos
+        area_mapping.nombre_area = area.nombre_area
+        area_mapping.descripcion = area.descripcion
+        area_mapping.afiche = area.afiche
+        area_mapping.precio = area.precio
+
+        # El id_evento no se actualiza porque es parte de la relación
+        db.session.commit()
+        return area_mapping.to_domain()
+

@@ -44,3 +44,52 @@ class PostgresEventsRepository(EventRepository):
             EventMapping.fin_evento >= now
         ).all()
         return [e.to_domain() for e in event_mappings]
+
+    def update(self, event: Event) -> Event:
+        """Actualiza un evento existente en la base de datos."""
+        # Buscar el evento existente
+        event_mapping = EventMapping.query.get(event.id_evento)
+        if not event_mapping:
+            raise ValueError(f"Evento con id {event.id_evento} no encontrado")
+
+        # Actualizar campos básicos
+        event_mapping.nombre_evento = event.nombre_evento
+        event_mapping.tipo_evento = event.tipo_evento
+        event_mapping.descripcion_evento = event.descripcion_evento
+        event_mapping.inicio_evento = event.inicio_evento
+        event_mapping.fin_evento = event.fin_evento
+        event_mapping.inicio_inscripcion = event.inicio_inscripcion
+        event_mapping.fin_inscripcion = event.fin_inscripcion
+        event_mapping.capacidad_evento = event.capacidad_evento
+        event_mapping.inscripcion = event.inscripcion
+        event_mapping.requisitos = event.requisitos
+        event_mapping.ubicacion = event.ubicacion
+        event_mapping.slogan = event.slogan
+        event_mapping.afiche = event.afiche
+
+        # Actualizar relación con usuarios (creadores)
+        # Limpiar relaciones existentes
+        event_mapping.users = []
+
+        # Añadir nuevos creadores
+        for user_id in event.creador_id:
+            user = UserMapping.query.get(user_id)
+            if user:
+                event_mapping.users.append(user)
+            else:
+                raise ValueError(f"Usuario con id {user_id} no encontrado")
+
+        db.session.commit()
+        return event_mapping.to_domain()
+
+    def delete(self, event_id: int):
+        """Elimina un evento y deja que la eliminación en cascada se encargue de las relaciones."""
+        event_mapping = EventMapping.query.get(event_id)
+
+        if not event_mapping:
+            raise ValueError(f"Evento con id {event_id} no encontrado")
+
+        db.session.delete(event_mapping)
+        db.session.commit()
+
+    

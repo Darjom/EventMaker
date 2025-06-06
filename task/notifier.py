@@ -1,24 +1,15 @@
-# tasks/notifier.py
 import logging
-from flask import Flask
 from app import create_app
-from modules.notifications.application.jobs import (
-    enviar_notificaciones_inicio,
-    enviar_notificaciones_inscripcion
-)
+from modules.notifications.application.jobs import Jobs  # importa la clase
 
 def main():
     app = create_app()
 
     with app.app_context():
         try:
-            enviar_notificaciones_inscripcion(app)
+            Jobs.ejecutar_todas_las_notificaciones(app)
         except Exception as e:
-            logging.warning(f"Error en : {e}")
-        try:
-            enviar_notificaciones_inicio(app)
-        except Exception as e:
-            logging.warning(f"Error en : {e}")
+            logging.warning(f"Error en ejecución de notificaciones: {e}")
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,8 @@
-from flask import Flask
+
+
+from flask import Flask, session
+from sqlalchemy import text
+
 from config import Config
 from modules.Data.RolesAndPermissions.Seeder import seed_roles_and_permissions
 from modules.admin.controllers.routes import admin_bp
@@ -22,6 +26,7 @@ from modules.delegations.infrastructure.persistence.DelegationTutorMapping impor
 from modules.groups.infrastructure.persistence.GroupMapping import GroupMapping
 from modules.vouchers.infrastructure.persistence.VoucherMapping import VoucherMapping
 from modules.notifications.infrastructure.persistence.NotificationMapping import NotificationMapping
+from modules.bitacoras.infrastructure.AuditLogMapping import AuditLogMapping
 import uuid
 from datetime import datetime
 from modules.events.controllers.routes import eventos_bp
@@ -29,20 +34,24 @@ from modules.user.controllers.routes import users_bp
 from modules.info.controllers.routes import info_bp
 from modules.students.controllers.routes import estudiantes_bp
 from modules.tutors.controllers.routes import tutores_bp
-from modules.categories.controllers.routes import categorias_bp
 from modules.inscriptions.controllers.routes import inscripciones_bp
 from modules.OCR.controllers.routes import ocr_bp
 from modules.delegations.controllers.routes import delegaciones_bp
 from modules.groups.controllers.routes import grupos_bp
+from modules.categories.controllers.routes import categorias_bp
 
 def create_app():
-    app = Flask(__name__,template_folder='templates')
+    app = Flask(__name__, template_folder='templates')
     app.config.from_object(Config)
 
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
     mail.init_app(app)
+
+    # Crear las tablas si no existen
+    #with app.app_context():
+       # db.create_all()
     # Inserta datos de roles y permisos
     #seed_roles_and_permissions()
 
@@ -50,6 +59,9 @@ def create_app():
     #from modules.Data.DatosColegios.cargar_colegios import CargarColegios
     #cargador = CargarColegios()
     #cargador.main()
+
+    # user_id para bitacoras
+
 
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix="/admin")
@@ -64,6 +76,15 @@ def create_app():
     app.register_blueprint(delegaciones_bp, url_prefix="/delegaciones")
     app.register_blueprint(info_bp)
     app.register_blueprint(grupos_bp, url_prefix="/grupos")
+
+# Obtenemos el id_user para las bitacoras
+    @app.before_request
+    def set_user_id():
+        # Suponiendo que has autenticado al usuario y tienes su ID
+        user_id = session.get("admin_user")  # puedes usar 'request.user.id' o como lo manejes
+        if user_id:
+            db.session.execute(text(f"SET app.user_id = '{user_id}'"))
+
     return app
 
 
@@ -71,4 +92,4 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

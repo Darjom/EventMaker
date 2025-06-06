@@ -11,6 +11,7 @@ from modules.delegations.application.DelegationCreator import DelegationCreator
 from modules.delegations.application.TutorDelegationFinder import TutorDelegationsFinder
 from modules.delegations.infrastructure.PostgresDelegationRepository import PostgresDelegationRepository
 from modules.delegations.infrastructure.PostgresDelegationTutorRepository import PostgresDelegationTutorRepository
+from modules.groups.application.AssignGroupToTutor import AssignGroupToTutor
 from modules.roles.application.RoleQueryService import RoleQueryService
 from modules.roles.infrastructure.PostgresRolesRepository import PostgresRolesRepository
 from modules.students.infrastructure.PostgresEstudentRepository import PostgresStudentRepository
@@ -409,7 +410,8 @@ def crear_grupo(delegacion_id):
         )
 
         try:
-            GroupCreator(PostgresGroupRepository()).execute(dto)
+            group_saved = GroupCreator(PostgresGroupRepository()).execute(dto)
+            AssignGroupToTutor(PostgresGroupRepository()).execute(group_saved.id_grupo, user_id)
             flash("Grupo creado exitosamente.", "success")
             return redirect(url_for("delegaciones_bp.ver_delegacion", delegacion_id=delegacion_id))
         except Exception as e:

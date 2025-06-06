@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Estadísticas del Evento{% endblock %}
+
+{% block content %}
+{% include 'shared/admin_header.html' %}
+<div class="container-fluid d-flex">
+  {% include 'admin/_sidebar.html' %}
+
+  <div class="container mt-4">
+    <!-- MENSAJES FLASH-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h2 class="mb-4">Estadísticas del Evento</h2>
+
+    <div class="row">
+      <div class="col-md-6 mt-4">
+        <h5>Estudiantes por Categoría</h5>
+        <canvas id="barChartCat"></canvas>
+      </div>
+
+      <div class="col-md-6 mt-4">
+        <h5>Estudiantes por Área</h5>
+        <canvas id="barChartArea"></canvas>
+      </div>
+
+      <div class="col-md-12 mt-4">
+        <h5>Evolución de Inscripciones</h5>
+        <canvas id="lineChart"></canvas>
+      </div>
+
+      <div class="col-md-6 mt-4">
+        <h5>Proporción de Completados</h5>
+        <canvas id="pieChart"></canvas>
+      </div>
+
+      <div class="col-md-6 mt-4">
+        <h5>Embudo de Inscripciones</h5>
+        <div id="funnelOutput"></div> <!-- reemplaza canvas -->
+      </div>
+
+      <div class="col-md-12 mt-4 mb-5">
+        <h5>Estudiantes por Área y Estado</h5>
+        <canvas id="stackedBarChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ver_evento.css') }}">
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const charts = {{ charts|tojson }};
+    console.log("Datos de gráficas:", charts);
+
+    // Bar chart - Categorías
+    new Chart(document.getElementById("barChartCat"), {
+      type: 'bar',
+      data: charts.bar_cat,
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Bar chart - Áreas
+    new Chart(document.getElementById("barChartArea"), {
+      type: 'bar',
+      data: charts.bar_area,
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Línea temporal
+    new Chart(document.getElementById("lineChart"), {
+      type: 'line',
+      data: charts.line,
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Pie chart
+    new Chart(document.getElementById("pieChart"), {
+      type: 'pie',
+      data: charts.pie,
+      options: { responsive: true }
+    });
+
+    // Funnel (visualizado como lista simple)
+    const funnel = charts.funnel;
+    let output = "<ul class='list-group'>";
+    for (let i = 0; i < funnel.stages.length; i++) {
+      output += `<li class='list-group-item d-flex justify-content-between align-items-center'>
+                  ${funnel.stages[i]} <span class='badge bg-primary rounded-pill'>${funnel.values[i]}</span>
+                </li>`;
+    }
+    output += "</ul>";
+    document.getElementById("funnelOutput").innerHTML = output;
+
+    // Stacked bar chart
+    new Chart(document.getElementById("stackedBarChart"), {
+      type: 'bar',
+      data: {
+        labels: charts.stacked.events,
+        datasets: charts.stacked.datasets
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { stacked: true },
+          y: { stacked: true, beginAtZero: true }
+        }
+      }
+    });
+  </script>
+{% endblock %}
