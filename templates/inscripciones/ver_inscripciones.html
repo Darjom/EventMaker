@@ -7,17 +7,18 @@
   {% include 'admin/_sidebar.html' %}
 
   <div class="container mt-4">
-          <!-- MENSAJES FLASH-->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                  {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                      {{ message }}
-                      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                  {% endfor %}
-                {% endif %}
-              {% endwith %}
+    <!-- MENSAJES FLASH -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     <h2 class="text-center mb-4">
       Bienvenido <span class="text-danger">{{ user.first_name }} {{ user.last_name }}</span>
     </h2>
@@ -41,10 +42,9 @@
         <div class="d-flex justify-content-between align-items-center">
           <h5 class="text-secondary fw-bold">{{ evento.event_name }}</h5>
 
-        <div class="d-flex gap-2">
-
+          <div class="d-flex gap-2">
             <a href="{{ url_for('inscripciones_bp.generar_orden_pago_estudiante', event_id=evento.event_id) }}"
-              class="btn btn-sm btn-outline-danger">
+               class="btn btn-sm btn-outline-danger">
               <i class="bi bi-file-earmark-pdf"></i> Descargar orden de pago
             </a>
 
@@ -54,8 +54,7 @@
                     data-bs-target="#modalRecibo_{{ evento.event_id }}">
               Comprobar recibo de inscripción
             </button>
-
-        </div>
+          </div>
         </div>
 
         <div class="table-responsive">
@@ -66,6 +65,7 @@
                 <th>Categoría</th>
                 <th>Fecha</th>
                 <th>Estado</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -79,13 +79,22 @@
                     {{ ins.status }}
                   </span>
                 </td>
+                <td>
+                  {% if ins.status != "Confirmado" %}
+                  <a href="{{ url_for('inscripciones_bp.editar_inscripcion_formulario', inscription_id=ins.inscription_id) }}"
+                     class="btn btn-sm btn-warning">
+                    Editar inscripción
+                  </a>
+                  {% else %}
+                  <span class="text-muted">No editable</span>
+                  {% endif %}
+                </td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
 
-        <!-- Modal de comprobación solo si es En Proceso -->
         {% if evento.inscriptions[0].status == "En Proceso" %}
         <div class="modal fade" id="modalRecibo_{{ evento.event_id }}" tabindex="-1"
              aria-labelledby="modalReciboLabel_{{ evento.event_id }}" aria-hidden="true">
@@ -112,7 +121,6 @@
         </div>
         {% endif %}
 
-        <!-- Resultados del OCR -->
         {% if ocr_resultado and ocr_resultado.event_id == evento.event_id %}
         <div class="alert alert-info mt-3">
           <h6>Resultado del OCR:</h6>
@@ -123,7 +131,6 @@
           </ul>
         </div>
         {% endif %}
-
       </div>
       {% endfor %}
     {% endif %}

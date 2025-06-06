@@ -5,6 +5,7 @@ from sqlalchemy import text
 
 from config import Config
 from modules.Data.RolesAndPermissions.Seeder import seed_roles_and_permissions
+
 from modules.admin.controllers.routes import admin_bp
 from modules.areas.controllers.routes import areas_bp
 #from.modules.roles.controllers.routes import rol_bp
@@ -77,6 +78,7 @@ def create_app():
     app.register_blueprint(info_bp)
     app.register_blueprint(grupos_bp, url_prefix="/grupos")
 
+
 # Obtenemos el id_user para las bitacoras
     @app.before_request
     def set_user_id():
@@ -92,4 +94,4 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

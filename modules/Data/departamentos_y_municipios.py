@@ -1,5 +1,5 @@
-def obtenerDepartamentos(data: dict) -> list:
-    return list(data.keys())
+def obtenerDepartamentos() -> list:
+    return list(departamentos_bolivia.keys())
 
 def obtenerProvinciasPorDepartamento(data: dict, departamento: str) -> list:
     return data.get(departamento.upper(), [])

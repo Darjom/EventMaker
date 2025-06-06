@@ -31,25 +31,78 @@
           <div class="col-md-4 mb-3"><input name="complemento" id="Complemento" class="form-control" placeholder="Complemento (opcional)"></div>
           <div class="col-md-4 mb-3"><input name="expedito_ci" id="Expedido" class="form-control" placeholder="Expedido en" required></div>
         </div>
-        <label for="Fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
-        <input type="date" name="fecha_nacimiento" id="Fecha_nacimiento" class="form-control mb-3" required>
+        <div class="row mb-3">
+          <label class="form-label">Fecha de nacimiento</label>
+          <div class="col-md-4">
+            <select name="nacdia" id="nacdia" class="form-control" required>
+              <option value="" disabled selected>Día</option>
+              {% for d in range(1, 32) %}
+                <option value="{{ d }}">{{ d }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <select name="nacmes" id="nacmes" class="form-control" required>
+              <option value="" disabled selected>Mes</option>
+              {% for num, mes in [
+                    ('01','Enero'),('02','Febrero'),('03','Marzo'),
+                    ('04','Abril'),('05','Mayo'),('06','Junio'),
+                    ('07','Julio'),('08','Agosto'),('09','Septiembre'),
+                    ('10','Octubre'),('11','Noviembre'),('12','Diciembre')
+                  ] %}
+                <option value="{{ num }}">{{ mes }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <select name="nacanio" id="nacanio" class="form-control" required>
+              <option value="" disabled selected>Año</option>
+              {# Desde el actual hacia atrás, por ejemplo 1900 #}
+              {% for y in range(current_year, 1899, -1) %}
+                <option value="{{ y }}">{{ y }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <!-- Campo oculto donde ensamblaremos la fecha para el backend -->
+        <input type="hidden" name="fecha_nacimiento" id="Fecha_nacimiento" />
+
         <input type="number" name="phone_number" id="Número" class="form-control mb-3" placeholder="Número de teléfono" required maxlength="10">
       </fieldset>
 
       <!-- Información Académica -->
       <fieldset class="border p-3 mb-4">
         <legend>Información Académica</legend>
-        <label for="Colegio" class="form-label">Nombre del colegio, Universidad o "Profecion"</label>
+        <label for="Colegio" class="form-label">Nombre del colegio, Universidad o Institucion</label>
         <input list="colegiosList" name="school_name" id="Colegio" class="form-control mb-3" placeholder="Escriba o seleccione un colegio" required>
         <datalist id="colegiosList">
           {% for colegio in colegios %}
             <option value="{{ colegio.name }}">
           {% endfor %}
         </datalist>
-        <input name="course" id="Curso" class="form-control mb-3" placeholder="Curso actual, Semestre actual o Profesion" required>
+
+        <select name="course" id="Curso" class="form-control mb-3" required>
+          <option disabled selected>Seleccione su nivel educativo</option>
+          {% for nivel in niveles %}
+            <option value="{{ nivel }}">{{ nivel }}</option>
+          {% endfor %}
+        </select>
+
         <div class="row">
-          <div class="col-md-6 mb-3"><input name="department" id="Departamento" class="form-control" placeholder="Departamento" required></div>
-          <div class="col-md-6 mb-3"><input name="province" id="Provincia" class="form-control" placeholder="Provincia" required></div>
+          <div class="col-md-6 mb-3">
+            <select id="department" name="department" class="form-control mb-3">
+              <option selected disabled>Seleccione un departamento</option>
+              {% for d in departamentos %}
+                <option value="{{ d }}">{{ d }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <select id="province" name="province" class="form-control mb-3" disabled>
+              <option selected disabled>Seleccione una provincia</option>
+            </select>
+          </div>
         </div>
       </fieldset>
 
@@ -196,4 +249,69 @@
     }
   });
 </script>
+<script>
+  const departamentosProvincias = {{ departamentos_json|tojson }};
+  console.log("📦 departamentosProvincias cargado:", departamentosProvincias);
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const departamentoSelect = document.getElementById("department");
+    const provinciaSelect = document.getElementById("province");
+
+    const poblarProvincias = (departamento) => {
+      const clave = departamento.toUpperCase();  // Asegura consistencia con las claves
+      const provincias = departamentosProvincias[clave] || [];
+
+      provinciaSelect.innerHTML = '<option selected disabled>Seleccione una provincia</option>';
+      provinciaSelect.disabled = provincias.length === 0;
+
+      provincias.forEach((provincia) => {
+        const option = document.createElement("option");
+        option.value = provincia;
+        option.textContent = provincia;
+        provinciaSelect.appendChild(option);
+      });
+    };
+
+    departamentoSelect.addEventListener("change", function () {
+      poblarProvincias(this.value);
+    });
+
+    // Inicializar si ya hay un valor cargado
+    if (departamentoSelect.value) {
+      poblarProvincias(departamentoSelect.value);
+    }
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const dia = document.getElementById("nacdia");
+  const mes = document.getElementById("nacmes");
+  const anio = document.getElementById("nacanio");
+  const hiddenFecha = document.getElementById("Fecha_nacimiento");
+  const form = document.getElementById("registro-form");
+
+  form.addEventListener("submit", (e) => {
+    // Sólo si todos los selects tienen valor
+    if (dia.value && mes.value && anio.value) {
+      const fechaStr = `${anio.value}-${mes.value.padStart(2,'0')}-${String(dia.value).padStart(2,'0')}`;
+      const fechaSel = new Date(fechaStr);
+      const hoy = new Date();
+
+      // Validar que no sea futura
+      if (fechaSel > hoy) {
+        e.preventDefault();
+        alert("La fecha de nacimiento no puede ser en el futuro.");
+        return;
+      }
+      // Asignar al campo oculto para que llegue al backend
+      hiddenFecha.value = fechaStr;
+    }
+    else {
+      e.preventDefault();
+      alert("Por favor seleccione día, mes y año de nacimiento.");
+    }
+  });
+});
+</script>
+
 {% endblock %}

@@ -17,7 +17,7 @@ class CategoryMapping(db.Model):
         db.ForeignKey('area.id_area', ondelete='CASCADE'),
         nullable=False
     )
-    
+
 
     def to_domain(self) -> Category:
 
