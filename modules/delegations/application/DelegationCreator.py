@@ -5,8 +5,12 @@ from ..domain.DelegationTutorRepository import DelegationTutorRepository
 from modules.user.infrastructure.PostgresUserRepository import PostgresUserRepository
 # Importaciones para envío de correo usando plantilla
 from flask_mail import Message
-from shared.extensions import mail
+from shared.extensions import mail,db
 from flask import current_app, render_template
+# Nuevas importaciones para guardar notificación
+from modules.notifications.infrastructure.persistence.NotificationMapping import NotificationMapping
+from modules.notifications.domain.EmailAddress import EmailAddress
+from modules.notifications.domain.Notification import Notification
 from datetime import datetime
 
 class DelegationCreator:
@@ -31,8 +35,8 @@ class DelegationCreator:
             # Obtener datos del tutor
             user_repo = PostgresUserRepository()
             tutor = user_repo.find_by_id(tutor_id)
-            if tutor and hasattr(tutor, "email"):
-                print(f"[DEBUG] Enviando correo a tutor.email = {tutor.email}")
+            if tutor and getattr(tutor, "active", False):
+                
                 # Contexto para el template
                 contexto = {
                     "tutor": tutor,
@@ -51,9 +55,31 @@ class DelegationCreator:
                     html=html_body,
                     charset="utf-8"
                 )
-                print("[DEBUG] Llamando a mail.send(msg)…")
+                
                 mail.send(msg)
-                print("[DEBUG] mail.send(msg) completado")
+                    # 5.2) Registrar notificación en BD
+                domain_notification = Notification(
+                        sender=EmailAddress(address=current_app.config['MAIL_DEFAULT_SENDER'], name="Sistema de Delegaciones"),
+                        recipient=EmailAddress(address=tutor.email, name=tutor.first_name),
+                        subject=msg.subject,
+                        body=msg.html,
+                        cc=[],
+                        bcc=[],
+                        attachments=[],
+                        read_receipt=False,
+                        created_at=datetime.utcnow()
+                    )
+
+                notification_record = NotificationMapping.from_domain(
+                        domain_notification=domain_notification,
+                        user_id=tutor.id,
+                        notification_type="creacion_delegacion_tutor",
+                        status="sent"
+                    )
+                notification_record.sent_at = datetime.utcnow()
+
+                db.session.add(notification_record)
+                db.session.commit()
         except Exception as e:
             current_app.logger.error(
                 f"Error enviando correo al tutor (ID={tutor_id}) tras creación de delegación (ID={saved_delegation.id_delegacion}): {e}"

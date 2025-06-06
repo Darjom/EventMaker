@@ -2,8 +2,13 @@ from modules.delegations.application.AssignStudentToDelegation import AssignStud
 from modules.delegations.domain.DelegationRepository import DelegationRepository
 from modules.user.domain.UserRepository import UserRepository
 from flask_mail import Message
-from shared.extensions import mail
+from shared.extensions import mail,db
 from flask import current_app
+# Nuevas importaciones para guardar notificación
+from modules.notifications.infrastructure.persistence.NotificationMapping import NotificationMapping
+from modules.notifications.domain.EmailAddress import EmailAddress
+from modules.notifications.domain.Notification import Notification
+from datetime import datetime
 
 class StudentJoinDelegation:
     USER_NOT_FOUND = 0
@@ -40,21 +45,45 @@ class StudentJoinDelegation:
         if was_associated:
             try:
                 # Obtener nombre de la delegación (ajusta según tu atributo real)
-                nombre_delegacion = getattr(delegation, "nombre", "") or getattr(delegation, "name", "")
+                if getattr(student, "active", False):
+                    nombre_delegacion = getattr(delegation, "nombre", "") or getattr(delegation, "name", "")
 
-                # Construir el mensaje
-                msg = Message(
-                    subject="🎉 Te has unido a una delegación",
-                    recipients=[student.email],
-                    html=f"""
-                        <p>Hola <strong>{student.first_name}</strong>,</p>
-                        <p>Te has unido exitosamente a la delegación <strong>{nombre_delegacion}</strong>.</p>
-                        <p>Puedes ver los detalles en “Mis delegaciones”. ¡Bienvenido!</p>
-                        <hr>
-                        <p>Si no reconoces esta acción, contacta con tu tutor o administrador.</p>
-                    """
-                )
-                mail.send(msg)
+                    # Construir el mensaje
+                    msg = Message(
+                        subject="🎉 Te has unido a una delegación",
+                        recipients=[student.email],
+                        html=f"""
+                            <p>Hola <strong>{student.first_name}</strong>,</p>
+                            <p>Te has unido exitosamente a la delegación <strong>{nombre_delegacion}</strong>.</p>
+                            <p>Puedes ver los detalles en “Mis delegaciones”. ¡Bienvenido!</p>
+                            <hr>
+                            <p>Si no reconoces esta acción, contacta con tu tutor o administrador.</p>
+                        """
+                    )
+                    mail.send(msg)
+                    # 5.2) Registrar notificación en BD
+                    domain_notification = Notification(
+                        sender=EmailAddress(address=current_app.config['MAIL_DEFAULT_SENDER'], name="Sistema de Delegaciones"),
+                        recipient=EmailAddress(address=student.email, name=student.first_name),
+                        subject=msg.subject,
+                        body=msg.html,
+                        cc=[],
+                        bcc=[],
+                        attachments=[],
+                        read_receipt=False,
+                        created_at=datetime.utcnow()
+                    )
+
+                    notification_record = NotificationMapping.from_domain(
+                        domain_notification=domain_notification,
+                        user_id=student.id,
+                        notification_type="union_delegacion_estudiante",
+                        status="sent"
+                    )
+                    notification_record.sent_at = datetime.utcnow()
+
+                    db.session.add(notification_record)
+                    db.session.commit()
             except Exception as e:
                 current_app.logger.error(
                     f"Error al notificar que el estudiante (ID={student_id}) "
