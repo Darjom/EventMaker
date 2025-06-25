@@ -29,6 +29,17 @@
 
   <h2 class="text-center mb-4">Inscripciones por Área y Categoría</h2>
 
+  <!-- Filtro por estado -->
+  <div class="mb-4 text-center">
+    <label for="filtroEstado" class="form-label fw-bold me-2">Filtrar por estado:</label>
+    <select id="filtroEstado" class="form-select d-inline-block w-auto">
+      <option value="todos">Todos</option>
+      <option value="Confirmado">Confirmado</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="En Proceso">En Proceso</option>
+    </select>
+  </div>
+
   <!-- Tabs de áreas -->
   <ul class="nav nav-tabs mb-3" id="areaTabs" role="tablist">
     {% for area_name, area_data in datos.items() %}
@@ -52,7 +63,7 @@
             <h5><strong>Categoría:</strong> {{ categoria }}</h5>
             <ul class="list-group">
               {% for ins in cat_data.inscriptions %}
-                <li class="list-group-item">
+                <li class="list-group-item estado-{{ ins.status|lower|replace(' ', '-') }}">
                   {{ ins.student_name }} - {{ ins.course }} - {{ ins.status }} - {{ ins.inscription_date }}
                 </li>
               {% endfor %}
@@ -67,15 +78,36 @@
 
 {% block scripts %}
 <script>
-  // Por si necesitas iniciar manualmente las tabs con JavaScript (Bootstrap 5)
-  const triggerTabList = [].slice.call(document.querySelectorAll('#areaTabs button'))
-  triggerTabList.forEach(function (triggerEl) {
-    const tabTrigger = new bootstrap.Tab(triggerEl)
+  document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar tabs de Bootstrap
+    const triggerTabList = [].slice.call(document.querySelectorAll('#areaTabs button'));
+    triggerTabList.forEach(function (triggerEl) {
+      const tabTrigger = new bootstrap.Tab(triggerEl);
 
-    triggerEl.addEventListener('click', function (event) {
-      event.preventDefault()
-      tabTrigger.show()
-    })
-  })
+      triggerEl.addEventListener('click', function (event) {
+        event.preventDefault();
+        tabTrigger.show();
+      });
+    });
+
+    // Filtro por estado
+    const filtro = document.getElementById('filtroEstado');
+    filtro.addEventListener('change', () => {
+      const estadoSeleccionado = filtro.value.toLowerCase().replace(' ', '-');
+      const inscripciones = document.querySelectorAll('.list-group-item');
+
+      inscripciones.forEach(item => {
+        if (estadoSeleccionado === 'todos') {
+          item.style.display = 'block';
+        } else {
+          if (item.classList.contains(`estado-${estadoSeleccionado}`)) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        }
+      });
+    });
+  });
 </script>
 {% endblock %}
